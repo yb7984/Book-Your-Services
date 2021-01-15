@@ -1,5 +1,7 @@
 #  **Book your services**
 
+Estimated Hours: 40 Hours
+
 ## 1. What goal will your website be designed to achieve?
 
 Customer can find service provider on the website and make appointment with them. 
