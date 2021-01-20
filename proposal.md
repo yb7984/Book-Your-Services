@@ -4,9 +4,13 @@ Estimated Hours: 40 Hours
 
 ## 1. What goal will your website be designed to achieve?
 
-Customer can find service provider on the website and make appointment with them. 
+- Customer can find service provider on the website and make appointment with them. 
 
-Service providers can define the appointment slots and see all appointment information throught the dashboard and a shared google calendar with any device.
+- Service providers can define the appointment slots and see all appointment information throught the dashboard and a shared google calendar with any device.
+
+- Customer can book the appointment from the provider list or get a link directly from the website of providers or other resources.
+  
+- Email notification with any update of the appointment to both customers and providers
 
 ## 2. What kind of users will visit your site? In other words, what is the demographic of your users?
 
@@ -17,6 +21,10 @@ Individual and small company providing services and looking for a easy to use on
 ## 3. What data do you plan on using? You may have not picked your actual API yet,which is fine, just outline what kind of data you would like it to contain.
    
 I am going to store all the customer and service provider information in database. Using google calendar API to make a shared calendar for each service provider and sync all appointment information to it.
+Current planning to use these parts of the google calendar api:
+- Acl Access control. Control how to share the calendar with the providers
+- Calendars Create, update calendar for the providers
+- Events Create, update, delete appointment for the providers
 
 ## 4. In brief, outline your approach to creating your project (knowing that you may not know everything in advance and that these details might change later). Answer questions like the ones below, but feel free to add more information:
 
@@ -54,4 +62,6 @@ I am going to store all the customer and service provider information in databas
 ### f. What features make your site more than CRUD? Do you have any stretch goals?
 - The feature making this site different is appointment information saving into google calendar and shared with the providers
 
-- The stretch goal for me is expanding the support from just google calendar to outlook calendar and more other popular calendar system. Making the system more flexable and the users have more choices
+- The stretch goal for me is expanding the support from just google calendar to outlook calendar and more other popular calendar system. Making the system more flexable and the users have more choices.
+  
+- Another stretch goal is going to support multiple google accounts, giving it more flexible provider can use there own account or a shared calendar.
