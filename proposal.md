@@ -60,8 +60,12 @@ Current planning to use these parts of the google calendar api:
 - Customer review the provider
 
 ### f. What features make your site more than CRUD? Do you have any stretch goals?
-- The feature making this site different is appointment information saving into google calendar and shared with the providers
+The feature making this site different is appointment information saving into google calendar and shared with the providers
 
-- The stretch goal for me is expanding the support from just google calendar to outlook calendar and more other popular calendar system. Making the system more flexable and the users have more choices.
+Stretch goals:
+
+- Expanding the support from just google calendar to outlook calendar and more other popular calendar system. Making the system more flexable and the users have more choices.
   
-- Another stretch goal is going to support multiple google accounts, giving it more flexible provider can use there own account or a shared calendar.
+- Support multiple google accounts, giving it more flexible provider can use there own account or a shared calendar.
+
+- Using blueprints to seperate different part of the app. Making it for flexible and managable
