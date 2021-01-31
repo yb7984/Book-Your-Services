@@ -4,4 +4,5 @@ venv/
 .DS_Store
 bookyourservices/static/upload/
 bookyourservices/Test/
+bookyourservices/google_calendar/service.json
 Test/

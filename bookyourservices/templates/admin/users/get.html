@@ -45,6 +45,16 @@ User: <span class="text-success">{{account.username}}</span>
         </div>
         <div class="col-12 text-primary">Description:</div>
         <div class="col-12 text-secondary">{{account.description}}</div>
+        {% if account.is_provider %}
+        <div class="col-12 text-primary">Services:</div>
+        <div class="col-12 text-secondary">
+                Service List Here
+        </div>
+        {% endif %}
+        <div class="col-12 text-primary">Addresses:</div>
+        <div class="col-12 text-secondary">
+                Addresses List Here
+        </div>
 </div>
 
 {% endblock %}
