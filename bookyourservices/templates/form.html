@@ -1,0 +1,26 @@
+
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        {% for field in form %}
+        {% if field.widget.input_type != 'hidden' %}
+        <p>
+            {% if field.widget.input_type == 'checkbox' %}
+            <div class="custom-control custom-checkbox">
+                {{ field(class_="custom-control-input") }}
+                {{ field.label(class_="custom-control-label") }}
+            </div>
+            {% else %}
+                {{ field.label }}
+                {{ field(class_="form-control") }}
+            {% endif %}
+
+            {% for error in field.errors %}
+            <span class="form-text text-danger">{{ error }}</span>
+            {% endfor %}
+        </p>
+        {% endif %}
+        {% endfor %}
+
+        <button class="btn btn-success" type="submit">Submit</button>
+    </form>

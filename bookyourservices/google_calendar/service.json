@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "book-your-services-302615",
+  "private_key_id": "c516d74931d7f858c971aac436597d9e048ff224",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCuPn/DwLC8GweU\nDYXrKpVKwj9rSMle2MEYX6B96w5jpoKVKbR/EMa20Pu3Nn8kCLCPnKBpBQPxBHRn\nTAgDLLPicKrRXPno4TacWJWrGOCqtLdxS54AczYtM1JWGKOnDttWtCPcWiVEcflP\niGcjoMbYK1jGDWXolKU+1vxyg8WE2+vo43uBdB2ZRrtq2F9YsxIcM2k6qmk30b6d\ndOgqwM92juVAzM7lqbInpSL6BKEJu5G247/pbIJjdb9f2pUrBk/niqfLYhYXo7KX\nw0bHlQLvl0M3+kZeRSNtAe8eKGMJjYDXGdL+tVPNnEYMdf/BpIEKESf7WzhY27cC\nevKRc3L9AgMBAAECggEAUY8HlsUW9LViMraxvIXOI5QQw1Lqju6+U35PTSE9Nv+1\nl8RRrDhaCzB+4h8sG93FZzNVElM6qRIAumkoRvQhrxg1nJH8mDjyqvP7+n5GiyDT\nzMAsUOGctkOTgqE92PBnUoo3TukTEJqYq9WZEWAsMvr3Lp0O2nLZdjSDLcboKWtR\nDZFH2OWNCB6nVh0x/AruuSKUT95gyXT/rNGNtEfpHaBj6JQCljOlmU490JnugvEV\nuNbrEDpda5UoSh3Nh9i71Y7SdsEsX8BL3P+2vEsv6o0gjyGOlEe5U8xVRkPEVnMn\nEegmecKo2Zu9NcurMTFyR/SjXiBRzBPf0qCuIzuVsQKBgQDkM5Kdx8cUbMeTdubs\nZCaAnl1L8HGEYK8QL00aXs7WqurFoGVeSLgnioqIOMcbkqtiuNsFsBaulcwOe4dm\nEx/kMXuLLVJkybR1g97GgKOi4T30oz4Q1EMkeSzXz/vpFCyo4wbtElwBjXt+rHpW\njgj8eiWr2cVwXAAbasBNaGWmrwKBgQDDeEaSqpNzJR9BrvCdGvaQUpjQhrhFWL1T\nptwbl8HKjL0L4+bDNoLzjlnNZ1jVo6nue+Arj2FDaeYDA/x2cs+5Z0HiYzafTeVC\nxmshJAskyj4b1umPUayxlDcFuab/MpH3ykmBqek0o6HfoVYD9S3ukaop4+7Gpi+6\npk/8a14sEwKBgGtQ5Y5VuQWd8m0i6Y4ZuxGZZ/6iYIAEh89wry3LkDHbxvSRbZpd\nUF0oBeXx7ZDF9NtEW5vdJ42K3J+i8BXMwJ6rtpHJCopjYP4yub1YGZwrmNtHOZTo\nfXrVkYUcRjdiSW5S9Zrfm20PgBgePJofyZIST0z16KfiXBqIpU7B3av5AoGBAIGO\nwMgJgz24hyUT/KtE6dPyyxK7mHtuO96sJAut5GaKLespnRQal2UzHtaD/19q4QEO\n3iBBImh6UlgBVl5z7rameAbDV7ry+FfwB6WprDEwU0ZEhf3WVq5E3MtQqB1RuWoR\ni/MDWWzoYCxHVSm+YjlUFwM47lSAZfZCsZVO3NY9AoGAeoxgC+pLI5G7BNC32Y3T\nRv5/RgPRh3huvCyNyjlym8N+seCndIxC5yF50Aav+3HctphZmGIvk/dW3TIeaxd0\nyrxBdZgMoldVmBY0hHkWaC3Zvnoxunp7NsYuwdmng1JGm/mzwcQmhPfdJz1LDKmq\nowccmMWO0rDGE75j8T7xOMw=\n-----END PRIVATE KEY-----\n",
+  "client_email": "calendar-master@book-your-services-302615.iam.gserviceaccount.com",
+  "client_id": "115154065099532195590",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/calendar-master%40book-your-services-302615.iam.gserviceaccount.com"
+}

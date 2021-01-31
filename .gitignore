@@ -1,0 +1,6 @@
+venv/
+site/Test/
+*/__pycache__/
+*/__pycache__/
+.DS_Store
+bookyourservices/static/upload/

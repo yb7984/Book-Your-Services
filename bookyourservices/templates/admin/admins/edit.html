@@ -1,0 +1,14 @@
+{% extends 'admin/base.html' %}
+
+{% block subtitle %}
+Edit Account: <span class="text-success">{{account.username}}</span>
+{% endblock %}
+
+{% block top_links %}
+<a class="btn btn-primary" href="{{ url_for('admin.admins_list')}}" title="All Accounts"><i
+        class="fas fa-users"></i></a>
+{% endblock %}
+
+{% block content %}
+{% include 'form.html' %}
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'admin/base.html' %}
+
+{% block subtitle %}
+Active Accounts
+{% endblock %}
+
+{% block top_links %}
+<a class="btn btn-success" href="{{ url_for('admin.admins_new')}}" title="New Account"><i
+        class="fas fa-user-plus"></i></a>
+{% endblock %}
+
+{% block content %}
+<table class="table table-striped rounded">
+    <thead class="bg-primary text-white">
+        <th>Username</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+
+        {% for item in list %}
+        <tr>
+            <td>{{ item.username }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.full_name }}</td>
+            <td class="text-capitalize">{{ item.authorization }}</td>
+            <td>
+                <form action="{{ url_for('admin.admins_delete' , username=item.username) }}" method="POST">
+                    <a class="btn btn-primary" href="{{ url_for('admin.admins_update' , username=item.username) }}"
+                        title="Edit"><i class="fas fa-user-edit"></i></a>
+                    {% if item.username != 'admin' and item.is_active %}
+                    <button class="btn btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+
+<h1 class="text-danger">Inactive Accounts</h1>
+
+<table class="table table-striped rounded">
+    <thead class="bg-primary text-white">
+        <th>Username</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+
+        {% for item in list_inactive %}
+        <tr>
+            <td>{{ item.username }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.full_name }}</td>
+            <td class="text-capitalize">{{ item.authorization }}</td>
+            <td>
+                <a class="btn btn-primary" href="{{ url_for('admin.admins_update' , username=item.username) }}"
+                    title="Edit"><i class="fas fa-user-edit"></i></a>
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,24 @@
+<ul class="nav flex-column text-center">
+    <li class="nav-item btn btn-primary">Appointments</li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Appointments List</a>
+    </li>
+    <li class="nav-item btn btn-primary">Users</li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('admin.users_list')}}">Users List</a>
+    </li>
+    <li class="nav-item btn btn-primary">Accounts</li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/admins">All Accounts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/admins/new">New Account</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/admins/password">Update Password</a>
+    </li>
+    <li class="nav-item btn btn-primary">Setting</li>
+    <li class="nav-item">
+        <a class="nav-link" href="/admin/categories">Categories</a>
+    </li>
+</ul>

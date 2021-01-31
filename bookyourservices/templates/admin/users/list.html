@@ -1,0 +1,95 @@
+{% extends 'admin/base.html' %}
+
+{% block subtitle %}
+Users List
+{% endblock %}
+
+{% block top_links %}
+<a class="btn btn-success" href="{{ url_for('admin.users_new')}}" title="New User"><i class="fas fa-user-plus"></i></a>
+{% endblock %}
+
+{% block content %}
+<form id="search-form">
+    <div id="filters" class="row container">
+        <div class="col-3">
+            <input type="text" class="form-control" name="username" placeholder="Username" value="{{request.args.get('username')}}">
+        </div>
+        <div class="col-3">
+            <input type="text" class="form-control" name="email" placeholder="Email" value="{{request.args.get('email')}}">
+        </div>
+        <div class="col-2">
+            <select name="is_provider" class="form-control">
+                <option value="">Is Provider</option>
+                <option value="1" {{"selected" if request.args.get("is_provider") == "1"}}>Providers</option>
+                <option value="0" {{"selected" if request.args.get("is_provider") == "0"}}>Not Providers</option>
+            </select>
+        </div>
+        <div class="col-2">
+            <select name="is_active" class="form-control">
+                <option value="">Is Active</option>
+                <option value="1" {{"selected" if request.args.get("is_active") == "1"}}>Active</option>
+                <option value="0" {{"selected" if request.args.get("is_active") == "0"}}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+<table class="table table-striped rounded">
+    <thead class="bg-primary text-white">
+        <th>Username</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Provider</th>
+        <th>Active</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+
+        {% for item in pagination.items %}
+        <tr>
+            <td><a href="{{url_for('admin.users_get' , username=item.username)}}">{{ item.username }}</a></td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.full_name }}</td>
+            <td class="text-center">{% if item.is_provider %}
+                <i class="fas fa-check text-success"></i>
+                {% else %}
+                <i class="fas fa-times text-danger"></i>
+                {% endif %}
+            </td>
+            <td class="text-center">{% if item.is_active %}
+                <i class="fas fa-check text-success"></i>
+                {% else %}
+                <i class="fas fa-times text-danger"></i>
+                {% endif %}
+            </td>
+            <td>
+                <form action="{{ url_for('admin.users_delete' , username=item.username) }}" method="POST">
+                    <a class="btn btn-primary" href="{{ url_for('admin.users_update' , username=item.username) }}"
+                        title="Edit"><i class="fas fa-user-edit"></i></a>
+                    {% if item.is_active %}
+                    <button class="btn btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+<div class=pagination>
+    {% for page in pagination.iter_pages() %}
+    {% if page %}
+    {% if page != pagination.page %}
+    <a href="?page={{page}}">{{ page }}</a>
+    {% else %}
+    <strong>{{ page }}</strong>
+    {% endif %}
+    {% else %}
+    <span class=ellipsis>…</span>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

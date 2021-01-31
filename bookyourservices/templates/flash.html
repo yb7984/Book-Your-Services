@@ -1,0 +1,7 @@
+{% if get_flashed_messages(with_categories=True) %}
+<div id="flash-messages">
+    {% for category, msg in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{category}}">{{ msg }}</div>
+    {% endfor %}
+</div>
+{% endif %}
