@@ -5,9 +5,28 @@ User: <span class="text-success">{{account.username}}</span>
 {% endblock %}
 
 {% block top_links %}
+<script>
+        //the variable storing the current user
+        const CUR_USERNAME = '{{account.username}}';
+        //Address urls 
+        const ADDRESS_LIST_URL = '{{url_for("admin.addresses_list" , username=account.username)}}';
+        const ADDRESS_NEW_URL = '{{url_for("admin.addresses_new" , username=account.username)}}';
+        const ADDRESS_UPDATE_URL = '{{url_for("admin.addresses_update" , username=account.username , address_id=0)}}';
+        const ADDRESS_DELETE_URL = '{{url_for("admin.addresses_delete" , username=account.username , address_id=0)}}';
+        
+        //Service urls
+        const SERVICE_LIST_URL = '{{url_for("admin.services_list" , username=account.username)}}';
+        const SERVICE_NEW_URL = '{{url_for("admin.services_new" , username=account.username)}}';
+        const SERVICE_UPDATE_URL = '{{url_for("admin.services_update" , username=account.username , service_id=0)}}';
+        const SERVICE_DELETE_URL = '{{url_for("admin.services_delete" , username=account.username , service_id=0)}}';
+        
+        //the variable storing the lists
+        let addresses = null;
+        let services = null;
+
+</script>
 <form action="{{ url_for('admin.users_delete' , username=account.username) }}" method="POST">
-        <a class="btn btn-primary" href="{{ url_for('admin.users_list')}}" title="Users List"><i
-                        class="fas fa-users"></i></a>
+        <a class="btn btn-primary" href="{{ url_for('admin.users_list')}}" title="Users List"><i class="fas fa-users"></i></a>
         <a class="btn btn-primary" href="{{ url_for('admin.users_update' , username=account.username) }}"
                 title="Edit"><i class="fas fa-user-edit"></i></a>
         {% if account.is_active %}
@@ -17,44 +36,150 @@ User: <span class="text-success">{{account.username}}</span>
 {% endblock %}
 
 {% block content %}
-<div class="row h3">
-        <div class="col-12 col-lg-6">
-                <div class="row">
-                        <div class="col-4 text-primary">Name:</div>
-                        <div class="col-8 text-secondary">{{account.full_name}}</div>
-                        <div class="col-4 text-primary">Email:</div>
-                        <div class="col-8 text-secondary">{{account.email}}</div>
-                        <div class="col-4 text-primary">Phone:</div>
-                        <div class="col-8 text-secondary">{{account.phone}}</div>
-                        <div class="col-4 text-primary">Privider:</div>
-                        <div class="col-8 text-secondary">{{account.is_provider}}</div>
-                        <div class="col-4 text-primary">Calendar:</div>
-                        <div class="col-8 text-secondary">{{account.calendar_id}}</div>
-                        <div class="col-4 text-primary">Gmail:</div>
-                        <div class="col-8 text-secondary">{{account.calendar_email}}</div>
-                        <div class="col-4 text-primary">Active:</div>
-                        <div class="col-8 text-secondary">{{account.is_active}}</div>
-                        <div class="col-4 text-primary">Updated:</div>
-                        <div class="col-8 text-secondary">{{account.updated|dt}}</div>
-                        <div class="col-4 text-primary">Created:</div>
-                        <div class="col-8 text-secondary">{{account.created|dt}}</div>
+
+<div class="h5">
+        <ul class="nav nav-pills">
+                <li class="nav-item">
+                        <a class="nav-link active" data-toggle='pill' href="#home">Basic</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle='pill' href="#addresses">Addresses</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle='pill' href="#services">Services</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle='pill' href="#schedules">Schedules</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle='pill' href="#appoitments">Appointments</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle='pill' href="#feedbacks">Feedbacks</a>
+                </li>
+        </ul>
+        <div class="tab-content">
+                <div id="home" class="tab-pane active">
+                        <div class="row h3">
+                                <div class="col-12 col-lg-6">
+                                        <div class="row">
+                                                <div class="col-4 text-primary">Name:</div>
+                                                <div class="col-8 text-secondary">{{account.full_name}}</div>
+                                                <div class="col-4 text-primary">Email:</div>
+                                                <div class="col-8 text-secondary">{{account.email}}</div>
+                                                <div class="col-4 text-primary">Phone:</div>
+                                                <div class="col-8 text-secondary">{{account.phone}}</div>
+                                                <div class="col-4 text-primary">Privider:</div>
+                                                <div class="col-8 text-secondary">{{account.is_provider}}</div>
+                                                <div class="col-4 text-primary">Calendar:</div>
+                                                <div class="col-8 text-secondary">{{account.calendar_id}}</div>
+                                                <div class="col-4 text-primary">Gmail:</div>
+                                                <div class="col-8 text-secondary">{{account.calendar_email}}</div>
+                                                <div class="col-4 text-primary">Active:</div>
+                                                <div class="col-8 text-secondary">{{account.is_active}}</div>
+                                                <div class="col-4 text-primary">Updated:</div>
+                                                <div class="col-8 text-secondary">{{account.updated|dt}}</div>
+                                                <div class="col-4 text-primary">Created:</div>
+                                                <div class="col-8 text-secondary">{{account.created|dt}}</div>
+                                        </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                        <img src="{{account.image_url}}" class="img-fluid" />
+                                </div>
+                                <div class="col-12 text-primary">Description:</div>
+                                <div class="col-12 text-secondary">{{account.description}}</div>
+                        </div>
                 </div>
-        </div>
-        <div class="col-12 col-lg-6">
-                <img src="{{account.image_url}}" class="img-fluid" />
-        </div>
-        <div class="col-12 text-primary">Description:</div>
-        <div class="col-12 text-secondary">{{account.description}}</div>
-        {% if account.is_provider %}
-        <div class="col-12 text-primary">Services:</div>
-        <div class="col-12 text-secondary">
-                Service List Here
-        </div>
-        {% endif %}
-        <div class="col-12 text-primary">Addresses:</div>
-        <div class="col-12 text-secondary">
-                Addresses List Here
+                <div id="addresses" class="tab-pane fade">
+                        <div id="addresses-container">
+                                <div id="addresses-list" class="row"></div>
+                                <div id="addresses-template" class="d-none">
+                                        <div class="col-6 col-lg-4" id="address-list-%%id%%">
+                                                <div class="card m-1 bg-light">
+                                                        <div class="card-body">
+                                                                <p class="card-text">
+                                                                        %%address%%
+                                                                </p>
+                                                                <div class="row">
+                                                                        <div class="col">%%is_default%%
+                                                                        </div>
+                                                                        <div class="col text-danger">%%is_active%%</div>
+                                                                </div>
+                                                                <a href="javascript:void(0);" data-id="%%id%%"
+                                                                        class="address-edit btn btn-primary">Edit</a>
+                                                                <a href="javascript:void(0);" data-id="%%id%%"
+                                                                        class="address-delete btn btn-danger">Delete</a>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+
+                        <div id="form-address-container">
+                                <div class="h2 mx-auto text-success" id="address-form-title">New Address</div>
+                                {% with form = address_form %}
+                                {% include "form-ajax.html" %}
+                                {% endwith %}
+                        </div>
+                </div>
+                <div id="services" class="tab-pane fade">
+                        <div id="services-container">
+                                <div id="services-list" class="row"></div>
+                                <div id="services-template" class="d-none">
+                                        <div class="col-12 col-lg-6" id="services-list-%%id%%">
+                                                <div class="card m-1 bg-light">
+                                                        <img class="card-img-top" src="%%image%%" alt="Service Image">
+                                                        <div class="card-body">
+                                                                <p class="card-title font-weight-bold">
+                                                                        %%name%%
+                                                                </p>
+                                                                <p class="card-text">
+                                                                        %%description%%
+                                                                </p>
+                                                                <p class="card-text text-info">
+                                                                        %%categories%%
+                                                                </p>
+                                                                <div class="row">
+                                                                        <div class="col text-secondary">%%location_type%%
+                                                                        </div>
+                                                                        <div class="col text-danger">%%is_active%%</div>
+                                                                </div>
+                                                                <a href="javascript:void(0);" data-id="%%id%%"
+                                                                        class="service-edit btn btn-primary">Edit</a>
+                                                                <a href="javascript:void(0);" data-id="%%id%%"
+                                                                        class="service-delete btn btn-danger">Delete</a>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                        <div id="form-service-container">
+                                <div class="h2 mx-auto text-success" id="service-form-title">New Service</div>
+                                {% with form = service_form %}
+                                {% include "form-ajax.html" %}
+                                {% endwith %}
+                        </div>
+                </div>
+                <div id="schedules" class="tab-pane fade">
+                        <h3>Menu 3</h3>
+                        <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+                                explicabo.</p>
+                </div>
+                <div id="appointments" class="tab-pane fade">
+                        <h3>Menu 3</h3>
+                        <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+                                explicabo.</p>
+                </div>
+                <div id="feedbacks" class="tab-pane fade">
+                        <h3>Menu 3</h3>
+                        <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+                                explicabo.</p>
+                </div>
         </div>
 </div>
 
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/admin/users_get.js" type="module"></script>
 {% endblock %}

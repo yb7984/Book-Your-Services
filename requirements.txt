@@ -6,12 +6,14 @@ certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
 click==7.1.2
+decorator==4.4.2
 dnspython==2.1.0
 email-validator==1.1.2
 Flask==1.1.2
 Flask-Bcrypt==0.7.1
 flask-blueprint==1.3.0
 Flask-DebugToolbar==0.11.0
+Flask-Mail==0.9.1
 Flask-SQLAlchemy==2.4.4
 Flask-WTF==0.14.3
 google-api-core==1.25.0
@@ -22,6 +24,8 @@ google-auth-oauthlib==0.4.2
 googleapis-common-protos==1.52.0
 httplib2==0.18.1
 idna==2.10
+infinity==1.5
+intervals==0.9.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
@@ -38,8 +42,11 @@ requests-oauthlib==1.3.0
 rsa==4.7
 six==1.15.0
 SQLAlchemy==1.3.22
+SQLAlchemy-Utils==0.36.8
 toml==0.10.2
 uritemplate==3.0.1
 urllib3==1.26.2
+validators==0.18.2
 Werkzeug==1.0.1
 WTForms==2.3.3
+WTForms-Components==0.10.5

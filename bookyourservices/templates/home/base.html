@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Book your service
+{% endblock %}
+
+
+{% block header %}
+<div class="p-2 h4 row bg-primary text-white mx-auto rounded">
+    <div class="col-12 col-md-8 display-2">Book Your Services</div>
+
+    {% if g.user %}
+    <div class="col-4 d-none d-md-block">
+        <label class="text-success">{{g.user.full_name}}</label>
+        <div class="col-12 col-md-6 col-lg-2">
+            <form method="POST" action="/users/logout">
+                <a class="btn btn-secondary d-inline-flex d-lg-none m-2" id="side-menu-btn"><i
+                        class="fas fa-bars"></i></a>
+                <button class="btn btn-danger" title="Signout"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% if g.user %}
+<div class="col-12 col-lg-3 d-none d-md-block" id="side-menu">
+    {% include 'home/menu.html' %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-12 col-lg-9 mx-auto">
+        {% include 'flash.html' %}
+        <div class="row">
+            <div class="col-12 col-md-8 h1">{% block subtitle %}Block Subtitle{% endblock %}</div>
+            <div class="col-12 col-md-4 align-self-center">
+                {% block top_links %}
+                Block Top Links
+                {% endblock %}
+            </div>
+        </div>
+        {% block content %}
+        Block Content
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

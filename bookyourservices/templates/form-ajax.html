@@ -1,5 +1,7 @@
 
     <form method="POST" enctype="multipart/form-data" id="form-{{form._prefix}}">
+        <p class="d-none text-danger text-center form-error-message" id="form-{{form._prefix}}-error">
+        </p>
         {{ form.hidden_tag() }}
 
         {% for field in form %}
@@ -15,9 +17,7 @@
                 {{ field(class_="form-control") }}
             {% endif %}
 
-            {% for error in field.errors %}
-            <span class="form-text text-danger">{{ error }}</span>
-            {% endfor %}
+            <span class="form-text text-danger form-error" id="form-{{form._prefix}}-error-{{field.short_name}}">{{ error }}</span>
         </p>
         {% endif %}
         {% endfor %}

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template , g , request
 from google_calendar.google_calendar import *
+from models import *
 
 home = Blueprint('home', __name__)
 
@@ -7,12 +8,6 @@ home = Blueprint('home', __name__)
 def index():
     # Do some stuff
 
-    events = calendar_events_list(time_min='2020-12-01T00:00:00' , max_results=20)
+    services = Service.query.filter(Service.is_active==True).order_by(Service.updated.desc()).all()
 
-    html = ''
-    if not events:
-        return 'No upcoming events found.'
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        html += start + event['summary'] + "<br/>"
-    return render_template("home/index.html" , html=html)
+    return render_template("home/index.html" , services=services)

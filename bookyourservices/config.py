@@ -10,6 +10,10 @@ SQLALCHEMY_ECHO = True
 #security key
 SECRET_KEY = os.environ.get('SECRET_KEY', 'so so so')
 
+
+#url
+BASE_URL = "http://127.0.0.1:5000"
+
 #debug setting
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 DEBUG = True
@@ -42,7 +46,92 @@ IMAGE_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 MAX_CONTENT_LENGTH = 5 * 1024 * 1024
 
+#default image url
+DEFAULT_IMAGE_USER = "/static/images/default-user.png"
+DEFAULT_IMAGE_SERVICE = "/static/images/default-service.jpg"
+
 USER_UPLOAD_DIRNAME = 'users'
+
+#flash message
+FLASH_GROUP_DANGER = "danger"
+FLASH_GROUP_SUCCESS = "success"
 
 #paginate
 ADMIN_USERS_PER_PAGE = 2
+
+#US States data
+# United States of America Python Dictionary to translate States,
+# Districts & Territories to Two-Letter codes and vice versa.
+#
+# https://gist.github.com/rogerallen/1583593
+#
+# Dedicated to the public domain.  To the extent possible under law,
+# Roger Allen has waived all copyright and related or neighboring
+# rights to this code.
+US_STATE_ABBREV = {
+    'Alabama': 'AL',
+    'Alaska': 'AK',
+    'American Samoa': 'AS',
+    'Arizona': 'AZ',
+    'Arkansas': 'AR',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'Delaware': 'DE',
+    'District of Columbia': 'DC',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Guam': 'GU',
+    'Hawaii': 'HI',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Iowa': 'IA',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Maine': 'ME',
+    'Maryland': 'MD',
+    'Massachusetts': 'MA',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Mississippi': 'MS',
+    'Missouri': 'MO',
+    'Montana': 'MT',
+    'Nebraska': 'NE',
+    'Nevada': 'NV',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'New York': 'NY',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Northern Mariana Islands':'MP',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Pennsylvania': 'PA',
+    'Puerto Rico': 'PR',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Vermont': 'VT',
+    'Virgin Islands': 'VI',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'West Virginia': 'WV',
+    'Wisconsin': 'WI',
+    'Wyoming': 'WY'
+}
+
+#US 
+US_ABBREV_STATES = dict(map(reversed, US_STATE_ABBREV.items()))
+
+
+#mail setting
+MAIL_SERVER='smtp.gmail.com'
+MAIL_PORT=465
+MAIL_USE_SSL=True

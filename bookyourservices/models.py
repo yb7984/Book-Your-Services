@@ -57,13 +57,14 @@ class Admin(db.Model):
             return False
 
     @classmethod
-    def update_password(cls , username , password):
+    def update_password(cls, username, password):
         """Update password"""
 
-        u = Admin.query.filter_by(username=username).first()
+        u = Admin.query.filter(Admin.username==username).first()
 
         if u:
-            u.password = bcrypt.generate_password_hash(password)
+            u.password = hash_password(password)
+            u.pwd_token = None
             db.session.commit()
 
             return u
@@ -74,10 +75,10 @@ class Admin(db.Model):
     def update_password_by_token(cls, token, password):
         """Update password by token"""
 
-        u = Admin.query.filter_by(pwd_token=token).first()
+        u = Admin.query.filter(Admin.pwd_token==token).first()
 
         if u:
-            u.password = bcrypt.generate_password_hash(password)
+            u.password = hash_password(password)
             u.password_token = None
             db.session.commit()
 
@@ -128,17 +129,15 @@ class User(db.Model):
 
     # Addresses
     addresses = db.relationship(
-        "Address", backref="user", cascade="all, delete", passive_deletes=True)
+        "Address", backref="user", cascade="all, delete, delete-orphan", passive_deletes=True)
 
     # Services
     services = db.relationship(
-        "Service", backref="user", cascade="all, delete", passive_deletes=True)
+        "Service", backref="user", cascade="all, delete, delete-orphan", passive_deletes=True)
 
-
-    #Schedules
+    # Schedules
     schedules = db.relationship(
-        "Schedule" , backref="user" , cascade="all, delete", passive_deletes=True)
-
+        "Schedule", backref="user", cascade="all, delete, delete-orphan", passive_deletes=True)
 
     @property
     def full_name(self):
@@ -148,7 +147,10 @@ class User(db.Model):
     @property
     def image_url(self):
         """Return the image url"""
-        return upload_file_url(self.image, USER_UPLOAD_DIRNAME)
+        if self.image is None or len(self.image) == 0:
+            return DEFAULT_IMAGE_USER
+
+        return upload_file_url(self.image, username=self.username)
 
     def __repr__(self):
         """Representation of this class"""
@@ -184,13 +186,13 @@ class User(db.Model):
             return False
 
     @classmethod
-    def update_password(cls , username , password):
+    def update_password(cls, username, password):
         """Update password"""
 
-        u = User.query.filter_by(username=username).first()
+        u = User.query.filter(User.username==username).first()
 
         if u:
-            u.password = bcrypt.generate_password_hash(password)
+            u.password = hash_password(password)
             db.session.commit()
 
             return u
@@ -201,10 +203,10 @@ class User(db.Model):
     def update_password_by_token(cls, token, pwd):
         """Update password by token"""
 
-        u = User.query.filter_by(pwd_token=token).first()
+        u = User.query.filter(User.pwd_token==token).first()
 
         if u:
-            u.password = bcrypt.generate_password_hash(pwd)
+            u.password = hash_password(pwd)
             u.password_token = None
             db.session.commit()
 
@@ -241,6 +243,23 @@ class Address(db.Model):
         e = self
         return f"<Address {e.username} {e.address}>"
 
+    def serialize(self):
+        """Serialize a Address SQLAlchemy obj to dictionary."""
+
+        return {
+            "id": self.id,
+            "username": self.username,
+            "name": self.name,
+            "address1": self.address1,
+            "address2": self.address2,
+            "city": self.city,
+            "state": self.state,
+            "zipcode": self.zipcode,
+            "address": self.address,
+            "is_default": self.is_default,
+            "is_active": self.is_active
+        }
+
 
 class Category(db.Model):
     """Categories"""
@@ -251,7 +270,7 @@ class Category(db.Model):
     is_active = db.Column(db.Boolean, nullable=False, server_default="true")
 
     categories_services = db.relationship(
-        "CategoryService", backref="category", cascade="all, delete", passive_deletes=True)
+        "CategoryService", backref="category", cascade="all, delete, delete-orphan", passive_deletes=True)
     services = db.relationship(
         "Service", secondary="categories_services", backref="categories")
 
@@ -259,6 +278,17 @@ class Category(db.Model):
         """Representation of this class"""
         e = self
         return f"<Category id={e.id} name={e.name}>"
+
+    def serialize(self):
+        """Serialize a Category SQLAlchemy obj to dictionary."""
+
+        return {
+            "id": self.id,
+            "name": self.name,
+            "is_active": self.is_active
+        }
+
+
 
 
 class Service(db.Model):
@@ -285,13 +315,75 @@ class Service(db.Model):
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
     categories_services = db.relationship(
-        "CategoryService", backref="service", cascade="all, delete", passive_deletes=True)
+        "CategoryService", backref="service", cascade="all, delete, delete-orphan", passive_deletes=True)
+
+
+    @property
+    def image_url(self):
+        """Return the image url"""
+        if self.image is None or len(self.image) == 0:
+            return DEFAULT_IMAGE_SERVICE
+
+        return upload_file_url(self.image, username=self.username , dirname="services")
+    
+    @property
+    def location_type_name(self):
+        """Return the location type name"""
+
+        return Service.get_location_type_name(self.location_type)
+
+    @classmethod
+    def get_location_type_name(cls , location_type):
+        """Return the location type name"""
+
+        if location_type == 0:
+            return "Online Service"
+        if location_type == 1:
+            return "Phone Service"
+
+        return "Online Service"
+
+    def set_categoiry_ids(self, ids=[]):
+        """Set categories with category_id list"""
+
+        self.categories_services.clear()
+        for category_id in ids:
+            self.categories_services.append(CategoryService(category_id=int(category_id) , service_id=self.id))
+    
+    
+    def get_category_ids(self):
+        """Return the list of the category_ids"""
+
+        ids = []
+        for item in self.categories_services:
+            ids.append(item.category_id)
+
+        return ids
 
     def __repr__(self):
         """Representation of this class"""
         e = self
         return f"<Service name={e.name} username={e.username}>"
 
+
+    def serialize(self):
+        """Serialize a Service SQLAlchemy obj to dictionary."""
+
+        return {
+            "id": self.id,
+            "username": self.username,
+            "name": self.name,
+            "location_type": self.location_type ,
+            "location_type_name": self.location_type_name,
+            "description": self.description ,
+            "image": self.image,
+            "image_url": self.image_url,
+            "updated": self.updated,
+            "created": self.created,
+            "is_active": self.is_active,
+            "categories": [category.serialize()  for category in self.categories],
+            "category_ids": self.get_category_ids()
+        }
 
 class CategoryService(db.Model):
     """Categories to Services"""
@@ -315,9 +407,9 @@ class Schedule(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
-    schedule_type = db.Column(db.Integer, nullable=False , server_default="0")
+    schedule_type = db.Column(db.Integer, nullable=False, server_default="0")
     schedule_date = db.Column(db.Date)
-    schedules = db.Column(db.Text , nullable=False , server_default="")
+    schedules = db.Column(db.Text, nullable=False, server_default="")
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
     @property
@@ -325,8 +417,8 @@ class Schedule(db.Model):
         """Return the schedule type display name"""
 
         if self.schedule_type == 1:
-            return "Date" 
-        
+            return "Date"
+
         return "Weekly"
 
     def __repr__(self):
@@ -335,14 +427,13 @@ class Schedule(db.Model):
         return f"<Service date_exp={e.date_exp} username={e.username} start={e.start} last={e.last}>"
 
 
-
 class Appointment(db.Model):
     """Appointments"""
     __tablename__ = 'appointments'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # available after generated google calendar event
-    event_id = db.Column(db.Text , server_default="")
+    event_id = db.Column(db.Text, server_default="")
     provider_username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
     customer_username = db.Column(db.String(20), db.ForeignKey(
@@ -368,9 +459,11 @@ class Appointment(db.Model):
     )
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
-    provider = db.relationship("User" , foreign_keys=[provider_username] , backref=db.backref("appointments_as_provider" , lazy="dynamic"))
+    provider = db.relationship("User", foreign_keys=[provider_username], backref=db.backref(
+        "appointments_as_provider", lazy="dynamic"))
 
-    customer = db.relationship("User" , foreign_keys=[customer_username] , backref=db.backref("appointments_as_customer" , lazy="dynamic"))
+    customer = db.relationship("User", foreign_keys=[customer_username], backref=db.backref(
+        "appointments_as_customer", lazy="dynamic"))
 
     def __repr__(self):
         """Representation of this class"""
@@ -383,15 +476,15 @@ class Email(db.Model):
     __tablename__ = 'emails'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    appointment_id = db.Column(db.Integer , db.ForeignKey(
+    appointment_id = db.Column(db.Integer, db.ForeignKey(
         'appointments.id', ondelete="CASCADE"))
     sender_username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
     receiver_username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
     email = db.Column(db.String(30), nullable=False)
-    title = db.Column(db.String(100) , nullable=False)
-    content = db.Column(db.Text , nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
     is_sent = db.Column(db.Boolean, nullable=False, server_default="FALSE")
     sent = db.Column(db.TIMESTAMP(timezone=True))
     created = db.Column(
@@ -401,18 +494,16 @@ class Email(db.Model):
     )
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
+    sender = db.relationship("User", foreign_keys=[
+                             sender_username], backref=db.backref("emails_sent", lazy="dynamic"))
 
-    sender = db.relationship("User" , foreign_keys=[sender_username] , backref=db.backref("emails_sent" , lazy="dynamic"))
-
-    receiver = db.relationship("User" , foreign_keys=[receiver_username] , backref=db.backref("emails_received" , lazy="dynamic"))
-
+    receiver = db.relationship("User", foreign_keys=[
+                               receiver_username], backref=db.backref("emails_received", lazy="dynamic"))
 
     def __repr__(self):
         """Representation of this class"""
         e = self
         return f"<Email title={e.title} from={e.sender_username} to={e.receiver_username} email={e.email}>"
-
-    
 
 
 class Review(db.Model):
@@ -420,15 +511,15 @@ class Review(db.Model):
     __tablename__ = 'reviews'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    appointment_id = db.Column(db.Integer , db.ForeignKey(
+    appointment_id = db.Column(db.Integer, db.ForeignKey(
         'appointments.id', ondelete="CASCADE"))
     from_username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
     to_username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
     rating = db.Column(db.Integer, nullable=False)
-    title = db.Column(db.String(100) , nullable=False)
-    content = db.Column(db.Text , nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
     is_visible = db.Column(db.Boolean, nullable=False, server_default="FALSE")
     updated = db.Column(db.TIMESTAMP(timezone=True))
     created = db.Column(
@@ -438,17 +529,13 @@ class Review(db.Model):
     )
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
+    from_user = db.relationship("User", foreign_keys=[
+                                from_username], backref=db.backref("reviews_sent", lazy='dynamic'))
 
-    from_user = db.relationship("User" , foreign_keys=[from_username] , backref=db.backref("reviews_sent" , lazy='dynamic'))
-
-    to_user = db.relationship("User" , foreign_keys=[to_username] , backref=db.backref("reviews_received" , lazy='dynamic'))
-
-
+    to_user = db.relationship("User", foreign_keys=[
+                              to_username], backref=db.backref("reviews_received", lazy='dynamic'))
 
     def __repr__(self):
         """Representation of this class"""
         e = self
         return f"<Review title={e.title} from_username={e.from_username} to_username={e.to_username} rating={e.rating}>"
-
-    
-    

@@ -5,4 +5,4 @@ venv/
 bookyourservices/static/upload/
 bookyourservices/Test/
 bookyourservices/google_calendar/service.json
-Test/
+bookyourservices/secret.py

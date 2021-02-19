@@ -1,0 +1,45 @@
+{% extends 'admin/base.html' %}
+
+{% block subtitle %}
+All Categories
+{% endblock %}
+
+{% block top_links %}
+<a class="btn btn-success" href="{{ url_for('admin.categories_new')}}" title="New Category"><i
+        class="fas fa-plus"></i></a>
+{% endblock %}
+
+{% block content %}
+<script>
+    //Address urls 
+    const LIST_URL = '{{url_for("admin.categories_list")}}';
+    const NEW_URL = '{{url_for("admin.categories_new")}}';
+    const UPDATE_URL = '{{url_for("admin.categories_update", category_id=0)}}';
+    const DELETE_URL = '{{url_for("admin.categories_delete", category_id=0)}}';
+
+    let categories = null;
+</script>
+<table class="table table-striped rounded">
+    <thead class="bg-primary text-white">
+        <th>ID</th>
+        <th>Name</th>
+        <th>Active</th>
+        <th>Actions</th>
+    </thead>
+    <tbody id="categories-list">
+
+
+    </tbody>
+</table>
+
+
+<div id="form-category-container">
+    <div class="h2 mx-auto text-success" id="category-form-title">New Category</div>
+    {% include 'form-ajax.html' %}
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script src="/static/js/admin/categories.js" type="module"></script>
+{% endblock %}
