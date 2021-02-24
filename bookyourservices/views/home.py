@@ -157,7 +157,7 @@ def login():
         else:
             flash('Invalid username/password.', 'danger')
 
-    return render_template('home/login.html', form=form)
+    return render_template('home/users/login.html', form=form)
 
 
 @home.route('/register', methods=['POST', 'GET'])
@@ -178,14 +178,14 @@ def register():
             flash('Successfully Registered!', FLASH_GROUP_SUCCESS)
             return redirect(url_for("home.dashboard"))
 
-    return render_template('home/register.html', form=form)
+    return render_template('home/users/register.html', form=form)
 
 @home.route('/dashboard')
 @login_required
 def dashboard():
     """Get user dashboard"""
 
-    return render_template("home/dashboard.html", account=g.user)
+    return render_template("home/users/dashboard.html", account=g.user)
 
 
 @home.route('/logout', methods=['POST'])
