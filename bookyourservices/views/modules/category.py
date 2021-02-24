@@ -28,7 +28,7 @@ class CategoryHandler:
         return [(str(category.id) , category.name) for category in Category.query.filter(Category.is_active==True).all()]
 
     @staticmethod
-    def categories_get(category_id):
+    def get(category_id):
         """Return Category"""
         return Category.query.get(category_id)
 

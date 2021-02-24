@@ -6,44 +6,32 @@ Book your service
 
 
 {% block header %}
-<div class="p-2 h4 row bg-primary text-white mx-auto rounded">
-    <div class="col-12 col-md-8 display-2">Book Your Services</div>
-
-    {% if g.user %}
-    <div class="col-4 d-none d-md-block">
-        <label class="text-success">{{g.user.full_name}}</label>
-        <div class="col-12 col-md-6 col-lg-2">
-            <form method="POST" action="/users/logout">
-                <a class="btn btn-secondary d-inline-flex d-lg-none m-2" id="side-menu-btn"><i
-                        class="fas fa-bars"></i></a>
-                <button class="btn btn-danger" title="Signout"><i class="fas fa-sign-out-alt"></i></button>
-            </form>
-        </div>
+<div class="p-2 h4 row bg-dark text-white mx-auto mb-0">
+    <div class="col-12 col-md-10 display-2">
+        Book Your Services
     </div>
-    {% endif %}
+    <div class="d-none d-lg-block col-lg-2">
+        {% if g.user %}
+            <p class="text-success h4 align-bottom">{{g.user.full_name}}</p>
+        {% endif %}
+    </div>
 </div>
-{% if g.user %}
-<div class="col-12 col-lg-3 d-none d-md-block" id="side-menu">
-    {% include 'home/menu.html' %}
-</div>
-{% endif %}
+{% include 'home/menu.html' %}
 {% endblock %}
 
 {% block main %}
-<div class="row">
-    <div class="col-12 col-lg-9 mx-auto">
-        {% include 'flash.html' %}
-        <div class="row">
-            <div class="col-12 col-md-8 h1">{% block subtitle %}Block Subtitle{% endblock %}</div>
-            <div class="col-12 col-md-4 align-self-center">
-                {% block top_links %}
-                Block Top Links
-                {% endblock %}
-            </div>
+<div class="container-fluid mx-auto">
+    {% include 'flash.html' %}
+    <div class="row">
+        <div class="col-12 col-md-8 h1">{% block subtitle %}Block Subtitle{% endblock %}</div>
+        <div class="col-12 col-md-4 align-self-center">
+            {% block top_links %}
+            Block Top Links
+            {% endblock %}
         </div>
-        {% block content %}
-        Block Content
-        {% endblock %}
     </div>
+    {% block content %}
+    Block Content
+    {% endblock %}
 </div>
 {% endblock %}

@@ -86,7 +86,6 @@ class Admin(db.Model):
 
         return False
 
-
 class User(db.Model):
     """User"""
     __tablename__ = 'users'
@@ -213,6 +212,27 @@ class User(db.Model):
             return u
 
         return False
+
+    def serialize(self):
+        """Serialize a User SQLAlchemy obj to dictionary."""
+
+        return {
+            "username": self.username,
+            "full_name": self.full_name,
+            "first_name": self.first_name,
+            "last_name":self.last_name,
+            "email": self.email,
+            "phone": self.phone,
+            "description": self.description,
+            "image": self.image,
+            "image_url": self.image_url,
+            "reviews": self.reviews,
+            "rating": self.rating,
+            "is_provider": self.is_provider,
+            "updated": self.updated,
+            "created": self.created,
+            "is_active": self.is_active
+        }
 
 
 class Address(db.Model):
@@ -382,7 +402,8 @@ class Service(db.Model):
             "created": self.created,
             "is_active": self.is_active,
             "categories": [category.serialize()  for category in self.categories],
-            "category_ids": self.get_category_ids()
+            "category_ids": self.get_category_ids(),
+            "provider": self.user.full_name
         }
 
 class CategoryService(db.Model):

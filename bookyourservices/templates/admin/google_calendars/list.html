@@ -1,0 +1,44 @@
+{% extends 'admin/base.html' %}
+
+{% block subtitle %}
+Google Calendar List
+{% endblock %}
+
+{% block top_links %}
+{% endblock %}
+
+{% block content %}
+<table class="table table-striped rounded mt-2">
+    <thead class="bg-primary text-white">
+        <th>User</th>
+        <th>Summary</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </thead>
+    <tbody>
+
+        {% for item in list %}
+        <tr>
+            <td>
+                {% if item["user"] %}
+                    <a href="{{url_for('admin.users_get' , username=item['user'].username)}}">{{item["user"].username}} ({{item["user"].full_name}})</a>
+                    
+                {% endif %}
+            </td>
+            <td>{{ item["summary"] }}</td>
+            <td>
+                {{ item["description"]}}
+            </td>
+            <td>
+                <form action="{{ url_for('admin.google_calendars_delete' , calendar_id=item['id']) }}" method="POST">
+                    <button class="btn btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                </form>
+
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+{% endblock %}

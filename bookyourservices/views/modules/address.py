@@ -14,7 +14,7 @@ class AddressHandler:
         return Address.query.filter(Address.username==username).order_by(Address.is_default.desc())
 
     @staticmethod
-    def addresses_get(address_id):
+    def get(address_id):
         """Return Address"""
         return Address.query.get(address_id)
 

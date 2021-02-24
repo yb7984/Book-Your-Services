@@ -1,26 +1,51 @@
-<ul class="nav flex-column text-center">
-    <li class="nav-item btn btn-primary">Appointments</li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Appointments List</a>
-    </li>
-    <li class="nav-item btn btn-primary">Users</li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('admin.users_list')}}">Users List</a>
-    </li>
-    <li class="nav-item btn btn-primary">Accounts</li>
-    {% if g.is_administrator %}
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/admins">All Accounts</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/admins/new">New Account</a>
-    </li>
-    {% endif %}
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/admins/password">Update Password</a>
-    </li>
-    <li class="nav-item btn btn-primary">Setting</li>
-    <li class="nav-item">
-        <a class="nav-link" href="/admin/categories">Categories</a>
-    </li>
-</ul>
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/services">Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/providers">Providers</a>
+        </li>
+        {% if g.user %}
+        <li class="nav-item">
+          <a class="nav-link" href="/dashboard">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/appoitments">My Appointments</a>
+        </li>
+        {% if g.user.is_provider %}
+        <li class="nav-item">
+          <a class="nav-link" href="/services">My Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/schedules">My Schedules</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/profile">My Profile</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" method="POST" action="/logout">
+                <button class="btn btn-link text-danger" title="Signout">[Logout]</button>
+            </form>
+        </li>
+        {% else %}
+
+        <li class="nav-item">
+          <a class="nav-link text-success" href="/register">Register</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-success" href="/login">Login</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>

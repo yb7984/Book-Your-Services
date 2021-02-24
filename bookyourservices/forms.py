@@ -5,6 +5,23 @@ from wtforms.validators import InputRequired, Email , Length , Optional , Regexp
 from config import *
 
 ######
+# For Search
+#
+class BaseSearchForm(FlaskForm):
+    """Basic Search Form"""
+
+    class Meta:
+        csrf = False  # Disable CSRF
+    term = StringField("term", validators=[Optional()], render_kw={"placeholder" : "Start your search here"})
+    
+class ServiceSearchForm(BaseSearchForm):
+    """Search form for Service"""
+    
+    categories = SelectField("Categories" , choices=[("0" , "All Categories")])
+    
+
+
+######
 # For Admin
 #
 class AdminLoginForm(FlaskForm):

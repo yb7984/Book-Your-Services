@@ -8,23 +8,6 @@
 {% block content %}
 <div class="row bg-light border-bottom p-2">
     <div class="col h2">
-        Services
-    </div>
-    <div class="col pt-2 row">
-        <div class="col-11">
-        {% with form=service_form, search_url=service_url %}
-        {% include "form-search.html" %}
-        {% endwith %}</div>
-        <div class="col-1">
-        </div>
-    </div>
-</div>
-<div class="row" id="services-list">
-</div>
-
-
-<div class="row bg-light border-bottom p-2">
-    <div class="col h2">
         Providers
     </div>
     <div class="col pt-2 row">
@@ -38,12 +21,11 @@
 </div>
 <div class="row" id="providers-list">
 </div>
-{% include "home/items/service.html" %}
 {% include "home/items/provider.html" %}
 {% endblock %}
 
 
 
 {% block js %}
-<script src="/static/js/home/index.js" type="module"></script>
+<script src="/static/js/home/providers.js" type="module"></script>
 {% endblock %}

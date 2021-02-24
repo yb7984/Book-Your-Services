@@ -20,7 +20,7 @@ DEBUG = True
 DEVELOPMENT = True
 
 #google account setting
-SERVICE_ACCOUNT_FILE = 'google_calendar/service.json'
+GOOGLE_SERVICE_ACCOUNT_FILE = 'google_calendar/service.json'
 
 #time zone
 DEFAULT_TIMEZONE = 'America/New_York'
@@ -57,7 +57,7 @@ FLASH_GROUP_DANGER = "danger"
 FLASH_GROUP_SUCCESS = "success"
 
 #paginate
-ADMIN_USERS_PER_PAGE = 2
+ADMIN_USERS_PER_PAGE = 20
 
 #US States data
 # United States of America Python Dictionary to translate States,

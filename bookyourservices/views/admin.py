@@ -1,13 +1,15 @@
 from flask import Blueprint, render_template, g, request, flash, url_for, jsonify
-from google_calendar.google_calendar import *
 from secrets import token_urlsafe
 from utils import *
 from forms import *
 from models import *
 from sqlalchemy.exc import IntegrityError
+from views.modules.admin import AdminHandler
+from views.modules.user import UserHandler
 from views.modules.address import AddressHandler
 from views.modules.service import ServiceHandler
 from views.modules.category import CategoryHandler
+from google_calendar.google_calendar import GoogleCalendarHandler
 
 
 admin = Blueprint('admin', __name__)
@@ -42,7 +44,7 @@ def login_admin_required(func):
     def func_wrapper(*args, **kwargs):
         if login_admin_username() is None:
             flash("Please login first!", FLASH_GROUP_DANGER)
-            return redirect(f'/admin/login?path={urllib.parse.quote_plus(request.path)}')
+            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
 
         return func(*args, **kwargs)
 
@@ -175,33 +177,13 @@ def admins_new():
     form_hide_value(form.is_active, True)
 
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        email = form.email.data
-        first_name = form.first_name.data
-        last_name = form.last_name.data
 
-        new_account = Admin.register(
-            username, password, email, first_name, last_name)
-        new_account.authorization = form.authorization.data
+        account = AdminHandler.register(form)
 
-        db.session.add(new_account)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
-            return render_template('admin/admins/new.html', form=form)
-        except:
-            db.session.rollback()
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
-            return render_template('admin/admins/new.html', form=form)
+        if account is not None:
+            flash('Successfully Created New Account!', FLASH_GROUP_SUCCESS)
 
-        flash('Successfully Created New Account!', FLASH_GROUP_SUCCESS)
-
-        return redirect(url_for("admin.admins_list"))
+            return redirect(url_for("admin.admins_list"))
 
     return render_template('admin/admins/new.html', form=form)
 
@@ -223,33 +205,13 @@ def admins_update(username):
         form_hide_value(form.is_active, True)
 
     if form.validate_on_submit():
-        password = form.password.data
 
-        if len(password) > 0:
-            account.password = hash_password(password)
+        account = AdminHandler.update(account , form)
 
-        account.email = form.email.data
-        account.first_name = form.first_name.data
-        account.last_name = form.last_name.data
+        if len(form.errors) == 0:
+            flash('Successfully Update Account!', FLASH_GROUP_SUCCESS)
 
-        if account.username != 'admin':
-            # can not update the role for the admin account
-            account.authorization = form.authorization.data
-            account.is_active = form.is_active.data
-        else:
-            account.authenticate = ADMIN_AUTH_VALUE
-            account.is_active = True
-
-        try:
-            db.session.commit()
-        except IntegrityError:
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
-            return render_template('admin/admins/edit.html', form=form, account=account)
-
-        flash('Successfully Update Account!', FLASH_GROUP_SUCCESS)
-
-        return redirect(url_for("admin.admins_list"))
+            return redirect(url_for("admin.admins_list"))
 
     return render_template('admin/admins/edit.html', form=form, account=account)
 
@@ -260,27 +222,19 @@ def admins_update(username):
 def admins_password_update():
     """Edit Password"""
 
-    account = Admin.query.get_or_404(login_admin_username())
-
-    form = PasswordForm(obj=account)
+    form = PasswordForm()
 
     if form.validate_on_submit():
         password = form.password.data
 
-        account.password = hash_password(password)
-        
-        try:
-            db.session.commit()
-        except:
-            flash("Error when updating password!" , FLASH_GROUP_DANGER)
+        account = Admin.update_password(login_admin_username() , password)
 
-            return render_template('admin/admins/password.html', form=form, account=account)
+        if account != False:
+            flash('Successfully Update Password!', FLASH_GROUP_SUCCESS)
 
-        flash('Successfully Update Password!', FLASH_GROUP_SUCCESS)
+            return redirect(url_for("admin.admins_password_update"))
 
-        return redirect(url_for("admin.admins_password_update"))
-
-    return render_template('admin/admins/password.html', form=form, account=account)
+    return render_template('admin/admins/password.html', form=form, account=g.admin)
 
 @admin.route('/admin/admins/password_reset', methods=['POST', 'GET'])
 def admins_password_reset():
@@ -292,20 +246,7 @@ def admins_password_reset():
         form = PasswordResetEmailForm()
 
         if form.validate_on_submit():
-            email = form.email.data
-
-            account = Admin.query.filter(Admin.email == email).first()
-
-            if account:
-                account.pwd_token = token_urlsafe()
-                db.session.commit()
-
-                mail.send_message(
-                    subject='Book your services admin password reset' ,
-                    sender='bobowu98@gmail.com',
-                    recipients=[email] ,
-                    body=f'{BASE_URL}{url_for("admin.admins_password_reset")}?token={account.pwd_token}'
-                )
+            if AdminHandler.reset_password_email(form):
 
                 flash('The reset email has been sent to you email address!' , FLASH_GROUP_SUCCESS)
                 return redirect(url_for('admin.login'))
@@ -318,9 +259,8 @@ def admins_password_reset():
     form = PasswordResetForm()
 
     if form.validate_on_submit():
-        password = form.password.data
-
-        account = Admin.update_password_by_token(token=token , password=password)
+        
+        account = AdminHandler.reset_password(form)
 
         if account:
             flash('Successfully reset password!' , FLASH_GROUP_SUCCESS)
@@ -347,11 +287,7 @@ def admins_delete(username):
         flash('Unable to delete admin account!', 'danger')
         return redirect(url_for("admin.admins_list"))
 
-    account = Admin.query.get_or_404(username)
-
-    account.is_active = False
-
-    db.session.commit()
+    AdminHandler.delete(username)
 
     flash('Successfull deactivate a account!', 'success')
 
@@ -366,27 +302,7 @@ def admins_delete(username):
 def users_list():
     """Show all the providers or customers"""
 
-    page = int(request.args.get("page", 1))
-
-    username = request.args.get('username', '')
-    email = request.args.get('email', '')
-    is_provider = request.args.get('is_provider', '')
-    is_active = request.args.get('is_active', '')
-
-    filters = []
-    if len(username) > 0:
-        filters.append(User.username.like(f'%{username}%'))
-
-    if len(email) > 0:
-        filters.append(User.email.like(f'%{email}%'))
-    if len(is_provider) > 0:
-        filters.append(User.is_provider == (
-            True if is_provider == '1' else False))
-    if len(is_active) > 0:
-        filters.append(User.is_active == (True if is_active == '1' else False))
-
-    pagination = User.query.filter(
-        *tuple(filters)).paginate(page, per_page=ADMIN_USERS_PER_PAGE)
+    pagination = UserHandler.list()
 
     return render_template('admin/users/list.html', pagination=pagination)
 
@@ -397,9 +313,12 @@ def users_get(username):
     """Get user information detail"""
 
     account = User.query.get_or_404(username)
+
     address_form = AddressForm(prefix="address")
+
     service_form = ServiceForm(prefix="service")
     service_form.categories.choices = CategoryHandler.list_for_select()
+
     return render_template('admin/users/get.html',
                            account=account,
                            address_form=address_form ,
@@ -416,54 +335,11 @@ def users_new():
     form_hide_value(form.is_active, True)
 
     if form.validate_on_submit():
-        username = form.username.data.lower().strip()
-        password = form.password.data
-        email = form.email.data
-        first_name = form.first_name.data
-        last_name = form.last_name.data
-        is_provider = form.is_provider.data
+        new_account = UserHandler.register(form)
 
-        new_account = User.register(
-            username, password, email, first_name, last_name, is_provider)
-
-        new_account.phone = form.phone.data
-        new_account.description = form.description.data
-
-        # todo create a calendar and share if calendar_email is not empty
-        if is_provider:
-            new_account.calendar_email = form.calendar_email.data
-
-        db.session.add(new_account)
-
-        try:
-            db.session.commit()
-
-            # upload file
-            image = upload_file(
-                form.image.name,
-                name=username,
-                dirname=upload_dir_user(username),
-                exts=IMAGE_ALLOWED_EXTENSIONS)
-
-            if image is not None:
-                new_account.image = image
-                # update the image information
-                db.session.commit()
-
-        except IntegrityError:
-            db.session.rollback()
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
-            return render_template('admin/users/new.html', form=form)
-        except:
-            db.session.rollback()
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
-            return render_template('admin/users/new.html', form=form)
-
-        flash('Successfully Created New User!', FLASH_GROUP_SUCCESS)
-
-        return redirect(url_for("admin.users_get", username=username))
+        if new_account is not None:
+            flash('Successfully Created New User!', FLASH_GROUP_SUCCESS)
+            return redirect(url_for("admin.users_get", username=new_account.username))
 
     return render_template('admin/users/new.html', form=form)
 
@@ -473,79 +349,63 @@ def users_new():
 def users_update(username):
     """Edit User Account"""
 
-    account = User.query.get_or_404(username)
+    user = User.query.get_or_404(username)
 
-    form = UserForm(obj=account)
+    form = UserForm(obj=user)
 
-    form_hide_value(form.username, account.username)
-    form_hide_value(form.password, account.password)
+    form_hide_value(form.username, user.username)
+    form_hide_value(form.password, user.password)
 
     if form.validate_on_submit():
-        password = form.password_edit.data
+        user = UserHandler.update(user, form)
 
-        if len(password) > 0:
-            account.password = hash_password(password)
+        if len(form.errors) == 0:
+            #no error, redirect
+            flash('Successfully Update Account!', FLASH_GROUP_SUCCESS)
 
-        account.email = form.email.data
-        account.first_name = form.first_name.data
-        account.last_name = form.last_name.data
-        account.is_active = form.is_active.data
+            return redirect(url_for("admin.users_get", username=username))
 
-        account.phone = form.phone.data
-        account.description = form.description.data
-
-        account.is_provider = form.is_provider.data
-
-        account.updated = datetime.datetime.now()
-
-        # todo create a calendar and share if calendar_email is not empty
-        if account.is_provider:
-            account.calendar_email = form.calendar_email.data
-        else:
-            account.calendar_email = None
-
-        try:
-            db.session.commit()
-
-            # upload file
-            image = upload_file(
-                form.image.name,
-                name=username,
-                dirname=upload_dir_user(username),
-                exts=IMAGE_ALLOWED_EXTENSIONS)
-
-            if image is not None:
-                account.image = image
-                # update the image information
-                db.session.commit()
-
-        except IntegrityError:
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
-            return render_template('admin/users/edit.html', form=form, account=account, fields_disabled=fields_disabled)
-
-        flash('Successfully Update Account!', FLASH_GROUP_SUCCESS)
-
-        return redirect(url_for("admin.users_get", username=username))
-
-    return render_template('admin/users/edit.html', form=form, account=account)
-
+    return render_template('admin/users/edit.html', form=form, account=user)
 
 @admin.route('/admin/users/<string:username>/delete', methods=['POST'])
 @login_admin_required
 def users_delete(username):
     """Delete account"""
 
-    account = User.query.get_or_404(username)
-
-    account.is_active = False
-
-    db.session.commit()
+    UserHandler.delete(username)
 
     flash('Successfull deactivate a user account!', 'success')
 
     return redirect(url_for("admin.users_list"))
 
+######
+# For Google Calendar
+#
+@admin.route('/admin/google_calendars', methods=['GET'])
+@login_admin_required
+def google_calendars_list():
+    """Show google calendar list"""
+
+    list = GoogleCalendarHandler.calendars_list()
+
+    for item in list:
+        calendar_id = item["id"]
+
+        item["user"] = User.query.filter(User.calendar_id==calendar_id).first()
+
+    return render_template("admin/google_calendars/list.html" , list=list)
+
+
+@admin.route('/admin/google_calendars/<string:calendar_id>/delete', methods=['POST'])
+@login_admin_required
+def google_calendars_delete(calendar_id):
+    """Show google calendar list"""
+
+    GoogleCalendarHandler.calendars_delete(calendar_id)
+
+    flash("Successfully deleted a google calendar!" , FLASH_GROUP_SUCCESS)
+
+    return redirect(url_for('admin.google_calendars_list'))
 
 ######
 # For addresses
@@ -607,7 +467,7 @@ def addresses_delete(username, address_id):
 def services_list(username):
     """Get Service List"""
 
-    items = ServiceHandler.list(username)
+    items = ServiceHandler.list_by_username(username)
 
     return jsonify(items=[item.serialize() for item in items])
 

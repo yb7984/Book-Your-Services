@@ -1,6 +1,6 @@
 """Modules file for handling request related to service"""
 
-from models import Service, CategoryService , Category , db
+from models import Service, CategoryService, Category, db
 from flask import request, jsonify
 from forms import ServiceForm
 from utils import *
@@ -12,14 +12,58 @@ class ServiceHandler:
     """Handler for service"""
 
     @staticmethod
-    def list(username):
+    def list_by_username(username):
         """Return service list"""
 
         return Service.query.filter(
             Service.username == username).order_by(Service.updated.desc())
 
     @staticmethod
-    def servicees_get(service_id):
+    def list(username='', only_active=True, per_page=12):
+        """Return service list"""
+
+        page = int(request.args.get("page", 1))
+
+        if username.lower().strip() == '':
+            username = request.args.get('username' , '').lower().strip()
+        term = request.args.get('term', '')
+        categories = request.args.get('categories', '')
+        is_active = request.args.get('is_active', '')
+
+        if only_active == True:
+            is_active = "1"
+
+        
+        limit = int(request.args.get("limit" , -1))
+        if limit > 0:
+            per_page = limit
+
+        filters = []
+
+        if len(username) > 0:
+            filters.append(Service.username==username)
+
+        if len(term) > 0:
+            filters.append(
+                Service.name.like(f'%{term}%') |
+                Service.description.like(f'%{term}%')
+            )
+
+        if len(categories) > 0:
+            category_ids = [int(category) for category in categories.split(',') if int(category) > 0]
+        
+            if len(category_ids) > 0:
+                filters.append(Service.id.in_(db.session.query(CategoryService.service_id).filter(
+                    CategoryService.category_id.in_(category_ids))))
+
+        if len(is_active) > 0:
+            filters.append(Service.is_active == (
+                True if is_active == '1' else False))
+
+        return Service.query.filter(*tuple(filters)).order_by(Service.updated.desc()).paginate(page, per_page=per_page)
+
+    @staticmethod
+    def get(service_id):
         """Return Service"""
         return Service.query.get(service_id)
 
@@ -57,8 +101,7 @@ class ServiceHandler:
                 # return error message
                 return {"error": "Error when adding an service"}
 
-
-            #append the categories
+            # append the categories
             if len(categories) > 0:
                 service.set_categoiry_ids(categories)
 
@@ -67,7 +110,7 @@ class ServiceHandler:
                 except:
                     db.session.rollback()
 
-            ServiceHandler.upload(service , form)
+            ServiceHandler.upload(service, form)
 
             # success, return new item
             return {"item": service.serialize()}
@@ -86,7 +129,7 @@ class ServiceHandler:
 
         form = ServiceForm(obj=request.json, prefix="service")
         form.categories.choices = CategoryHandler.list_for_select()
-        
+
         if form.validate():
             service.name = form.name.data
             service.location_type = form.location_type.data
@@ -99,9 +142,9 @@ class ServiceHandler:
             service.set_categoiry_ids(categories)
 
             db.session.commit()
-            
-            #upload the image
-            ServiceHandler.upload(service , form)
+
+            # upload the image
+            ServiceHandler.upload(service, form)
 
             # success, return new item
             return {"item": service.serialize()}
@@ -123,16 +166,16 @@ class ServiceHandler:
         return {}
 
     @staticmethod
-    def upload(service , form):
+    def upload(service, form):
         """Upload image"""
 
         old_file = service.image
         try:
-            #upload file
+            # upload file
             image = upload_file(
                 form.image.name,
                 name=service.id,
-                dirname=upload_dir_user(service.username , "services"),
+                dirname=upload_dir_user(service.username, "services"),
                 exts=IMAGE_ALLOWED_EXTENSIONS)
 
             if image is not None:
@@ -143,4 +186,3 @@ class ServiceHandler:
             service.image = old_file
 
             db.session.rollback()
-

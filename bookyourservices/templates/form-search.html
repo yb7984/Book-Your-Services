@@ -1,0 +1,22 @@
+<form id="form-search-{{form._prefix}}" action="{{ search_url }}">
+    <div class="row">
+        {{ form.hidden_tag() }}
+
+        {% for field in form %}
+        {% if field.widget.input_type != 'hidden' %}
+        <div class="col">
+            {% if field.widget.input_type == 'checkbox' %}
+            <div class="custom-control custom-checkbox">
+                {{ field(class_="custom-control-input") }}
+                {{ field.label(class_="custom-control-label") }}
+            </div>
+            {% else %}
+            {{ field(class_="form-control") }}
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <button class="btn btn-success" type="submit">Search</button>
+    </div>
+</form>
