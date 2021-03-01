@@ -1,0 +1,25 @@
+{% extends 'home/base.html' %}
+
+{% block subtitle %}
+{% if g.user.is_provider %}
+    Customer Appointments
+{% else %}
+    My Appointments
+{% endif %}
+{% endblock %}
+
+{% block top_links %}
+{% endblock %}
+
+{% block content %}
+<div class="row" id="appointments-list">
+</div>
+{% include "home/items/myappointment.html" %}
+{% endblock %}
+
+{% block js %}
+<script>
+    const APPOINTMENT_LIST_URL = '/api/appointments';
+</script>
+<script src="/static/js/home/users/myappointments.js" type="module"></script>
+{% endblock %}

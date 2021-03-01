@@ -6,7 +6,7 @@ Book your service control panel
 
 
 {% block header %}
-<div class="p-2 h4 row bg-dark text-white mx-auto rounded">
+<div class="p-2 h4 row bg-secondary text-white mx-auto rounded">
     <div class="col-12 col-md-6">Book Your Services Control Panel</div>
 
     {% if g.admin %}
@@ -31,8 +31,8 @@ Book your service control panel
     <div class="col-12 col-lg-9 mx-auto">
         {% include 'flash.html' %}
         <div class="row">
-            <div class="col-12 col-md-8 h1">{% block subtitle %}Block Subtitle{% endblock %}</div>
-            <div class="col-12 col-md-4 align-self-center">
+            <div class="col-12 col-sm-8 h1">{% block subtitle %}Block Subtitle{% endblock %}</div>
+            <div class="col-12 col-sm-4 align-self-center">
                 {% block top_links %}
                 Block Top Links
                 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'home/base.html' %}
 
 {% block subtitle%}
-User Login
+<div class="container">User Login</div>
 {% endblock%}
 
 {% block top_links %}
@@ -9,25 +9,26 @@ User Login
 
 
 {% block content %}
+<div class="container">
+    <form method="POST">
 
-<form method="POST">
+        {{ form.hidden_tag() }}
 
-    {{ form.hidden_tag() }}
+        {% for field in form
+        if field.widget.input_type != 'hidden' %}
+        <p>
+            {{ field.label }}
+            {{ field(class_="form-control") }}
 
-    {% for field in form
-    if field.widget.input_type != 'hidden' %}
-    <p>
-        {{ field.label }}
-        {{ field(class_="form-control") }}
-
-        {% for error in field.errors %}
-        <span class="form-text text-danger">{{ error }}</span>
+            {% for error in field.errors %}
+            <span class="form-text text-danger">{{ error }}</span>
+            {% endfor %}
+        </p>
         {% endfor %}
-    </p>
-    {% endfor %}
 
-    <button class="btn btn-success" type="submit">Login</button> Forgot the password?<a
-        href="/users/reset_password">Click here</a> to reset.
+        <button class="btn btn-success" type="submit">Login</button> Forgot the password?<a
+            href="{{ url_for('home.password_reset') }}">Click here</a> to reset.
 
-</form>
+    </form>
+</div>
 {% endblock %}

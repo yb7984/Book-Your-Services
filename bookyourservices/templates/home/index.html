@@ -6,7 +6,7 @@
 {% block top_links %}{% endblock %}
 
 {% block content %}
-<div class="row bg-light border-bottom p-2">
+<div class="row p-2">
     <div class="col h2">
         Services
     </div>
@@ -23,7 +23,7 @@
 </div>
 
 
-<div class="row bg-light border-bottom p-2">
+<div class="row p-2">
     <div class="col h2">
         Providers
     </div>
@@ -40,6 +40,9 @@
 </div>
 {% include "home/items/service.html" %}
 {% include "home/items/provider.html" %}
+{% with form = appointment_form %}
+{% include "form-ajax-modal.html" %}
+{% endwith %}
 {% endblock %}
 
 

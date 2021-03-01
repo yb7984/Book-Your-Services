@@ -1,0 +1,29 @@
+{% extends 'home/base.html' %}
+
+{% block subtitle %}
+My Services
+{% endblock %}
+
+{% block top_links %}
+<a class="btn btn-success" id="btn-new" data-toggle="modal" data-target="#form-service-container"><i
+        class="fas fa-plus"></i></a>
+{% endblock %}
+
+{% block content %}
+<div class="row" id="services-list">
+</div>
+{% include "form-ajax-modal.html" %}
+{% include "home/items/myservice.html" %}
+{% endblock %}
+
+{% block js %}
+<script>
+    const PROVIDER_USER_NAME = '{{ account.username }}';
+    const SERVICE_LIST_URL = '/api/services/mine';
+    const SERVICE_INSERT_URL = '/api/services';
+    const SERVICE_UPDATE_URL = '/api/services/0';
+    const SERVICE_DELETE_URL = '/api/services/0';
+
+</script>
+<script src="/static/js/home/users/myservices.js" type="module"></script>
+{% endblock %}

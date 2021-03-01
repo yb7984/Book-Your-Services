@@ -1,10 +1,11 @@
 """Modules file for handling request related to admin"""
 
 from models import Admin, db
-from flask import request , jsonify
+from flask import request , jsonify, url_for
 from forms import AdminForm, AdminLoginForm
 from utils import *
 import datetime
+from secrets import token_urlsafe
 
 class AdminHandler:
     """Handler for admin"""
@@ -144,7 +145,7 @@ class AdminHandler:
 
     
     @staticmethod
-    def reset_password(form):
+    def reset_password(form , token):
         """For reset password"""
 
         password = form.password.data

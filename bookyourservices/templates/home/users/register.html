@@ -1,7 +1,7 @@
 {% extends 'home/base.html' %}
 
 {% block subtitle%}
-User Register
+<div class="container">User Register</div>
 {% endblock%}
 
 {% block top_links %}
@@ -9,5 +9,8 @@ User Register
 
 
 {% block content %}
-{% include "form.html" %}
+<div class="container">
+    {% include "form.html" %}
+</div>
+
 {% endblock %}

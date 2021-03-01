@@ -16,7 +16,7 @@ class ServiceHandler:
         """Return service list"""
 
         return Service.query.filter(
-            Service.username == username).order_by(Service.updated.desc())
+            Service.username == username).order_by(Service.is_active.desc(), Service.updated.desc())
 
     @staticmethod
     def list(username='', only_active=True, per_page=12):
@@ -60,7 +60,7 @@ class ServiceHandler:
             filters.append(Service.is_active == (
                 True if is_active == '1' else False))
 
-        return Service.query.filter(*tuple(filters)).order_by(Service.updated.desc()).paginate(page, per_page=per_page)
+        return Service.query.filter(*tuple(filters)).order_by(Service.is_active.desc(), Service.updated.desc()).paginate(page, per_page=per_page)
 
     @staticmethod
     def get(service_id):
@@ -71,7 +71,7 @@ class ServiceHandler:
     def insert(username):
         """New Service"""
         form = ServiceForm(obj=request.json, prefix="service")
-        form.categories.choices = CategoryHandler.list_for_select()
+        form.category_ids.choices = CategoryHandler.list_for_select()
 
         if form.validate():
             name = form.name.data
@@ -79,7 +79,7 @@ class ServiceHandler:
             description = form.description.data
             is_active = form.is_active.data
 
-            categories = form.categories.data
+            category_ids = form.category_ids.data
 
             service = Service(
                 username=username,
@@ -102,8 +102,8 @@ class ServiceHandler:
                 return {"error": "Error when adding an service"}
 
             # append the categories
-            if len(categories) > 0:
-                service.set_categoiry_ids(categories)
+            if len(category_ids) > 0:
+                service.set_categoiry_ids(category_ids)
 
                 try:
                     db.session.commit()
@@ -128,7 +128,7 @@ class ServiceHandler:
             return {"error": "Error when updating an service"}
 
         form = ServiceForm(obj=request.json, prefix="service")
-        form.categories.choices = CategoryHandler.list_for_select()
+        form.category_ids.choices = CategoryHandler.list_for_select()
 
         if form.validate():
             service.name = form.name.data
@@ -137,9 +137,9 @@ class ServiceHandler:
             service.is_active = form.is_active.data
             service.updated = datetime.datetime.now()
 
-            categories = form.categories.data
+            category_ids = form.category_ids.data
 
-            service.set_categoiry_ids(categories)
+            service.set_categoiry_ids(category_ids)
 
             db.session.commit()
 
@@ -160,7 +160,8 @@ class ServiceHandler:
         if service is None:
             return {}
 
-        db.session.delete(service)
+        service.is_active = False
+        # db.session.delete(service)
         db.session.commit()
 
         return {}

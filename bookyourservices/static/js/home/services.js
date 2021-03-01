@@ -1,6 +1,9 @@
-import ServicesList from '/static/js/modules/listServices.js'
+import ListServices from '/static/js/modules/listServices.js'
 
-const listServices = new ServicesList($("#services-list") , $("#services-template").html() , "/api/services")
+const $serviceList = $("#services-list");
+const $serviceTemplate = $("#services-template").html();
+
+const listServices = new ListServices($serviceList , $serviceTemplate , "/api/services");
 
 listServices.loadList();
 

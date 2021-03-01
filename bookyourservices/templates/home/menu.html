@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-secondary">
     <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -18,15 +18,26 @@
         <li class="nav-item">
           <a class="nav-link" href="/dashboard">Dashboard</a>
         </li>
+        {% if not g.user.is_provider %}
         <li class="nav-item">
-          <a class="nav-link" href="/appoitments">My Appointments</a>
+          <a class="nav-link" href="/myappointments">My Appointments</a>
         </li>
+        {% endif %}
         {% if g.user.is_provider %}
-        <li class="nav-item">
-          <a class="nav-link" href="/services">My Services</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            My Appointments
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item"  href="/myappointments">Customer Appointments</a>
+            <a class="dropdown-item" href="/provider_appointments">Provider Appointments</a>
+          </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/schedules">My Schedules</a>
+          <a class="nav-link" href="/myservices">My Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/myschedules">My Schedules</a>
         </li>
         {% endif %}
         <li class="nav-item">

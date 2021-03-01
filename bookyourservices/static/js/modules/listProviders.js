@@ -1,6 +1,6 @@
-import BasicList from '/static/js/modules/list.js'
+import ListBasic from '/static/js/modules/list.js'
 
-class ProvidersList extends BasicList {
+class ListProviders extends ListBasic {
     /**
      * Return the html of the provider
      * @param {*} item 
@@ -18,4 +18,4 @@ class ProvidersList extends BasicList {
     }
 }
 
-export { ProvidersList as default };
+export { ListProviders as default };

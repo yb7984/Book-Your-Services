@@ -7,26 +7,27 @@ User: <span class="text-success">{{account.username}}</span>
 {% block top_links %}
 <script>
         //the variable storing the current user
-        const CUR_USERNAME = '{{account.username}}';
+        const CURRENT_USERNAME = '{{account.username}}';
         //Address urls 
         const ADDRESS_LIST_URL = '{{url_for("admin.addresses_list" , username=account.username)}}';
-        const ADDRESS_NEW_URL = '{{url_for("admin.addresses_new" , username=account.username)}}';
+        const ADDRESS_INSERT_URL = '{{url_for("admin.addresses_new" , username=account.username)}}';
         const ADDRESS_UPDATE_URL = '{{url_for("admin.addresses_update" , username=account.username , address_id=0)}}';
         const ADDRESS_DELETE_URL = '{{url_for("admin.addresses_delete" , username=account.username , address_id=0)}}';
-        
+
         //Service urls
         const SERVICE_LIST_URL = '{{url_for("admin.services_list" , username=account.username)}}';
-        const SERVICE_NEW_URL = '{{url_for("admin.services_new" , username=account.username)}}';
+        const SERVICE_INSERT_URL = '{{url_for("admin.services_new" , username=account.username)}}';
         const SERVICE_UPDATE_URL = '{{url_for("admin.services_update" , username=account.username , service_id=0)}}';
         const SERVICE_DELETE_URL = '{{url_for("admin.services_delete" , username=account.username , service_id=0)}}';
-        
+
         //the variable storing the lists
         let addresses = null;
         let services = null;
 
 </script>
 <form action="{{ url_for('admin.users_delete' , username=account.username) }}" method="POST">
-        <a class="btn btn-primary" href="{{ url_for('admin.users_list')}}" title="Users List"><i class="fas fa-users"></i></a>
+        <a class="btn btn-primary" href="{{ url_for('admin.users_list')}}" title="Users List"><i
+                        class="fas fa-users"></i></a>
         <a class="btn btn-primary" href="{{ url_for('admin.users_update' , username=account.username) }}"
                 title="Edit"><i class="fas fa-user-edit"></i></a>
         {% if account.is_active %}
@@ -92,9 +93,14 @@ User: <span class="text-success">{{account.username}}</span>
                 </div>
                 <div id="addresses" class="tab-pane fade">
                         <div id="addresses-container">
+                                <div class="text-right">
+                                        <a class="btn btn-success" title="New Address" data-toggle="modal"
+                                                data-target="#form-address-container" id="btn-address-new"><i
+                                                        class="fas fa-plus"></i></a>
+                                </div>
                                 <div id="addresses-list" class="row"></div>
                                 <div id="addresses-template" class="d-none">
-                                        <div class="col-6 col-lg-4" id="address-list-%%id%%">
+                                        <div class="col-6 col-lg-4 d-flex" id="address-list-%%id%%">
                                                 <div class="card m-1 bg-light">
                                                         <div class="card-body">
                                                                 <p class="card-text">
@@ -105,28 +111,28 @@ User: <span class="text-success">{{account.username}}</span>
                                                                         </div>
                                                                         <div class="col text-danger">%%is_active%%</div>
                                                                 </div>
+                                                                <a data-id="%%id%%" data-toggle="modal"
+                                                                        data-target="#form-address-container"
+                                                                        class="btn-edit btn btn-primary"><i class="fas fa-edit"></i></a>
                                                                 <a href="javascript:void(0);" data-id="%%id%%"
-                                                                        class="address-edit btn btn-primary">Edit</a>
-                                                                <a href="javascript:void(0);" data-id="%%id%%"
-                                                                        class="address-delete btn btn-danger">Delete</a>
+                                                                        class="btn-delete btn btn-danger"><i class="fas fa-trash-alt"></i></a>
                                                         </div>
                                                 </div>
                                         </div>
                                 </div>
                         </div>
 
-                        <div id="form-address-container">
-                                <div class="h2 mx-auto text-success" id="address-form-title">New Address</div>
-                                {% with form = address_form %}
-                                {% include "form-ajax.html" %}
-                                {% endwith %}
-                        </div>
                 </div>
                 <div id="services" class="tab-pane fade">
                         <div id="services-container">
+                                <div class="text-right">
+                                        <a class="btn btn-success" title="New Service" data-toggle="modal"
+                                                data-target="#form-service-container" id="btn-service-new"><i
+                                                        class="fas fa-plus"></i></a>
+                                </div>
                                 <div id="services-list" class="row"></div>
                                 <div id="services-template" class="d-none">
-                                        <div class="col-12 col-lg-6" id="services-list-%%id%%">
+                                        <div class="col-12 col-md-4 d-flex" id="services-list-%%id%%">
                                                 <div class="card m-1 bg-light">
                                                         <img class="card-img-top" src="%%image%%" alt="Service Image">
                                                         <div class="card-body">
@@ -140,24 +146,20 @@ User: <span class="text-success">{{account.username}}</span>
                                                                         %%categories%%
                                                                 </p>
                                                                 <div class="row">
-                                                                        <div class="col text-secondary">%%location_type%%
+                                                                        <div class="col text-secondary">
+                                                                                %%location_type%%
                                                                         </div>
                                                                         <div class="col text-danger">%%is_active%%</div>
                                                                 </div>
+                                                                <a data-id="%%id%%" data-toggle="modal"
+                                                                        data-target="#form-service-container"
+                                                                        class="btn-edit btn btn-primary"><i class="fas fa-edit"></i></a>
                                                                 <a href="javascript:void(0);" data-id="%%id%%"
-                                                                        class="service-edit btn btn-primary">Edit</a>
-                                                                <a href="javascript:void(0);" data-id="%%id%%"
-                                                                        class="service-delete btn btn-danger">Delete</a>
+                                                                        class="btn-delete btn btn-danger"><i class="fas fa-trash-alt"></i></a>
                                                         </div>
                                                 </div>
                                         </div>
                                 </div>
-                        </div>
-                        <div id="form-service-container">
-                                <div class="h2 mx-auto text-success" id="service-form-title">New Service</div>
-                                {% with form = service_form %}
-                                {% include "form-ajax.html" %}
-                                {% endwith %}
                         </div>
                 </div>
                 <div id="schedules" class="tab-pane fade">
@@ -177,6 +179,14 @@ User: <span class="text-success">{{account.username}}</span>
                 </div>
         </div>
 </div>
+
+{% with form = address_form %}
+{% include "form-ajax-modal.html" %}
+{% endwith %}
+
+{% with form = service_form %}
+{% include "form-ajax-modal.html" %}
+{% endwith %}
 
 {% endblock %}
 

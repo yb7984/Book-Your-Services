@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, g, request, flash, url_for, jsonify
-from secrets import token_urlsafe
 from utils import *
 from forms import *
 from models import *
@@ -260,7 +259,7 @@ def admins_password_reset():
 
     if form.validate_on_submit():
         
-        account = AdminHandler.reset_password(form)
+        account = AdminHandler.reset_password(form=form, token=token)
 
         if account:
             flash('Successfully reset password!' , FLASH_GROUP_SUCCESS)
@@ -317,7 +316,7 @@ def users_get(username):
     address_form = AddressForm(prefix="address")
 
     service_form = ServiceForm(prefix="service")
-    service_form.categories.choices = CategoryHandler.list_for_select()
+    service_form.category_ids.choices = CategoryHandler.list_for_select()
 
     return render_template('admin/users/get.html',
                            account=account,

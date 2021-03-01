@@ -51,33 +51,38 @@ def check_password_hash(hashed_pwd, password):
     return bcrypt.check_password_hash(hashed_pwd, password)
 
 
-# def login_required(func):
-#     """
-#     For the route need to login
-#     Check if the username in session
-#     Redirect to login page if not login yet
-#     """
-
-#     @wraps(func)
-#     def func_wrapper(*args, **kwargs):
-#         if login_username() is None:
-#             flash("Please login first!", "danger")
-#             return redirect(f'/login?path={urllib.parse.quote_plus(request.path)}')
-
-#         return func(*args, **kwargs)
-
-#     return func_wrapper
+###########
+# Common methods
 
 
-# def login_username():
-#     """Return current login username"""
-#     return session.get(USERNAME_SESSION_KEY, None)
+def login_required(func):
+    """
+    For the route need to login
+    Check if the username in session
+    Redirect to login page if not login yet
+    """
+
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if login_username() is None:
+            flash("Please login first!", FLASH_GROUP_DANGER)
+            return redirect(f'{url_for("home.login")}?path={urllib.parse.quote_plus(request.path)}')
+
+        return func(*args, **kwargs)
+
+    return func_wrapper
 
 
-# def login_username_set(username):
-#     """Set current login username"""
+def login_username():
+    """Return current login username"""
+    return session.get(USERNAME_SESSION_KEY, None)
 
-#     session[USERNAME_SESSION_KEY] = username
+
+def login_username_set(username):
+    """Set current login username"""
+
+    session[USERNAME_SESSION_KEY] = username
+
 
 
 # upload methods

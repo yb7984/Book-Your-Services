@@ -28,38 +28,6 @@ def _jinja2_filter_date(d):
 
     return dt.strftime(DATE_FORMAT)
 
-###########
-# Common methods
-
-
-def login_required(func):
-    """
-    For the route need to login
-    Check if the username in session
-    Redirect to login page if not login yet
-    """
-
-    @wraps(func)
-    def func_wrapper(*args, **kwargs):
-        if login_username() is None:
-            flash("Please login first!", FLASH_GROUP_DANGER)
-            return redirect(f'{url_for("home.login")}?path={urllib.parse.quote_plus(request.path)}')
-
-        return func(*args, **kwargs)
-
-    return func_wrapper
-
-
-def login_username():
-    """Return current login username"""
-    return session.get(USERNAME_SESSION_KEY, None)
-
-
-def login_username_set(username):
-    """Set current login username"""
-
-    session[USERNAME_SESSION_KEY] = username
-
 
 ##################
 # Methods for before request
@@ -88,11 +56,15 @@ def index():
 
     provider_form = BaseSearchForm()
     provider_url = "/providers"
+
+    appointment_form = AppointmentForm(prefix="appointment")
+
     return render_template("home/index.html",
                            service_url=service_url,
                            service_form=service_form,
                            provider_url=provider_url,
-                           provider_form=provider_form)
+                           provider_form=provider_form,
+                           appointment_form=appointment_form)
 
 
 
@@ -104,9 +76,12 @@ def services_list():
     service_form.categories.choices.extend(CategoryHandler.list_for_select())
     service_url = "/services"
 
+    appointment_form = AppointmentForm(prefix="appointment")
+
     return render_template("home/services.html",
                            service_url=service_url,
-                           service_form=service_form)
+                           service_form=service_form, 
+                           appointment_form=appointment_form)
 
 
 
@@ -166,6 +141,11 @@ def register():
 
     form = UserForm()
     form_hide_value(form.password_edit, '')
+    form_hide_value(form.first_name, '')
+    form_hide_value(form.last_name, '')
+    form_hide_value(form.description, '')
+    form_hide_value(form.phone, '')
+    form_hide_value(form.image, '')
     form_hide_value(form.is_active, True)
 
     if form.validate_on_submit():
@@ -180,12 +160,45 @@ def register():
 
     return render_template('home/users/register.html', form=form)
 
-@home.route('/dashboard')
-@login_required
-def dashboard():
-    """Get user dashboard"""
 
-    return render_template("home/users/dashboard.html", account=g.user)
+
+@home.route('/password_reset', methods=['POST', 'GET'])
+def password_reset():
+    """Reset Password"""
+
+    token = request.args.get('token' , None)
+
+    if token is None:
+        form = PasswordResetEmailForm()
+
+        if form.validate_on_submit():
+            if UserHandler.reset_password_email(form):
+
+                flash('The reset email has been sent to you email address!' , FLASH_GROUP_SUCCESS)
+                return redirect(url_for('home.login'))
+
+            flash('Email is not found!' , FLASH_GROUP_DANGER)
+
+        return render_template('home/users/password_reset.html' , form=form)
+    
+    # Set the new password
+    form = PasswordResetForm()
+
+    if form.validate_on_submit():
+        
+        account = UserHandler.reset_password(form=form, token=token)
+
+        if account:
+            flash('Successfully reset password!' , FLASH_GROUP_SUCCESS)
+
+            login_username_set(account.username)
+
+            return redirect(url_for('home.index'))
+        
+        flash('Error when updating password!' , FLASH_GROUP_DANGER)
+
+    return render_template('home/users/password_reset.html' , form=form)
+
 
 
 @home.route('/logout', methods=['POST'])
@@ -197,3 +210,40 @@ def logout():
 
     return redirect(url_for('home.login'))
 
+
+@home.route('/dashboard')
+@login_required
+def dashboard():
+    """Get user dashboard"""
+
+    return render_template("home/users/dashboard.html", account=g.user)
+
+
+@home.route('/myservices')
+@login_required
+def my_services():
+    """Get all my services"""
+
+    list = ServiceHandler.list_by_username(login_username())
+
+    form = ServiceForm(prefix="service")
+    form.category_ids.choices = CategoryHandler.list_for_select()
+
+    return render_template("home/services/list.html", account=g.user , list=list , form=form)
+
+
+
+@home.route('/myappointments')
+@login_required
+def my_appointments():
+    """Get all my services"""
+
+    return render_template("home/appointments/list.html")
+
+
+@home.route('/provider_appointments')
+@login_required
+def provider_appointments():
+    """Get all my services"""
+
+    return render_template("home/appointments/list-provider.html")

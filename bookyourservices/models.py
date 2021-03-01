@@ -60,7 +60,7 @@ class Admin(db.Model):
     def update_password(cls, username, password):
         """Update password"""
 
-        u = Admin.query.filter(Admin.username==username).first()
+        u = Admin.query.filter(Admin.username == username).first()
 
         if u:
             u.password = hash_password(password)
@@ -75,7 +75,7 @@ class Admin(db.Model):
     def update_password_by_token(cls, token, password):
         """Update password by token"""
 
-        u = Admin.query.filter(Admin.pwd_token==token).first()
+        u = Admin.query.filter(Admin.pwd_token == token).first()
 
         if u:
             u.password = hash_password(password)
@@ -85,6 +85,7 @@ class Admin(db.Model):
             return u
 
         return False
+
 
 class User(db.Model):
     """User"""
@@ -141,6 +142,9 @@ class User(db.Model):
     @property
     def full_name(self):
         """Return the full name of the admin"""
+        if self.first_name == '' and self.last_name == '':
+            return self.username
+
         return f"{self.first_name} {self.last_name}"
 
     @property
@@ -188,7 +192,7 @@ class User(db.Model):
     def update_password(cls, username, password):
         """Update password"""
 
-        u = User.query.filter(User.username==username).first()
+        u = User.query.filter(User.username == username).first()
 
         if u:
             u.password = hash_password(password)
@@ -199,13 +203,13 @@ class User(db.Model):
             return False
 
     @classmethod
-    def update_password_by_token(cls, token, pwd):
+    def update_password_by_token(cls, token, password):
         """Update password by token"""
 
-        u = User.query.filter(User.pwd_token==token).first()
+        u = User.query.filter(User.pwd_token == token).first()
 
         if u:
-            u.password = hash_password(pwd)
+            u.password = hash_password(password)
             u.password_token = None
             db.session.commit()
 
@@ -220,7 +224,7 @@ class User(db.Model):
             "username": self.username,
             "full_name": self.full_name,
             "first_name": self.first_name,
-            "last_name":self.last_name,
+            "last_name": self.last_name,
             "email": self.email,
             "phone": self.phone,
             "description": self.description,
@@ -309,8 +313,6 @@ class Category(db.Model):
         }
 
 
-
-
 class Service(db.Model):
     """Services from the providers"""
     __tablename__ = 'services'
@@ -337,23 +339,22 @@ class Service(db.Model):
     categories_services = db.relationship(
         "CategoryService", backref="service", cascade="all, delete, delete-orphan", passive_deletes=True)
 
-
     @property
     def image_url(self):
         """Return the image url"""
         if self.image is None or len(self.image) == 0:
             return DEFAULT_IMAGE_SERVICE
 
-        return upload_file_url(self.image, username=self.username , dirname="services")
-    
+        return upload_file_url(self.image, username=self.username, dirname="services")
+
     @property
     def location_type_name(self):
         """Return the location type name"""
 
         return Service.get_location_type_name(self.location_type)
 
-    @classmethod
-    def get_location_type_name(cls , location_type):
+    @staticmethod
+    def get_location_type_name(location_type):
         """Return the location type name"""
 
         if location_type == 0:
@@ -368,9 +369,9 @@ class Service(db.Model):
 
         self.categories_services.clear()
         for category_id in ids:
-            self.categories_services.append(CategoryService(category_id=int(category_id) , service_id=self.id))
-    
-    
+            self.categories_services.append(CategoryService(
+                category_id=int(category_id), service_id=self.id))
+
     def get_category_ids(self):
         """Return the list of the category_ids"""
 
@@ -385,7 +386,6 @@ class Service(db.Model):
         e = self
         return f"<Service name={e.name} username={e.username}>"
 
-
     def serialize(self):
         """Serialize a Service SQLAlchemy obj to dictionary."""
 
@@ -393,18 +393,19 @@ class Service(db.Model):
             "id": self.id,
             "username": self.username,
             "name": self.name,
-            "location_type": self.location_type ,
+            "location_type": self.location_type,
             "location_type_name": self.location_type_name,
-            "description": self.description ,
+            "description": self.description,
             "image": self.image,
             "image_url": self.image_url,
             "updated": self.updated,
             "created": self.created,
             "is_active": self.is_active,
-            "categories": [category.serialize()  for category in self.categories],
+            "categories": [category.serialize() for category in self.categories],
             "category_ids": self.get_category_ids(),
             "provider": self.user.full_name
         }
+
 
 class CategoryService(db.Model):
     """Categories to Services"""
@@ -466,8 +467,8 @@ class Appointment(db.Model):
     location_type = db.Column(db.Integer, nullable=False, server_default="0")
     address = db.Column(db.Text, nullable=False, server_default="")
     note = db.Column(db.Text, nullable=False, server_default="")
-    summary = db.Column(db.Text, nullable=False, server_default="")
-    description = db.Column(db.Text, nullable=False, server_default="")
+    # summary = db.Column(db.Text, nullable=False, server_default="")
+    # description = db.Column(db.Text, nullable=False, server_default="")
     updated = db.Column(
         db.TIMESTAMP(timezone=True),
         nullable=False,
@@ -486,10 +487,80 @@ class Appointment(db.Model):
     customer = db.relationship("User", foreign_keys=[customer_username], backref=db.backref(
         "appointments_as_customer", lazy="dynamic"))
 
+    service = db.relationship("Service")
+
+    @property
+    def summary(self):
+        """Return the google calendar summary"""
+
+        return f"{self.service.name} with {self.customer.full_name}"
+
+    @property
+    def description(self):
+        """Return the google calendar description"""
+
+        return f"""
+Customer:{self.customer.full_name}
+Location:{self.location_type_name}
+Address:{self.address}
+Note:{self.note}
+"""
+
+    @property
+    def location_type_name(self):
+        """Returnt the name of location_type"""
+
+        return Service.get_location_type_name(self.location_type)
+
     def __repr__(self):
         """Representation of this class"""
         e = self
-        return f"<Service id={e.id} provider_username={e.provider_username} customer_username={e.customer_username} start={e.start} end={e.end}>"
+        return f"<Appointment id={e.id} provider_username={e.provider_username} customer_username={e.customer_username} start={e.start} end={e.end}>"
+
+    def check_conflict(self):
+        """Check is there is a conflict with the time frme"""
+
+        count = Appointment.query.filter(
+            (Appointment.provider_username == self.provider_username) &
+            (Appointment.id != self.id) &
+            (
+                (
+                    ((Appointment.start <= self.start) & (Appointment.end > self.start)) |
+                    ((Appointment.start < self.end)
+                     & (Appointment.end >= self.end))
+                ) |
+                (
+                    ((self.start <= Appointment.start) & (self.end > Appointment.start)) |
+                    ((self.start < Appointment.end)
+                     & (self.end >= Appointment.end))
+                )
+            )).count()
+
+        return (count > 0)
+
+    def serialize(self):
+        """Serialize a Appointment SQLAlchemy obj to dictionary."""
+
+        return {
+            "id": self.id,
+            "event_id": self.event_id,
+            "provider_username": self.provider_username,
+            "customer_username": self.customer_username,
+            "start": self.start,
+            "end": self.end,
+            "service_id": self.service_id,
+            "location_type": self.location_type,
+            "location_type_name": self.location_type_name,
+            "address": self.address,
+            "note": self.note,
+            "summary": self.summary,
+            "description": self.description,
+            "updated": self.updated,
+            "created": self.created,
+            "is_active": self.is_active,
+            "provider": self.provider.full_name,
+            "customer": self.customer.full_name
+        }
 
 
 class Email(db.Model):

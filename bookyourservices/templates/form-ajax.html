@@ -1,26 +1,45 @@
+<form method="POST" enctype="multipart/form-data" id="form-{{form._prefix}}">
+    <p class="d-none text-danger text-center form-error-message" id="form-{{form._prefix}}-error">
+    </p>
+    {{ form.hidden_tag() }}
 
-    <form method="POST" enctype="multipart/form-data" id="form-{{form._prefix}}">
-        <p class="d-none text-danger text-center form-error-message" id="form-{{form._prefix}}-error">
-        </p>
-        {{ form.hidden_tag() }}
+    {% for field in form %}
 
-        {% for field in form %}
-        {% if field.widget.input_type != 'hidden' %}
-        <p>
-            {% if field.widget.input_type == 'checkbox' %}
-            <div class="custom-control custom-checkbox">
-                {{ field(class_="custom-control-input") }}
-                {{ field.label(class_="custom-control-label") }}
-            </div>
-            {% else %}
-                {{ field.label }}
-                {{ field(class_="form-control") }}
-            {% endif %}
+    {% if field.widget.input_type != 'hidden' %}
+    <p>
+        {% if field.widget.input_type == 'checkbox' %}
+    <div class="custom-control custom-checkbox">
+        {{ field(class_="custom-control-input") }}
+        {{ field.label(class_="custom-control-label") }}
+    </div>
 
-            <span class="form-text text-danger form-error" id="form-{{form._prefix}}-error-{{field.short_name}}">{{ error }}</span>
-        </p>
-        {% endif %}
+    {% elif field.type in ["SelectField", "SelectMultipleField"] %}
+    {{ field.label }}
+    {{ field(class_="custom-select") }}
+
+    {% elif field.type in ["CheckboxMultipleField"] %}
+    {{ field.label }}
+    <div class="container row mx-auto">
+
+        {% for choice in field %}
+        <div class="col-6 col-md-4 col-lg-3">
+            {{ choice(class_="custom-control-input") }}
+            {{ choice.label(class_="custom-control-label") }}
+        </div>
         {% endfor %}
+    </div>
 
+    {% else %}
+    {{ field.label }}
+    {{ field(class_="form-control") }}
+    {% endif %}
+
+    <span class="form-text text-danger form-error" id="form-{{form._prefix}}-error-{{field.short_name}}">{{ error
+        }}</span>
+    </p>
+    {% endif %}
+    {% endfor %}
+    <p class="text-center">
         <button class="btn btn-success" type="submit">Submit</button>
-    </form>
+    </p>
+</form>

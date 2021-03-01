@@ -5,7 +5,7 @@ All Categories
 {% endblock %}
 
 {% block top_links %}
-<a class="btn btn-success" href="{{ url_for('admin.categories_new')}}" title="New Category"><i
+<a class="btn btn-success" title="New Category" data-toggle="modal" data-target="#form-container" id="btn-new"><i
         class="fas fa-plus"></i></a>
 {% endblock %}
 
@@ -20,7 +20,7 @@ All Categories
     let categories = null;
 </script>
 <table class="table table-striped rounded">
-    <thead class="bg-primary text-white">
+    <thead class="bg-secondary text-white">
         <th>ID</th>
         <th>Name</th>
         <th>Active</th>
@@ -33,10 +33,7 @@ All Categories
 </table>
 
 
-<div id="form-category-container">
-    <div class="h2 mx-auto text-success" id="category-form-title">New Category</div>
-    {% include 'form-ajax.html' %}
-</div>
+{% include 'form-ajax-modal.html' %}
 {% endblock %}
 
 

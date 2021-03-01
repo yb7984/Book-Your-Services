@@ -1,11 +1,12 @@
 """Modules file for handling request related to user"""
 
 from models import User, db
-from flask import request, jsonify
+from flask import request, jsonify, url_for
 from forms import UserForm, UserLoginForm
 from utils import *
 from google_calendar.google_calendar import GoogleCalendarHandler
 import datetime
+from secrets import token_urlsafe
 
 
 class UserHandler:
@@ -24,6 +25,10 @@ class UserHandler:
         limit = int(request.args.get("limit" , -1))
         if limit > 0:
             per_page = limit
+        else:
+            limit = int(request.args.get("per_page" , -1))
+            if limit > 0:
+                per_page = limit
 
         if only_active == True:
             is_active = "1"
@@ -78,13 +83,19 @@ class UserHandler:
         is_provider = form.is_provider.data
 
         # check duplicate username and email
-        count = User.query.filter(
-            db.or_(User.username == username, User.email == email)).count()
+        count = User.query.filter(User.username == username).count()
 
         if count > 0:
             form.username.errors.append(
-                'Username or Email taken.  Please pick another')
+                'Username taken.  Please pick another')
 
+        count = User.query.filter(User.email == email).count()
+
+        if count > 0:
+            form.email.errors.append(
+                'Email taken.  Please pick another')
+
+        if len(form.errors) > 0:
             return None
 
         user = User.register(
@@ -96,23 +107,23 @@ class UserHandler:
         db.session.add(user)
 
         success = False
-        try:
-            db.session.commit()
+        # try:
+        db.session.commit()
 
-            success = True
+        success = True
 
-        except IntegrityError:
-            db.session.rollback()
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
+        # except IntegrityError:
+        #     db.session.rollback()
+        #     form.username.errors.append(
+        #         'Username or Email taken.  Please pick another')
 
-            return None
-        except:
-            db.session.rollback()
-            form.username.errors.append(
-                'Username or Email taken.  Please pick another')
+        #     return None
+        # except:
+        #     db.session.rollback()
+        #     form.username.errors.append(
+        #         'Username or Email taken.  Please pick another')
 
-            return None
+        #     return None
 
         if success == True:
 
@@ -186,6 +197,39 @@ class UserHandler:
         db.session.commit()
 
         return {}
+
+
+    
+    @staticmethod
+    def reset_password_email(form):
+        """For reset password, if found the account return true"""
+        
+        email = form.email.data
+
+        account = User.query.filter(User.email == email).first()
+
+        if account:
+            account.pwd_token = token_urlsafe()
+            db.session.commit()
+
+            mail.send_message(
+                subject='Book your services admin password reset' ,
+                sender='bobowu98@gmail.com',
+                recipients=[email] ,
+                body=f'{BASE_URL}{url_for("home.password_reset")}?token={account.pwd_token}'
+            )
+
+            return True
+        return False
+
+    
+    @staticmethod
+    def reset_password(form , token):
+        """For reset password"""
+        
+        password = form.password.data
+
+        return User.update_password_by_token(token=token , password=password)
 
     @staticmethod
     def upload_image(user, form):
