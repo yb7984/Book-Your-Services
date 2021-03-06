@@ -58,7 +58,7 @@ class AppointmentHandler:
                 note=note
             )
 
-            if item.check_conflict():
+            if not item.available:
                 # time conflict return error
                 return {"error": "Appointment time is not available now. Please choose another time frame!"}
 
@@ -88,7 +88,7 @@ class AppointmentHandler:
             appointment.start,
             appointment.end,
             description=appointment.description,
-            location=appointment.address
+            location=""
         )
 
         if appointment.event_id != "":
@@ -121,8 +121,6 @@ class AppointmentHandler:
                 Customer: {appointment.customer.full_name}
                 Start: {appointment.start}
                 End: {appointment.end}
-                Location: {appointment.location_type_name}
-                Address: {appointment.address}
                 Note: {appointment.note}
                 """
         )

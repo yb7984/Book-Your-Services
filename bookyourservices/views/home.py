@@ -4,9 +4,9 @@ from utils import *
 from forms import *
 from models import *
 from views.modules.user import UserHandler
-from views.modules.address import AddressHandler
 from views.modules.service import ServiceHandler
 from views.modules.category import CategoryHandler
+from views.modules.schedule import ScheduleHandler
 from google_calendar.google_calendar import GoogleCalendarHandler
 
 
@@ -67,7 +67,6 @@ def index():
                            appointment_form=appointment_form)
 
 
-
 @home.route('/services')
 def services_list():
     """Service List"""
@@ -80,9 +79,8 @@ def services_list():
 
     return render_template("home/services.html",
                            service_url=service_url,
-                           service_form=service_form, 
+                           service_form=service_form,
                            appointment_form=appointment_form)
-
 
 
 @home.route('/providers')
@@ -152,7 +150,7 @@ def register():
         new_account = UserHandler.register(form)
 
         if new_account is not None:
-            #login the new account and redirect to dashboard
+            # login the new account and redirect to dashboard
             login_username_set(new_account.username)
 
             flash('Successfully Registered!', FLASH_GROUP_SUCCESS)
@@ -161,12 +159,11 @@ def register():
     return render_template('home/users/register.html', form=form)
 
 
-
 @home.route('/password_reset', methods=['POST', 'GET'])
 def password_reset():
     """Reset Password"""
 
-    token = request.args.get('token' , None)
+    token = request.args.get('token', None)
 
     if token is None:
         form = PasswordResetEmailForm()
@@ -174,31 +171,31 @@ def password_reset():
         if form.validate_on_submit():
             if UserHandler.reset_password_email(form):
 
-                flash('The reset email has been sent to you email address!' , FLASH_GROUP_SUCCESS)
+                flash('The reset email has been sent to you email address!',
+                      FLASH_GROUP_SUCCESS)
                 return redirect(url_for('home.login'))
 
-            flash('Email is not found!' , FLASH_GROUP_DANGER)
+            flash('Email is not found!', FLASH_GROUP_DANGER)
 
-        return render_template('home/users/password_reset.html' , form=form)
-    
+        return render_template('home/users/password_reset.html', form=form)
+
     # Set the new password
     form = PasswordResetForm()
 
     if form.validate_on_submit():
-        
+
         account = UserHandler.reset_password(form=form, token=token)
 
         if account:
-            flash('Successfully reset password!' , FLASH_GROUP_SUCCESS)
+            flash('Successfully reset password!', FLASH_GROUP_SUCCESS)
 
             login_username_set(account.username)
 
             return redirect(url_for('home.index'))
-        
-        flash('Error when updating password!' , FLASH_GROUP_DANGER)
 
-    return render_template('home/users/password_reset.html' , form=form)
+        flash('Error when updating password!', FLASH_GROUP_DANGER)
 
+    return render_template('home/users/password_reset.html', form=form)
 
 
 @home.route('/logout', methods=['POST'])
@@ -224,13 +221,20 @@ def dashboard():
 def my_services():
     """Get all my services"""
 
-    list = ServiceHandler.list_by_username(login_username())
-
     form = ServiceForm(prefix="service")
     form.category_ids.choices = CategoryHandler.list_for_select()
 
-    return render_template("home/services/list.html", account=g.user , list=list , form=form)
+    return render_template("home/services/list.html", form=form)
 
+
+@home.route('/myschedules')
+@login_required
+def my_schedules():
+    """Get all my schedules"""
+
+    form = ScheduleForm(prefix="schedule")
+
+    return render_template("home/schedules/list.html", form=form)
 
 
 @home.route('/myappointments')

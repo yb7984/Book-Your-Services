@@ -33,9 +33,6 @@ class ListBasic {
 
         this.newTitle = newTitle;
 
-        //indicating is the form is posting, avoid resubmiting
-        this.formPosting = false;
-
         this.event();
 
     }
@@ -79,18 +76,7 @@ class ListBasic {
 
 
         this.$listContainer.on("click", ".btn-delete", async (e) => {
-            e.preventDefault();
-            const $btn = findClickedButton(e, "btn-delete");
-
-            const id = $btn.data(this.idKey);
-
-            // try {
-            const resp = await axios.delete(this.deleteUrl.substring(0, this.deleteUrl.length - 1) + id);
-
-            await this.loadList(true);
-            // } catch (error) {
-            //     showAlert("Error when deleting!", ALERT_ERROR);
-            // }
+            await this.deleteItem(e);
         });
 
         //form submit event
@@ -148,19 +134,35 @@ class ListBasic {
     }
 
     /**
+     * Delete item
+     * @param {*} e 
+     */
+    async deleteItem(e) {
+        e.preventDefault();
+        const $btn = findClickedButton(e, "btn-delete");
+
+        const id = $btn.data(this.idKey);
+        // try {
+        const resp = await axios.delete(this.deleteUrl.substring(0, this.deleteUrl.length - 1) + id);
+
+        await this.loadList(true);
+        // } catch (error) {
+        //     showAlert("Error when deleting!", ALERT_ERROR);
+        // }
+    }
+
+    /**
      * setup the form submit event
      */
     setFormSubmit() {
         this.$form.on("submit", async (e) => {
             e.preventDefault();
 
-            if (this.formPosting === true) {
-                //avoid resubmitting
-                alert("Form posting, please wait!");
-                return false;
-            }
+            const $modal = this.$form.parents(".modal");
+            const $modalLoading = $modal.find(".modal-loading");
 
-            this.formPosting = true;
+            this.$form.addClass("d-none");
+            $modalLoading.removeClass("d-none");
 
             // try {
             formFunc.showFormError(this.$form, "");
@@ -178,7 +180,6 @@ class ListBasic {
             const resp = await formFunc.postForm(this.$form, url, method, true);
 
             if (resp.data.item) {
-                const $modal = this.$form.parents(".modal");
                 if (resp.status === 201) {
                     $modal.modal("hide");
 
@@ -207,7 +208,8 @@ class ListBasic {
             //     formFunc.showFormError(this.$form , "Error when updating data!");
             // }
 
-            this.formPosting = false;
+            this.$form.removeClass("d-none");
+            $modalLoading.addClass("d-none");
         });
     }
 

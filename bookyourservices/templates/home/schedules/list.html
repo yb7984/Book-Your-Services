@@ -1,0 +1,37 @@
+{% extends 'home/base-login.html' %}
+
+{% block subtitle %}
+My Weekly Schedules
+{% endblock %}
+
+{% block top_links %}
+<a class="btn btn-success btn-new" id="btn-new" data-toggle="modal" data-target="#form-schedule-container" data-date_exp=""><i
+        class="fas fa-plus"></i></a>
+{% endblock %}
+
+{% block content %}
+<div class="row flex-lg-nowrap" id="schedules-list-weekly">
+</div>
+
+
+<div class="row">
+    <div class="col-12 col-md-8 h1">Specific Dates</div>
+    <div class="col-12 col-md-4 align-self-center">
+    </div>
+</div>
+<div class="row flex-lg-nowrap" id="schedules-list-dates">
+</div>
+{% include "form-ajax-modal.html" %}
+{% include "home/items/myschedule.html" %}
+{% endblock %}
+
+{% block js %}
+<script>
+    const PROVIDER_USER_NAME = CURRENT_USERNAME;
+    const SCHEDULE_LIST_URL = `/api/schedules/${CURRENT_USERNAME}`;
+    const SCHEDULE_UPDATE_URL = `/api/schedules/${CURRENT_USERNAME}`;
+    const SCHEDULE_DELETE_URL = `/api/schedules/${CURRENT_USERNAME}/0`;
+
+</script>
+<script src="/static/js/home/users/myschedules.js" type="module"></script>
+{% endblock %}

@@ -1,0 +1,31 @@
+<ul class="nav flex-column text-center">
+    <li class="nav-item btn btn-secondary">Appointments</li>
+    {% if g.user.is_provider %}
+    <li class="nav-item">
+        <a class="nav-link" href="/myappointments">Customer Appointments</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/provider_appointments">Provider Appointments</a>
+    </li>
+    {% else %}
+    <li class="nav-item">
+        <a class="nav-link" href="/myappointments">My Appointments</a>
+    </li>
+    {% endif %}
+    {% if g.user.is_provider %}
+    <li class="nav-item btn btn-secondary">My Settings</li>
+    <li class="nav-item">
+        <a class="nav-link" href="/myservices">My Services</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/myschedules">My Schedules</a>
+    </li>
+    {% endif %}
+    <li class="nav-item btn btn-secondary">My Account</li>
+    <li class="nav-item">
+        <a class="nav-link" href="/myprofile">My Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/users/password">Update Password</a>
+    </li>
+</ul>

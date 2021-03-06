@@ -21,7 +21,7 @@ class ListServices extends ListBasic {
             .replaceAll("%%username%%", item.username)
             .replaceAll("%%provider%%", item.provider)
             .replaceAll("%%categories%%", categories)
-            .replaceAll("%%location_type%%", item.location_type_name)
+            // .replaceAll("%%location_type%%", item.location_type_name)
             .replaceAll("%%description%%", item.description.replaceAll("\n", "<br />"))
             .replaceAll("%%image%%", item.image_url)
             .replaceAll("%%is_active%%", item.is_active ? `<span class="text-success">Active</span>` : `<span class="text-danger">Inactive</span>`);
@@ -62,6 +62,11 @@ class ListServices extends ListBasic {
 
                 const $form = $("#form-appointment-");
                 const $formContainer = $("#form-appointment-container");
+                const $formLoading = $formContainer.find(".modal-loading");
+
+                $form.addClass("d-none");
+                $formLoading.removeClass("d-none");
+
                 try {
                     formFunc.showFormError($form, "");
 
@@ -89,6 +94,10 @@ class ListServices extends ListBasic {
                 } catch (error) {
                     formFunc.showFormError($form, "Error when updating data!");
                 }
+
+
+                $form.removeClass("d-none");
+                $formLoading.addClass("d-none");
             });
         }
 

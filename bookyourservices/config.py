@@ -29,6 +29,8 @@ DEFAULT_TIMEZONE = 'America/New_York'
 DATETIME_FORMAT = '%a, %d. %b %Y %I:%M%p'
 DATE_FORMAT = '%a, %d. %b %Y'
 
+WEEKDAYS = ["SUNDAY" , "MONDAY" , "TUESDAY" , "WEDNESDAY" , "THURDAY" , "FRIDAY" , "SATURDAY"]
+
 #encoding
 DEFAULT_ENCODING = 'utf-8'
 

@@ -5,7 +5,6 @@ from models import *
 from sqlalchemy.exc import IntegrityError
 from views.modules.admin import AdminHandler
 from views.modules.user import UserHandler
-from views.modules.address import AddressHandler
 from views.modules.service import ServiceHandler
 from views.modules.category import CategoryHandler
 from google_calendar.google_calendar import GoogleCalendarHandler
@@ -313,14 +312,11 @@ def users_get(username):
 
     account = User.query.get_or_404(username)
 
-    address_form = AddressForm(prefix="address")
-
     service_form = ServiceForm(prefix="service")
     service_form.category_ids.choices = CategoryHandler.list_for_select()
 
     return render_template('admin/users/get.html',
                            account=account,
-                           address_form=address_form ,
                            service_form=service_form)
 
 
@@ -405,58 +401,6 @@ def google_calendars_delete(calendar_id):
     flash("Successfully deleted a google calendar!" , FLASH_GROUP_SUCCESS)
 
     return redirect(url_for('admin.google_calendars_list'))
-
-######
-# For addresses
-#
-@admin.route('/admin/users/<string:username>/addresses', methods=['GET'])
-@login_admin_required
-def addresses_list(username):
-    """Get Address List"""
-
-    items = AddressHandler.list(username)
-
-    return jsonify(items = [item.serialize() for item in items])
-
-
-@admin.route('/admin/users/<string:username>/addresses/<int:address_id>', methods=['GET'])
-@login_admin_required
-def addresses_get(username, address_id):
-    """Get Address"""
-    item = AddressHandler.get(username, address_id)
-
-    return jsonify(item=item.serialize())
-
-
-@admin.route('/admin/users/<string:username>/addresses', methods=['POST'])
-@login_admin_required
-def addresses_new(username):
-    """New Addresses"""
-
-    item = AddressHandler.insert(username)
-
-    if "item" in item:
-        return (jsonify(item) , 201)
-
-    return (jsonify(item) , 200)
-
-
-@admin.route('/admin/users/<string:username>/addresses/<int:address_id>', methods=['PATCH'])
-@login_admin_required
-def addresses_update(username, address_id):
-    """Update Addresses"""
-
-    item = AddressHandler.update(address_id=address_id)
-
-    return (jsonify(item) , 200)
-
-
-@admin.route('/admin/users/<string:username>/addresses/<int:address_id>', methods=['DELETE'])
-@login_admin_required
-def addresses_delete(username, address_id):
-    """Delete Addresses"""
-
-    return (jsonify(AddressHandler.delete(address_id)) , 200)
 
 ######
 # For services

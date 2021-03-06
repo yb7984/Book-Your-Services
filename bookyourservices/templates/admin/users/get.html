@@ -8,21 +8,11 @@ User: <span class="text-success">{{account.username}}</span>
 <script>
         //the variable storing the current user
         const CURRENT_USERNAME = '{{account.username}}';
-        //Address urls 
-        const ADDRESS_LIST_URL = '{{url_for("admin.addresses_list" , username=account.username)}}';
-        const ADDRESS_INSERT_URL = '{{url_for("admin.addresses_new" , username=account.username)}}';
-        const ADDRESS_UPDATE_URL = '{{url_for("admin.addresses_update" , username=account.username , address_id=0)}}';
-        const ADDRESS_DELETE_URL = '{{url_for("admin.addresses_delete" , username=account.username , address_id=0)}}';
-
         //Service urls
         const SERVICE_LIST_URL = '{{url_for("admin.services_list" , username=account.username)}}';
         const SERVICE_INSERT_URL = '{{url_for("admin.services_new" , username=account.username)}}';
         const SERVICE_UPDATE_URL = '{{url_for("admin.services_update" , username=account.username , service_id=0)}}';
         const SERVICE_DELETE_URL = '{{url_for("admin.services_delete" , username=account.username , service_id=0)}}';
-
-        //the variable storing the lists
-        let addresses = null;
-        let services = null;
 
 </script>
 <form action="{{ url_for('admin.users_delete' , username=account.username) }}" method="POST">
@@ -42,9 +32,6 @@ User: <span class="text-success">{{account.username}}</span>
         <ul class="nav nav-pills">
                 <li class="nav-item">
                         <a class="nav-link active" data-toggle='pill' href="#home">Basic</a>
-                </li>
-                <li class="nav-item">
-                        <a class="nav-link" data-toggle='pill' href="#addresses">Addresses</a>
                 </li>
                 <li class="nav-item">
                         <a class="nav-link" data-toggle='pill' href="#services">Services</a>
@@ -91,38 +78,6 @@ User: <span class="text-success">{{account.username}}</span>
                                 <div class="col-12 text-secondary">{{account.description}}</div>
                         </div>
                 </div>
-                <div id="addresses" class="tab-pane fade">
-                        <div id="addresses-container">
-                                <div class="text-right">
-                                        <a class="btn btn-success" title="New Address" data-toggle="modal"
-                                                data-target="#form-address-container" id="btn-address-new"><i
-                                                        class="fas fa-plus"></i></a>
-                                </div>
-                                <div id="addresses-list" class="row"></div>
-                                <div id="addresses-template" class="d-none">
-                                        <div class="col-6 col-lg-4 d-flex" id="address-list-%%id%%">
-                                                <div class="card m-1 bg-light">
-                                                        <div class="card-body">
-                                                                <p class="card-text">
-                                                                        %%address%%
-                                                                </p>
-                                                                <div class="row">
-                                                                        <div class="col">%%is_default%%
-                                                                        </div>
-                                                                        <div class="col text-danger">%%is_active%%</div>
-                                                                </div>
-                                                                <a data-id="%%id%%" data-toggle="modal"
-                                                                        data-target="#form-address-container"
-                                                                        class="btn-edit btn btn-primary"><i class="fas fa-edit"></i></a>
-                                                                <a href="javascript:void(0);" data-id="%%id%%"
-                                                                        class="btn-delete btn btn-danger"><i class="fas fa-trash-alt"></i></a>
-                                                        </div>
-                                                </div>
-                                        </div>
-                                </div>
-                        </div>
-
-                </div>
                 <div id="services" class="tab-pane fade">
                         <div id="services-container">
                                 <div class="text-right">
@@ -147,7 +102,6 @@ User: <span class="text-success">{{account.username}}</span>
                                                                 </p>
                                                                 <div class="row">
                                                                         <div class="col text-secondary">
-                                                                                %%location_type%%
                                                                         </div>
                                                                         <div class="col text-danger">%%is_active%%</div>
                                                                 </div>
@@ -179,10 +133,6 @@ User: <span class="text-success">{{account.username}}</span>
                 </div>
         </div>
 </div>
-
-{% with form = address_form %}
-{% include "form-ajax-modal.html" %}
-{% endwith %}
 
 {% with form = service_form %}
 {% include "form-ajax-modal.html" %}

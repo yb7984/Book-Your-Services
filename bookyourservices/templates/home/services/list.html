@@ -1,4 +1,4 @@
-{% extends 'home/base.html' %}
+{% extends 'home/base-login.html' %}
 
 {% block subtitle %}
 My Services
@@ -18,7 +18,7 @@ My Services
 
 {% block js %}
 <script>
-    const PROVIDER_USER_NAME = '{{ account.username }}';
+    const PROVIDER_USER_NAME = '{{ g.user.username }}';
     const SERVICE_LIST_URL = '/api/services/mine';
     const SERVICE_INSERT_URL = '/api/services';
     const SERVICE_UPDATE_URL = '/api/services/0';

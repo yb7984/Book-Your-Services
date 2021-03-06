@@ -27,7 +27,7 @@ export function showFormError($form, message, messageList = {}) {
     const formId = $form.attr("id");
 
     for (const key in messageList) {
-        $(`#${formId}-error-${key}`).text(messageList[key].join("\n"));
+        $(`#${formId}-error-${key}`).html(messageList[key].join("<br />"));
     }
 }
 
@@ -41,9 +41,15 @@ export async function postForm($form, url, method = "POST", withFiles = false) {
     //post the infomation
     method = method.toLowerCase();
     let config = {};
+
     if (withFiles === true) {
         config["headers"] = { 'Content-Type': 'multipart/form-data' };
+    } else {
+        config["headers"] = { 'Content-Type': 'application/json' };
     }
+
+    console.log(config);
+
     if (method === "patch") {
         return await axios.patch(url, getFormData($form), config);
     } else if (method === "put") {

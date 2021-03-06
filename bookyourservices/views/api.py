@@ -4,10 +4,10 @@ from utils import *
 from forms import *
 from models import *
 from views.modules.user import UserHandler
-from views.modules.address import AddressHandler
 from views.modules.service import ServiceHandler
 from views.modules.category import CategoryHandler
 from views.modules.appointment import AppointmentHandler
+from views.modules.schedule import ScheduleHandler
 from google_calendar.google_calendar import GoogleCalendarHandler
 
 
@@ -84,6 +84,49 @@ def services_delete(service_id):
         return (jsonify(ServiceHandler.delete(service_id)) , 200)
 
     return (jsonify({}) , 200)
+
+
+
+######
+# For Schedules
+#
+@api.route('/api/schedules/<string:username>/<string:schedule_type>')
+def schedules_list(username, schedule_type):
+    """List for schedules"""
+
+    items = ScheduleHandler.list(username=username , schedule_type=schedule_type)
+
+    return jsonify(items = [item.serialize() for item in items])
+
+
+@api.route('/api/schedules/<string:username>/<string:date_exp>', methods=['GET'])
+def schedules_get(username, date_exp):
+    """Get Schedule"""
+    item = ScheduleHandler.get(username , date_exp)
+
+    return jsonify(item=item.serialize())
+
+@api.route('/api/schedules/<string:username>', methods=['POST'])
+@login_required
+def schedules_update(username):
+    """update /insert for schedules"""
+
+    if login_username() == username:
+        item = ScheduleHandler.update(username)
+
+        return (jsonify(item) , 200)
+
+    return (jsonify({}) , 200)
+
+
+@api.route('/api/schedules/<string:username>/<string:date_exp>', methods=['DELETE'])
+@login_required
+def schedules_delete(username , date_exp):
+    """Delete Schedule"""
+    if login_username() == username:
+        return (jsonify(ScheduleHandler.delete(username , date_exp)) , 200)
+
+    return jsonify({} , 200)
 
 
 ######

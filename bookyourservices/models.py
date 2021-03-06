@@ -1,6 +1,8 @@
 from utils import db, hash_password, check_password_hash
 from flask_sqlalchemy import SQLAlchemy, sqlalchemy
 from utils import *
+import datetime
+import json
 
 
 class Admin(db.Model):
@@ -127,10 +129,6 @@ class User(db.Model):
 
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
-    # Addresses
-    addresses = db.relationship(
-        "Address", backref="user", cascade="all, delete, delete-orphan", passive_deletes=True)
-
     # Services
     services = db.relationship(
         "Service", backref="user", cascade="all, delete, delete-orphan", passive_deletes=True)
@@ -239,52 +237,6 @@ class User(db.Model):
         }
 
 
-class Address(db.Model):
-    """Address"""
-    __tablename__ = 'addresses'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(20), db.ForeignKey(
-        'users.username', ondelete="CASCADE"))
-    name = db.Column(db.String(100), nullable=False)
-    address1 = db.Column(db.String(100), nullable=False)
-    address2 = db.Column(db.String(100))
-    city = db.Column(db.String(50), nullable=False)
-    state = db.Column(db.String(50), nullable=False)
-    zipcode = db.Column(db.String(20), nullable=False)
-    is_default = db.Column(db.Boolean, nullable=False, server_default="true")
-    is_active = db.Column(db.Boolean, nullable=False, server_default="true")
-
-    @property
-    def address(self):
-        """Return the address"""
-        return f"""{self.name}
-{self.address1} {self.address2}
-{self.city}, {self.state} {self.zipcode}"""
-
-    def __repr__(self):
-        """Representation of this class"""
-        e = self
-        return f"<Address {e.username} {e.address}>"
-
-    def serialize(self):
-        """Serialize a Address SQLAlchemy obj to dictionary."""
-
-        return {
-            "id": self.id,
-            "username": self.username,
-            "name": self.name,
-            "address1": self.address1,
-            "address2": self.address2,
-            "city": self.city,
-            "state": self.state,
-            "zipcode": self.zipcode,
-            "address": self.address,
-            "is_default": self.is_default,
-            "is_active": self.is_active
-        }
-
-
 class Category(db.Model):
     """Categories"""
     __tablename__ = 'categories'
@@ -321,7 +273,7 @@ class Service(db.Model):
     username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
     name = db.Column(db.String(100), nullable=False)
-    location_type = db.Column(db.Integer, nullable=False)
+    # location_type = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=False)
     image = db.Column(db.Text)
     updated = db.Column(
@@ -347,22 +299,22 @@ class Service(db.Model):
 
         return upload_file_url(self.image, username=self.username, dirname="services")
 
-    @property
-    def location_type_name(self):
-        """Return the location type name"""
+    # @property
+    # def location_type_name(self):
+    #     """Return the location type name"""
 
-        return Service.get_location_type_name(self.location_type)
+    #     return Service.get_location_type_name(self.location_type)
 
-    @staticmethod
-    def get_location_type_name(location_type):
-        """Return the location type name"""
+    # @staticmethod
+    # def get_location_type_name(location_type):
+    #     """Return the location type name"""
 
-        if location_type == 0:
-            return "Online Service"
-        if location_type == 1:
-            return "Phone Service"
+    #     if location_type == 0:
+    #         return "Online Service"
+    #     if location_type == 1:
+    #         return "Phone Service"
 
-        return "Online Service"
+    #     return "Online Service"
 
     def set_categoiry_ids(self, ids=[]):
         """Set categories with category_id list"""
@@ -393,8 +345,8 @@ class Service(db.Model):
             "id": self.id,
             "username": self.username,
             "name": self.name,
-            "location_type": self.location_type,
-            "location_type_name": self.location_type_name,
+            # "location_type": self.location_type,
+            # "location_type_name": self.location_type_name,
             "description": self.description,
             "image": self.image,
             "image_url": self.image_url,
@@ -421,32 +373,80 @@ class CategoryService(db.Model):
         e = self
         return f"<CategoryService category_id={e.category_id} service_id={e.service_id}>"
 
+    def serialize(self):
+        """Serialize a CategoryService SQLAlchemy obj to dictionary."""
+
+        return {
+            "category_id": self.category_id,
+            "service_id": self.service_id
+        }
+
 
 class Schedule(db.Model):
     """Schedule setting for providers"""
     __tablename__ = 'schedules'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), db.ForeignKey(
-        'users.username', ondelete="CASCADE"))
-    schedule_type = db.Column(db.Integer, nullable=False, server_default="0")
-    schedule_date = db.Column(db.Date)
+        'users.username', ondelete="CASCADE"), primary_key=True)
+    date_exp = db.Column(db.String(20), nullable=False, primary_key=True)
     schedules = db.Column(db.Text, nullable=False, server_default="")
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
     @property
-    def schedule_type_name(self):
+    def schedule_name(self):
         """Return the schedule type display name"""
 
-        if self.schedule_type == 1:
-            return "Date"
+        if self.date_exp in [str(item) for item in range(7)]:
+            # for weekly schedules return the day of the week
+            return WEEKDAYS[int(self.date_exp)]
 
-        return "Weekly"
+        # for other schedule, return the date
+        return datetime.date.fromisoformat(self.date_exp).strftime(DATE_FORMAT)
+
+    @property
+    def schedule_list(self):
+        """Return the current schedule list"""
+
+        if len(self.schedules) > 0:
+            return json.loads(self.schedules)
+
+        return []
+
+    def available_times(self , date):
+        """Return the list of available time for specific date"""
+
+        list = self.schedule_list
+
+        return [(f"{item['start']}-{item['end']}" , f"{item['start']} to {item['end']}") for item in list if Schedule.check_available(self.username , date , item)]
+
+
+    @staticmethod
+    def check_available(username, date, item):
+        """Check if a schedule time frame is available"""
+
+        start_time = datetime.time.fromisoformat(item["start"])
+        end_time = datetime.time.fromisoformat(item["end"])
+
+        start = datetime.datetime.combine(date, start_time)
+        end = datetime.datetime.combine(date, end_time)
+
+        return Appointment.check_available(username, start, end)
 
     def __repr__(self):
         """Representation of this class"""
         e = self
-        return f"<Service date_exp={e.date_exp} username={e.username} start={e.start} last={e.last}>"
+        return f"<Schedule date_exp={e.date_exp} username={e.username}>"
+
+    def serialize(self):
+        """Serialize a Schedule SQLAlchemy obj to dictionary."""
+
+        return {
+            "username": self.username,
+            "date_exp": self.date_exp,
+            "schedules": self.schedules,
+            "schedule_name": self.schedule_name,
+            "is_active": self.is_active
+        }
 
 
 class Appointment(db.Model):
@@ -464,11 +464,7 @@ class Appointment(db.Model):
     end = db.Column(db.TIMESTAMP(timezone=True), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey(
         'services.id', ondelete="CASCADE"))
-    location_type = db.Column(db.Integer, nullable=False, server_default="0")
-    address = db.Column(db.Text, nullable=False, server_default="")
     note = db.Column(db.Text, nullable=False, server_default="")
-    # summary = db.Column(db.Text, nullable=False, server_default="")
-    # description = db.Column(db.Text, nullable=False, server_default="")
     updated = db.Column(
         db.TIMESTAMP(timezone=True),
         nullable=False,
@@ -501,42 +497,46 @@ class Appointment(db.Model):
 
         return f"""
 Customer:{self.customer.full_name}
-Location:{self.location_type_name}
-Address:{self.address}
 Note:{self.note}
 """
 
-    @property
-    def location_type_name(self):
-        """Returnt the name of location_type"""
+    # @property
+    # def location_type_name(self):
+    #     """Returnt the name of location_type"""
 
-        return Service.get_location_type_name(self.location_type)
+    #     return Service.get_location_type_name(self.location_type)
 
     def __repr__(self):
         """Representation of this class"""
         e = self
         return f"<Appointment id={e.id} provider_username={e.provider_username} customer_username={e.customer_username} start={e.start} end={e.end}>"
 
-    def check_conflict(self):
-        """Check is there is a conflict with the time frme"""
-
+    @staticmethod
+    def check_available(username, start, end, appointment_id=0):
+        """Check if there is a conflict with a schedule"""
         count = Appointment.query.filter(
-            (Appointment.provider_username == self.provider_username) &
-            (Appointment.id != self.id) &
+            (Appointment.provider_username == username) &
+            (Appointment.id != appointment_id) &
             (
                 (
-                    ((Appointment.start <= self.start) & (Appointment.end > self.start)) |
-                    ((Appointment.start < self.end)
-                     & (Appointment.end >= self.end))
+                    ((Appointment.start <= start) & (Appointment.end > start)) |
+                    ((Appointment.start < end)
+                     & (Appointment.end >= end))
                 ) |
                 (
-                    ((self.start <= Appointment.start) & (self.end > Appointment.start)) |
-                    ((self.start < Appointment.end)
-                     & (self.end >= Appointment.end))
+                    ((Appointment.start >= start) & (Appointment.start < end)) |
+                    ((Appointment.end > start)
+                     & (Appointment.end <= end))
                 )
             )).count()
 
-        return (count > 0)
+        return (count == 0)
+
+    @property
+    def available(self):
+        """Check if the time frame is available"""
+
+        return Appointment.check_available(self.provider_username, self.start, self.end, self.id)
 
     def serialize(self):
         """Serialize a Appointment SQLAlchemy obj to dictionary."""
@@ -549,9 +549,6 @@ Note:{self.note}
             "start": self.start,
             "end": self.end,
             "service_id": self.service_id,
-            "location_type": self.location_type,
-            "location_type_name": self.location_type_name,
-            "address": self.address,
             "note": self.note,
             "summary": self.summary,
             "description": self.description,

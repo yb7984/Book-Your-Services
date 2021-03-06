@@ -1,9 +1,6 @@
 import ListAppointments from '/static/js/modules/listAppointments.js';
-import * as formFunc from '/static/js/modules/form.js';
 
-const $title = $("#appointment-form-title");
 const $listContainer = $("#appointments-list");
-const $formContainer = $("#form-appointment-container");
 const $form = $("#form-appointment-");
 const $newBtn = $("#btn-new");
 

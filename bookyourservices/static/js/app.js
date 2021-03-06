@@ -8,6 +8,8 @@ const DATE_FORMAT_OPTIONS = {
     minute: 'numeric'
 };
 
+const WEEKDAYS = ["SUNDAY" , "MONDAY" , "TUESDAY" , "WEDNESDAY" , "THURDAY" , "FRIDAY" , "SATURDAY"];
+
 const ALERT_SUCCESS = "success";
 const ALERT_ERROR = "danger";
 
