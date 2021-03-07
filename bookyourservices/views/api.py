@@ -98,6 +98,13 @@ def schedules_list(username, schedule_type):
 
     return jsonify(items = [item.serialize() for item in items])
 
+@api.route('/api/schedules/<string:username>/<string:date>/<int:appointment_id>')
+def schedules_list_available_times(username , date , appointment_id):
+    """Return available schedules for the date"""
+
+    list = ScheduleHandler.get_available_times(username , datetime.date.fromisoformat(date) , appointment_id=appointment_id)
+    
+    return jsonify(items=list)
 
 @api.route('/api/schedules/<string:username>/<string:date_exp>', methods=['GET'])
 def schedules_get(username, date_exp):

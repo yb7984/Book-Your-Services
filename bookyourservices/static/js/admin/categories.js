@@ -1,15 +1,20 @@
-import * as formFunc from '/static/js/modules/form.js'
 import ListCategories from '/static/js/modules/listCategories.js'
 
 /************
  * Here is the part for categories
  * 
  */
+
+
+const LIST_URL = getGlobalValues("LIST_URL");
+const NEW_URL = getGlobalValues("NEW_URL");
+const UPDATE_URL = getGlobalValues("UPDATE_URL");
+const DELETE_URL = getGlobalValues("DELETE_URL");
+
+let categories = null;
 const $btnNew = $("#btn-new");
 const $categoryList = $("#categories-list");
 const $categoryForm = $("#form-");
-const $categoryFormTitle = $("#form-title");
-const $categoryFormModal = $("#form-container");
 
 const categoryTemplate = `
 <tr>

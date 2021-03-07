@@ -5,6 +5,14 @@ import ListServices from '/static/js/modules/listServices.js';
  * Here is the part for services
  * 
  */
+
+//Service urls
+const SERVICE_LIST_URL = getGlobalValues("SERVICE_LIST_URL")
+const SERVICE_INSERT_URL = getGlobalValues("SERVICE_INSERT_URL")
+const SERVICE_UPDATE_URL = getGlobalValues("SERVICE_UPDATE_URL");
+const SERVICE_DELETE_URL = getGlobalValues("SERVICE_DELETE_URL");
+
+
 const $serviceList = $("#services-list");
 const $serviceTemplate = $("#services-template");
 const $serviceForm = $("#form-service-container form");

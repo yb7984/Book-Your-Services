@@ -10,15 +10,6 @@ All Categories
 {% endblock %}
 
 {% block content %}
-<script>
-    //Address urls 
-    const LIST_URL = '{{url_for("admin.categories_list")}}';
-    const NEW_URL = '{{url_for("admin.categories_new")}}';
-    const UPDATE_URL = '{{url_for("admin.categories_update", category_id=0)}}';
-    const DELETE_URL = '{{url_for("admin.categories_delete", category_id=0)}}';
-
-    let categories = null;
-</script>
 <table class="table table-striped rounded">
     <thead class="bg-secondary text-white">
         <th>ID</th>

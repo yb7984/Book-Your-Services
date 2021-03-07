@@ -1,5 +1,10 @@
 import ListServices from '/static/js/modules/listServices.js';
 
+const SERVICE_LIST_URL = '/api/services/mine';
+const SERVICE_INSERT_URL = '/api/services';
+const SERVICE_UPDATE_URL = '/api/services/0';
+const SERVICE_DELETE_URL = '/api/services/0';
+
 const $listContainer = $("#services-list");
 const $form = $("#form-service-");
 const $newBtn = $("#btn-new");

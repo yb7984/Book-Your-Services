@@ -1,5 +1,6 @@
 import ListAppointments from '/static/js/modules/listAppointments.js';
 
+const APPOINTMENT_LIST_URL = getGlobalValues("APPOINTMENT_LIST_URL");
 const $listContainer = $("#appointments-list");
 const $form = $("#form-appointment-");
 const $newBtn = $("#btn-new");

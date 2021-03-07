@@ -21,10 +21,6 @@ Book your service
 
 {% block main %}
 {% include 'flash.html' %}
-<script>
-    const CURRENT_USERNAME = '{{ g.user.username if g.user }}';
-</script>
-
 <div class="row">
     <div class="col-12 col-md-8 h1">{% block subtitle %}Block Subtitle{% endblock %}</div>
     <div class="col-12 col-md-4 align-self-center">

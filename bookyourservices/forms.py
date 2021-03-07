@@ -196,11 +196,12 @@ class AppointmentForm(FlaskForm):
     customer_username = HiddenField("Customer Username")
     service_date = DateField("Service Date", validators=[InputRequired()], render_kw={
                              "placeholder": "Input your service date here"})
-    start = TimeField("Starts from", validators=[InputRequired()])
-    end = TimeField("Ends at", validators=[InputRequired()])
+    # start = TimeField("Starts from", validators=[InputRequired()])
+    # end = TimeField("Ends at", validators=[InputRequired()])
+    times = StringField("Schedule Time" , validators=[InputRequired()])
     note = TextAreaField("Note", validators=[Optional()],
                          render_kw={"placeholder": "Input your note here",
-                                    "rows": 6})
+                                    "rows": 4})
 
     def validate_service_date(form, field):
         """validator for service_date"""

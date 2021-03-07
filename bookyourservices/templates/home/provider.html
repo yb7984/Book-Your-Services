@@ -34,8 +34,5 @@ Provider: <label class="text-success">{{ account.full_name }}</label>
 {% endblock %}
 
 {% block js %}
-<script>
-    const PROVIDER_USER_NAME = '{{ account.username }}';
-</script>
 <script src="/static/js/home/provider.js" type="module"></script>
 {% endblock %}

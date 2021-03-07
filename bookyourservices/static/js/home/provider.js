@@ -1,5 +1,7 @@
 import ListServices from '/static/js/modules/listServices.js'
 
+const PROVIDER_USER_NAME = getGlobalValues("PROVIDER_USER_NAME");
+
 const listServices = new ListServices(
     $("#services-list"),
     $("#services-template").html(),

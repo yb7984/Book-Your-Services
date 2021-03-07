@@ -26,12 +26,5 @@ My Weekly Schedules
 {% endblock %}
 
 {% block js %}
-<script>
-    const PROVIDER_USER_NAME = CURRENT_USERNAME;
-    const SCHEDULE_LIST_URL = `/api/schedules/${CURRENT_USERNAME}`;
-    const SCHEDULE_UPDATE_URL = `/api/schedules/${CURRENT_USERNAME}`;
-    const SCHEDULE_DELETE_URL = `/api/schedules/${CURRENT_USERNAME}/0`;
-
-</script>
 <script src="/static/js/home/users/myschedules.js" type="module"></script>
 {% endblock %}

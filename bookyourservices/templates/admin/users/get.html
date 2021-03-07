@@ -5,16 +5,6 @@ User: <span class="text-success">{{account.username}}</span>
 {% endblock %}
 
 {% block top_links %}
-<script>
-        //the variable storing the current user
-        const CURRENT_USERNAME = '{{account.username}}';
-        //Service urls
-        const SERVICE_LIST_URL = '{{url_for("admin.services_list" , username=account.username)}}';
-        const SERVICE_INSERT_URL = '{{url_for("admin.services_new" , username=account.username)}}';
-        const SERVICE_UPDATE_URL = '{{url_for("admin.services_update" , username=account.username , service_id=0)}}';
-        const SERVICE_DELETE_URL = '{{url_for("admin.services_delete" , username=account.username , service_id=0)}}';
-
-</script>
 <form action="{{ url_for('admin.users_delete' , username=account.username) }}" method="POST">
         <a class="btn btn-primary" href="{{ url_for('admin.users_list')}}" title="Users List"><i
                         class="fas fa-users"></i></a>

@@ -1,4 +1,8 @@
 import ListSchedules from '/static/js/modules/listSchedules.js';
+const CURRENT_USERNAME = getGlobalValues("CURRENT_USERNAME");
+const SCHEDULE_LIST_URL = `/api/schedules/${CURRENT_USERNAME}`;
+const SCHEDULE_UPDATE_URL = `/api/schedules/${CURRENT_USERNAME}`;
+const SCHEDULE_DELETE_URL = `/api/schedules/${CURRENT_USERNAME}/0`;
 
 const $listWeeklyContainer = $("#schedules-list-weekly");
 const $listDatesContainer = $("#schedules-list-dates");

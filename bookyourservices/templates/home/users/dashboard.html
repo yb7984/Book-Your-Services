@@ -8,10 +8,10 @@ Dashboard
 
 {% block content %}
 <div class="row">
-    <div class="col-12 col-lg-6">
+    <div class="col-12 col-lg-4">
         <img src="{{account.image_url}}" class="img-fluid" />
     </div>
-    <div class="col-12 col-lg-6 h4">
+    <div class="col-12 col-lg-8 h4">
         <div class="row">
             <div class="col-4 text-primary">Name:</div>
             <div class="col-8 text-secondary">{{account.full_name}}</div>
@@ -36,8 +36,5 @@ Dashboard
 {% endblock %}
 
 {% block js %}
-<script>
-    const PROVIDER_USER_NAME = '{{ account.username }}';
-</script>
 <script src="/static/js/home/provider.js" type="module"></script>
 {% endblock %}

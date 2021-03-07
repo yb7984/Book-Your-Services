@@ -15,6 +15,14 @@ const ALERT_ERROR = "danger";
 
 
 /**
+ * Return the values set from the server side
+ * @param {*} key 
+ */
+function getGlobalValues(key){
+    return $(document).data(key);
+}
+
+/**
  * Return the click event clicked button
  * @param {*} event 
  * @param {*} className 

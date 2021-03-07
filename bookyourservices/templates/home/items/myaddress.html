@@ -1,0 +1,29 @@
+<div id="addresses-template" class="d-none">
+        <div class="col-12 col-md-6 col-lg-4 d-flex" id="addresses-list-%%id%%">
+                <div class="card m-1 bg-light">
+                        <div class="card-body">
+                                <p class="card-title font-weight-bold">
+                                        %%name%%
+                                </p>
+                                <p class="card-text">
+                                        %%address%%
+                                </p>
+                                <div class="row">
+                                        <div class="col text-success">
+                                                %%is_default%%
+                                        </div>
+                                        <div class="col text-secondary">
+                                                %%is_active%%
+                                        </div>
+                                </div>
+                                <div class="text-center">
+                                        <button class="btn btn-primary btn-edit" data-id="%%id%%" data-toggle="modal"
+                                                data-target="#form-address-container"><i
+                                                        class="fas fa-edit"></i></button>
+                                        <button class="btn btn-danger btn-delete" data-id="%%id%%"><i
+                                                        class="fas fa-trash-alt"></i></button>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>

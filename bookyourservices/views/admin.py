@@ -90,6 +90,8 @@ def login_admin_username_set(username):
 def before_request_func():
     """Set current login user information"""
 
+    g.global_values = {}
+
     if login_admin_username():
         g.admin = Admin.query.get(login_admin_username())
 
@@ -315,6 +317,14 @@ def users_get(username):
     service_form = ServiceForm(prefix="service")
     service_form.category_ids.choices = CategoryHandler.list_for_select()
 
+
+    g.global_values["CURRENT_USERNAME"] = account.username
+    #Service urls
+    g.global_values["SERVICE_LIST_URL"] = url_for("admin.services_list" , username=account.username)
+    g.global_values["SERVICE_INSERT_URL"] = url_for("admin.services_new" , username=account.username)
+    g.global_values["SERVICE_UPDATE_URL"] = url_for("admin.services_update" , username=account.username , service_id=0)
+    g.global_values["SERVICE_DELETE_URL"] = url_for("admin.services_delete" , username=account.username , service_id=0)
+
     return render_template('admin/users/get.html',
                            account=account,
                            service_form=service_form)
@@ -463,6 +473,11 @@ def services_delete(username, service_id):
 def categories_index():
     """Page for categories management"""
     form = CategoryForm()
+
+    g.global_values["LIST_URL"] = url_for("admin.categories_list")
+    g.global_values["NEW_URL"] = url_for("admin.categories_new")
+    g.global_values["UPDATE_URL"] = url_for("admin.categories_update", category_id=0)
+    g.global_values["DELETE_URL"] = url_for("admin.categories_delete", category_id=0)
 
     return render_template('admin/categories/index.html', form=form)
 

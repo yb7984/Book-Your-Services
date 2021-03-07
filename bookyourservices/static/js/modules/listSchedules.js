@@ -210,6 +210,14 @@ class ListSchedules extends ListBasic {
         let currentValue = this.$date_exp_dates.val();
 
         if (date.length > 0 && !currentValue.includes(date)) {
+            //only add dates today and after
+            const today = (new Date(Date.now())).toISOString().substr(0 , 10);
+
+            if (date < today){
+                showAlert("Only adding dates today or after!" , ALERT_ERROR);
+                return ;
+            }
+
             currentValue = (currentValue.length > 0 ? currentValue + ',' : '') + date;
             this.$date_exp_dates.val(currentValue);
 

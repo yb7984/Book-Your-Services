@@ -37,8 +37,12 @@ def _jinja2_filter_date(d):
 def before_request_func():
     """Set current login user information"""
 
+    g.global_values = {}
+
     if login_username():
         g.user = User.query.get(login_username())
+
+        g.global_values["CURRENT_USERNAME"] = g.user.username
 
         if g.user is None:
             flash("Please login first!", FLASH_GROUP_DANGER)
@@ -99,6 +103,8 @@ def provider_detail(username):
     """Provider Detail"""
 
     user = User.query.get_or_404(username)
+
+    g.global_values["PROVIDER_USER_NAME"] = user.username
 
     return render_template("home/provider.html", account=user)
 
@@ -213,6 +219,8 @@ def logout():
 def dashboard():
     """Get user dashboard"""
 
+    g.global_values["PROVIDER_USER_NAME"] = g.user.username
+
     return render_template("home/users/dashboard.html", account=g.user)
 
 
@@ -242,6 +250,8 @@ def my_schedules():
 def my_appointments():
     """Get all my services"""
 
+    g.global_values["APPOINTMENT_LIST_URL"] = '/api/appointments'
+
     return render_template("home/appointments/list.html")
 
 
@@ -249,5 +259,7 @@ def my_appointments():
 @login_required
 def provider_appointments():
     """Get all my services"""
+
+    g.global_values["APPOINTMENT_LIST_URL"] = '/api/appointments?is_provider=1'
 
     return render_template("home/appointments/list-provider.html")

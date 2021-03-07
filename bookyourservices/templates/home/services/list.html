@@ -17,13 +17,5 @@ My Services
 {% endblock %}
 
 {% block js %}
-<script>
-    const PROVIDER_USER_NAME = '{{ g.user.username }}';
-    const SERVICE_LIST_URL = '/api/services/mine';
-    const SERVICE_INSERT_URL = '/api/services';
-    const SERVICE_UPDATE_URL = '/api/services/0';
-    const SERVICE_DELETE_URL = '/api/services/0';
-
-</script>
 <script src="/static/js/home/users/myservices.js" type="module"></script>
 {% endblock %}

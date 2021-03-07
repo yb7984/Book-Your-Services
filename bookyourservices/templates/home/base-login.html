@@ -21,9 +21,6 @@ Book your service
 
 {% block main %}
 {% include 'flash.html' %}
-<script>
-    const CURRENT_USERNAME = '{{ g.user.username if g.user }}';
-</script>
 <div class="row">
     <div class="col-3 d-none d-lg-block">
         {% include "home/menu-side.html" %}
