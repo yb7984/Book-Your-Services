@@ -107,10 +107,6 @@ class User(db.Model):
     calendar_id = db.Column(db.Text)
     calendar_email = db.Column(db.String(50))
 
-    # analysis
-    reviews = db.Column(db.Integer, server_default="0")
-    rating = db.Column(db.Float, server_default="0")
-
     #provider or customer
     is_provider = db.Column(db.Boolean, nullable=False, server_default="FALSE")
 
@@ -228,8 +224,6 @@ class User(db.Model):
             "description": self.description,
             "image": self.image,
             "image_url": self.image_url,
-            "reviews": self.reviews,
-            "rating": self.rating,
             "is_provider": self.is_provider,
             "updated": self.updated,
             "created": self.created,
@@ -560,73 +554,3 @@ Note:{self.note}
             "customer": self.customer.full_name,
             "service": self.service.name
         }
-
-
-class Email(db.Model):
-    """Emails"""
-    __tablename__ = 'emails'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    appointment_id = db.Column(db.Integer, db.ForeignKey(
-        'appointments.id', ondelete="CASCADE"))
-    sender_username = db.Column(db.String(20), db.ForeignKey(
-        'users.username', ondelete="CASCADE"))
-    receiver_username = db.Column(db.String(20), db.ForeignKey(
-        'users.username', ondelete="CASCADE"))
-    email = db.Column(db.String(30), nullable=False)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    is_sent = db.Column(db.Boolean, nullable=False, server_default="FALSE")
-    sent = db.Column(db.TIMESTAMP(timezone=True))
-    created = db.Column(
-        db.TIMESTAMP(timezone=True),
-        nullable=False,
-        server_default=sqlalchemy.func.now()
-    )
-    is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
-
-    sender = db.relationship("User", foreign_keys=[
-                             sender_username], backref=db.backref("emails_sent", lazy="dynamic"))
-
-    receiver = db.relationship("User", foreign_keys=[
-                               receiver_username], backref=db.backref("emails_received", lazy="dynamic"))
-
-    def __repr__(self):
-        """Representation of this class"""
-        e = self
-        return f"<Email title={e.title} from={e.sender_username} to={e.receiver_username} email={e.email}>"
-
-
-class Review(db.Model):
-    """Reviews"""
-    __tablename__ = 'reviews'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    appointment_id = db.Column(db.Integer, db.ForeignKey(
-        'appointments.id', ondelete="CASCADE"))
-    from_username = db.Column(db.String(20), db.ForeignKey(
-        'users.username', ondelete="CASCADE"))
-    to_username = db.Column(db.String(20), db.ForeignKey(
-        'users.username', ondelete="CASCADE"))
-    rating = db.Column(db.Integer, nullable=False)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    is_visible = db.Column(db.Boolean, nullable=False, server_default="FALSE")
-    updated = db.Column(db.TIMESTAMP(timezone=True))
-    created = db.Column(
-        db.TIMESTAMP(timezone=True),
-        nullable=False,
-        server_default=sqlalchemy.func.now()
-    )
-    is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
-
-    from_user = db.relationship("User", foreign_keys=[
-                                from_username], backref=db.backref("reviews_sent", lazy='dynamic'))
-
-    to_user = db.relationship("User", foreign_keys=[
-                              to_username], backref=db.backref("reviews_received", lazy='dynamic'))
-
-    def __repr__(self):
-        """Representation of this class"""
-        e = self
-        return f"<Review title={e.title} from_username={e.from_username} to_username={e.to_username} rating={e.rating}>"
