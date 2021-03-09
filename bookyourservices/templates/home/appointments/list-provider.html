@@ -8,10 +8,23 @@ Provider Appointments
 {% endblock %}
 
 {% block content %}
+<div class="row">
+    <div class="col-12 d-flex row py-2 bg-secondary text-white font-weight-bolder" id="services-list-%%id%%">
+        <div class="col-2">Customer</div>
+        <div class="col-2">Service</div>
+        <div class="col-2">Date</div>
+        <div class="col">Start</div>
+        <div class="col">End</div>
+        <div class="col">Note</div>
+        <div class="col-2">
+            Actions
+        </div>
+    </div>
+</div>
 <div class="row" id="appointments-list">
 </div>
 {% include "form-ajax-modal.html" %}
-{% include "home/items/myappointment.html" %}
+{% include "home/items/myappointment-provider.html" %}
 {% endblock %}
 
 {% block js %}

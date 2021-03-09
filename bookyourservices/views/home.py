@@ -220,9 +220,10 @@ def dashboard():
     """Get user dashboard"""
 
     g.global_values["PROVIDER_USERNAME"] = g.user.username
-    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments?{"is_provider=1" if g.user.is_provider else ""}'
+    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments/{ g.user.username }?{"is_provider=1" if g.user.is_provider else ""}'
     g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
     g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
+    g.global_values["APPOINTMENT_PER_PAGE"] = '6'
 
     appointment_form = AppointmentForm(prefix="appointment")
 
@@ -309,7 +310,7 @@ def my_schedules():
 def my_appointments():
     """Get all my services"""
 
-    g.global_values["APPOINTMENT_LIST_URL"] = '/api/appointments'
+    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments/{login_username()}'
     g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
     g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
 
@@ -323,7 +324,7 @@ def my_appointments():
 def provider_appointments():
     """Get all my services"""
 
-    g.global_values["APPOINTMENT_LIST_URL"] = '/api/appointments?is_provider=1'
+    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments/{login_username()}?is_provider=1'
     g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
     g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
 

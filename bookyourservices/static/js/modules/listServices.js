@@ -32,9 +32,9 @@ class ListServices extends ListBasic {
             //this service is belong to current login user, hide the appointment button
 
             html = html.replaceAll("btn-appointment", "btn-appointment d-none");
-        } 
-        if (current_username){
-            html = html.replaceAll("btn-login" , "btn-login d-none");
+        }
+        if (current_username) {
+            html = html.replaceAll("btn-login", "btn-login d-none");
         }
         return html;
     }
@@ -68,6 +68,9 @@ class ListServices extends ListBasic {
     async openAppointment(e) {
         const $btn = findClickedButton(e, "btn-appointment");
 
+        const $form = $("#form-appointment-");
+        formFunc.showFormError($form, "");
+
         const id = $btn.data("id");
 
         this.current_service = await this.getItem("id", id);
@@ -99,8 +102,8 @@ class ListServices extends ListBasic {
                 $times.val($timesSelector.val());
             });
 
-            $date.on("change" , async (e) =>{
-                await this.loadAvailableTimes(this.current_service.username , $date.val());
+            $date.on("change", async (e) => {
+                await this.loadAvailableTimes(this.current_service.username, $date.val());
             });
         }
 
@@ -109,7 +112,7 @@ class ListServices extends ListBasic {
 
         $date.val(today);
 
-        await this.loadAvailableTimes(this.current_service.username , $date.val());
+        await this.loadAvailableTimes(this.current_service.username, $date.val());
 
         const $timesSelector = $("#appointment-times-select");
         $times.val($timesSelector.val());
@@ -162,6 +165,8 @@ class ListServices extends ListBasic {
                 if (resp.status === 201) {
                     this.resetAppointmentForm();
                     $formContainer.modal("hide");
+
+                    formFunc.showFormError($form, "");
 
                     showAlert("Successfully make appointment!")
                 }

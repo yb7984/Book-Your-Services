@@ -277,7 +277,7 @@ def users_get(username):
 
     appointment_form = AppointmentForm(prefix="appointment")
 
-    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments{"?is_provider=1" if account.is_provider else ""}'
+    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments/{account.username}{"?is_provider=1" if account.is_provider else ""}'
     g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
     g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
 

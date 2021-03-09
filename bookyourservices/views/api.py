@@ -183,11 +183,17 @@ def appointments_delete(appointment_id):
 
     return (jsonify(item) , 200)
 
-@api.route('/api/appointments')
+@api.route('/api/appointments/<string:username>')
 @login_required
-def appointments_list():
+def appointments_list(username):
     """insert for appointment"""
 
-    paginate = AppointmentHandler.list(login_username())
+    if (login_username() == username or login_admin_username() is not None):
 
-    return jsonify_paginate(paginate)
+        per_page = request.args.get("per_page" , "12")
+        
+        paginate = AppointmentHandler.list(username , int(per_page))
+
+        return jsonify_paginate(paginate)
+
+    return jsonify({})

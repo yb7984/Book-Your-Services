@@ -2,6 +2,28 @@ import ListBasic from '/static/js/modules/list.js';
 import * as config from '/static/js/config.js';
 
 class ListAppointments extends ListBasic {
+
+    /**
+     * Load events
+     */
+    event(){
+        super.event();
+
+        this.$listContainer.on("click" , ".btn-note" , async (e)=>{
+
+            e.preventDefault();
+            const $btn = findClickedButton(e, "btn-note");
+
+            const id = $btn.data(this.idKey);
+
+            const item = await this.getItem(this.idKey, id);
+
+            if (item.note != ""){
+                showAlert(item.note);
+            }
+        });
+    }
+
     /**
      * Return the html of the service
      * @param {*} item 
@@ -11,12 +33,14 @@ class ListAppointments extends ListBasic {
         return this.template
             .replaceAll("%%id%%", item.id)
             .replaceAll("%%summary%%", item.summary)
+            .replaceAll("%%service%%", item.service)
             .replaceAll("%%provider%%", item.provider_username)
             .replaceAll("%%customer%%", item.customer_username)
-            .replaceAll("%%start%%", (new Date(item.start)).toLocaleString(config.DATE_FORMAT_LANG, config.DATE_FORMAT_OPTIONS))
-            .replaceAll("%%end%%", (new Date(item.end)).toLocaleString(config.DATE_FORMAT_LANG, config.DATE_FORMAT_OPTIONS))
+            .replaceAll("%%service_date%%", (new Date(item.start)).toLocaleString(config.DATE_FORMAT_LANG, config.DATE_FORMAT_OPTIONS))
+            .replaceAll("%%start%%", (new Date(item.start)).toLocaleString(config.DATE_FORMAT_LANG, config.TIME_FORMAT_OPTIONS))
+            .replaceAll("%%end%%", (new Date(item.end)).toLocaleString(config.DATE_FORMAT_LANG, config.TIME_FORMAT_OPTIONS))
             // .replaceAll("%%location_type%%", item.location_type)
-            .replaceAll("%%note%%", item.note.replaceAll("\n", "<br />"))
+            .replaceAll("%%no_note%%", item.note === "" ? "d-none": "")
             .replaceAll("%%description%%", item.description.replaceAll("\n", "<br />"))
             .replaceAll("%%is_active%%", item.is_active ? `<span class="text-success">Active</span>` : `<span class="text-danger">Inactive</span>`);
     }
@@ -80,6 +104,26 @@ class ListAppointments extends ListBasic {
     }
 
 
+    /**
+     * List All items
+     * @param {*} reload 
+     * @param {*} page
+     * @param {*} loadPager
+     */
+    async loadList(reload = false, page = 1, loadPager = false) {
+
+        await super.loadList(reload , page , loadPager);
+        
+        const $rows = this.$listContainer.find(".appointment-item");
+
+        console.log($rows.length);
+
+        for (let i = 0 ; i < $rows.length ; i ++){
+            if (i % 2 == 0){
+                $($rows[i]).addClass("bg-light");
+            }
+        }
+    }
 
     /**
      * Load available times of the date

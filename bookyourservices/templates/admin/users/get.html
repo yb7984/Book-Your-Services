@@ -23,12 +23,14 @@ User: <span class="text-success">{{account.username}}</span>
                 <li class="nav-item">
                         <a class="nav-link active" data-toggle='pill' href="#home">Basic</a>
                 </li>
+                {% if account.is_provider %}
                 <li class="nav-item">
                         <a class="nav-link" data-toggle='pill' href="#services">Services</a>
                 </li>
                 <li class="nav-item">
                         <a class="nav-link" data-toggle='pill' href="#schedules">Schedules</a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
                         <a class="nav-link" data-toggle='pill' href="#appointments">Appointments</a>
                 </li>
@@ -65,6 +67,7 @@ User: <span class="text-success">{{account.username}}</span>
                                 <div class="col-12 text-secondary">{{account.description}}</div>
                         </div>
                 </div>
+                {% if account.is_provider %}
                 <div id="services" class="tab-pane fade">
                         <div id="services-container">
                                 <div class="text-right">
@@ -129,13 +132,27 @@ User: <span class="text-success">{{account.username}}</span>
                         {% endwith %}
                         {% include "home/items/myschedule.html" %}
                 </div>
+                {% endif %}
                 <div id="appointments" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-12 d-flex row py-2 bg-secondary text-white font-weight-bolder" id="services-list-%%id%%">
+                                <div class="col-2">Customer</div>
+                                <div class="col-2">Service</div>
+                                <div class="col-3">Date</div>
+                                <div class="col">Start</div>
+                                <div class="col">End</div>
+                                <div class="col">Note</div>
+                                <div class="col-2">
+                                    Actions
+                                </div>
+                            </div>
+                        </div>
                         <div class="row" id="appointments-list">
                         </div>
                         {% with form = appointment_form %}
                         {% include "form-ajax-modal.html" %}
                         {% endwith %}
-                        {% include "home/items/myappointment.html" %}
+                        {% include "home/items/myappointment-provider.html" %}
                 </div>
         </div>
 </div>
@@ -148,6 +165,8 @@ User: <span class="text-success">{{account.username}}</span>
 
 {% block js %}
 <script src="/static/js/admin/users_get.js" type="module"></script>
+{% if account.is_provider %}
 <script src="/static/js/home/users/myschedules.js" type="module"></script>
+{% endif %}
 <script src="/static/js/home/users/myappointments.js" type="module"></script>
 {% endblock %}
