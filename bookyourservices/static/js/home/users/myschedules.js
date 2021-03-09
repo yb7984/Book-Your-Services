@@ -9,11 +9,16 @@ const $listDatesContainer = $("#schedules-list-dates");
 const template = $("#schedule-template").html();
 const $form = $("#form-schedule-");
 
+let $btnNew = $("#btn-new-schedule");
+if ($btnNew.length === 0){
+    $btnNew = $("#btn-new");
+}
+
 //make a counter for how many time has been created
 let schedulesCount = 0;
 
 //new button event
-$("#btn-new").on("click", async (e) => {
+$btnNew.on("click", async (e) => {
     e.preventDefault();
 
     const $btn = findClickedButton(e, "btn-new");

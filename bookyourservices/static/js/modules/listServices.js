@@ -27,10 +27,14 @@ class ListServices extends ListBasic {
             .replaceAll("%%is_active%%", item.is_active ? `<span class="text-success">Active</span>` : `<span class="text-danger">Inactive</span>`);
 
         const current_username = getGlobalValues("CURRENT_USERNAME");
-        if (current_username === item.username) {
+        console.log(current_username);
+        if (!current_username || current_username === item.username) {
             //this service is belong to current login user, hide the appointment button
 
             html = html.replaceAll("btn-appointment", "btn-appointment d-none");
+        } 
+        if (current_username){
+            html = html.replaceAll("btn-login" , "btn-login d-none");
         }
         return html;
     }

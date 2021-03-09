@@ -483,7 +483,7 @@ class Appointment(db.Model):
     customer = db.relationship("User", foreign_keys=[customer_username], backref=db.backref(
         "appointments_as_customer", lazy="dynamic"))
 
-    service = db.relationship("Service")
+    service = db.relationship("Service" , foreign_keys=[service_id])
 
     @property
     def summary(self):
@@ -515,6 +515,7 @@ Note:{self.note}
     def check_available(username, start, end, appointment_id=0):
         """Check if there is a conflict with a schedule"""
         count = Appointment.query.filter(
+            (Appointment.is_active == True) &
             (Appointment.provider_username == username) &
             (Appointment.id != appointment_id) &
             (
@@ -546,8 +547,8 @@ Note:{self.note}
             "event_id": self.event_id,
             "provider_username": self.provider_username,
             "customer_username": self.customer_username,
-            "start": self.start,
-            "end": self.end,
+            "start": self.start.isoformat(),
+            "end": self.end.isoformat(),
             "service_id": self.service_id,
             "note": self.note,
             "summary": self.summary,
@@ -556,7 +557,8 @@ Note:{self.note}
             "created": self.created,
             "is_active": self.is_active,
             "provider": self.provider.full_name,
-            "customer": self.customer.full_name
+            "customer": self.customer.full_name,
+            "service": self.service.name
         }
 
 

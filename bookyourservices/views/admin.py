@@ -27,60 +27,6 @@ def _jinja2_filter_date(d):
 
     return dt.strftime(DATE_FORMAT)
 
-###########
-# Common methods
-
-
-def login_admin_required(func):
-    """
-    For the route need to login as admin
-    Check if the username in session
-    Redirect to login page if not login yet
-    """
-
-    @wraps(func)
-    def func_wrapper(*args, **kwargs):
-        if login_admin_username() is None:
-            flash("Please login first!", FLASH_GROUP_DANGER)
-            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
-
-        return func(*args, **kwargs)
-
-    return func_wrapper
-
-
-def login_administrator_only(func):
-    """
-    For the route need to login as admin
-    Check if the username in session
-    Redirect to login page if not login yet
-    Check if the authorization is administrator
-    if not redirect to index page
-    """
-    @wraps(func)
-    def func_wrapper(*args, **kwargs):
-        if login_admin_username() is None:
-            flash("Please login first!", FLASH_GROUP_DANGER)
-            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
-
-        if g.admin.authorization != ADMIN_AUTH_VALUE:
-            flash("Not authorized visit!", FLASH_GROUP_DANGER)
-            return redirect(url_for('admin.index'))
-
-        return func(*args, **kwargs)
-
-    return func_wrapper
-
-
-def login_admin_username():
-    """Return current login username of admin"""
-    return session.get(ADMIN_USER_SESSION_KEY, None)
-
-
-def login_admin_username_set(username):
-    """Set current login username of admin"""
-
-    session[ADMIN_USER_SESSION_KEY] = username
 
 ##################
 # Methods for before request
@@ -314,20 +260,32 @@ def users_get(username):
 
     account = User.query.get_or_404(username)
 
+    g.global_values["CURRENT_USERNAME"] = account.username
+
     service_form = ServiceForm(prefix="service")
     service_form.category_ids.choices = CategoryHandler.list_for_select()
 
-
-    g.global_values["CURRENT_USERNAME"] = account.username
     #Service urls
     g.global_values["SERVICE_LIST_URL"] = url_for("admin.services_list" , username=account.username)
     g.global_values["SERVICE_INSERT_URL"] = url_for("admin.services_new" , username=account.username)
     g.global_values["SERVICE_UPDATE_URL"] = url_for("admin.services_update" , username=account.username , service_id=0)
     g.global_values["SERVICE_DELETE_URL"] = url_for("admin.services_delete" , username=account.username , service_id=0)
 
+
+    schedule_form = ScheduleForm(prefix="schedule")
+
+
+    appointment_form = AppointmentForm(prefix="appointment")
+
+    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments{"?is_provider=1" if account.is_provider else ""}'
+    g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
+    g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
+
     return render_template('admin/users/get.html',
                            account=account,
-                           service_form=service_form)
+                           service_form=service_form,
+                           schedule_form=schedule_form, 
+                           appointment_form=appointment_form)
 
 
 @admin.route('/admin/users/new', methods=['POST', 'GET'])

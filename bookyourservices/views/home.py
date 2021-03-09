@@ -104,7 +104,7 @@ def provider_detail(username):
 
     user = User.query.get_or_404(username)
 
-    g.global_values["PROVIDER_USER_NAME"] = user.username
+    g.global_values["PROVIDER_USERNAME"] = user.username
 
     return render_template("home/provider.html", account=user)
 
@@ -197,7 +197,7 @@ def password_reset():
 
             login_username_set(account.username)
 
-            return redirect(url_for('home.index'))
+            return redirect(url_for('home.dashboard'))
 
         flash('Error when updating password!', FLASH_GROUP_DANGER)
 
@@ -214,17 +214,76 @@ def logout():
     return redirect(url_for('home.login'))
 
 
-@home.route('/dashboard')
+@home.route('/users/dashboard')
 @login_required
 def dashboard():
     """Get user dashboard"""
 
-    g.global_values["PROVIDER_USER_NAME"] = g.user.username
+    g.global_values["PROVIDER_USERNAME"] = g.user.username
+    g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments?{"is_provider=1" if g.user.is_provider else ""}'
+    g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
+    g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
 
-    return render_template("home/users/dashboard.html", account=g.user)
+    appointment_form = AppointmentForm(prefix="appointment")
+
+    return render_template("home/users/dashboard.html", account=g.user, appointment_form=appointment_form)
 
 
-@home.route('/myservices')
+@home.route('/users/profile')
+@login_required
+def profile():
+    """Get user dashboard"""
+
+    return render_template("home/users/profile.html", account=g.user)
+
+
+@home.route('/users/edit', methods=['POST', 'GET'])
+@login_required
+def user_edit():
+    """Get user dashboard"""
+
+    user = g.user
+
+    form = UserForm(obj=user)
+
+    form_hide_value(form.username, user.username)
+    form_hide_value(form.password, user.password)
+    form_hide_value(form.password_edit, '')
+    form_hide_value(form.is_active, True)
+
+    if form.validate_on_submit():
+        user = UserHandler.update(user, form)
+
+        if len(form.errors) == 0:
+            # no error, redirect
+            flash('Successfully Update Account!', FLASH_GROUP_SUCCESS)
+
+            return redirect(url_for("home.profile"))
+
+    return render_template('home/users/edit.html', form=form, account=user)
+
+
+@home.route('/users/password', methods=['POST', 'GET'])
+@login_required
+def password_update():
+    """Edit Password"""
+
+    form = PasswordForm()
+
+    if form.validate_on_submit():
+        password = form.password.data
+
+        account = User.update_password(login_username(), password)
+
+        if account != False:
+            flash('Successfully Update Password!', FLASH_GROUP_SUCCESS)
+
+            return redirect(url_for("home.password_update"))
+
+    return render_template('home/users/password.html', form=form, account=g.user)
+
+
+@home.route('/users/myservices')
 @login_required
 def my_services():
     """Get all my services"""
@@ -235,7 +294,7 @@ def my_services():
     return render_template("home/services/list.html", form=form)
 
 
-@home.route('/myschedules')
+@home.route('/users/myschedules')
 @login_required
 def my_schedules():
     """Get all my schedules"""
@@ -245,21 +304,29 @@ def my_schedules():
     return render_template("home/schedules/list.html", form=form)
 
 
-@home.route('/myappointments')
+@home.route('/users/myappointments')
 @login_required
 def my_appointments():
     """Get all my services"""
 
     g.global_values["APPOINTMENT_LIST_URL"] = '/api/appointments'
+    g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
+    g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
 
-    return render_template("home/appointments/list.html")
+    appointment_form = AppointmentForm(prefix="appointment")
+
+    return render_template("home/appointments/list.html", form=appointment_form)
 
 
-@home.route('/provider_appointments')
+@home.route('/users/provider_appointments')
 @login_required
 def provider_appointments():
     """Get all my services"""
 
     g.global_values["APPOINTMENT_LIST_URL"] = '/api/appointments?is_provider=1'
+    g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
+    g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
 
-    return render_template("home/appointments/list-provider.html")
+    appointment_form = AppointmentForm(prefix="appointment")
+
+    return render_template("home/appointments/list-provider.html", form=appointment_form)

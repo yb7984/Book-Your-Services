@@ -30,10 +30,7 @@ User: <span class="text-success">{{account.username}}</span>
                         <a class="nav-link" data-toggle='pill' href="#schedules">Schedules</a>
                 </li>
                 <li class="nav-item">
-                        <a class="nav-link" data-toggle='pill' href="#appoitments">Appointments</a>
-                </li>
-                <li class="nav-item">
-                        <a class="nav-link" data-toggle='pill' href="#feedbacks">Feedbacks</a>
+                        <a class="nav-link" data-toggle='pill' href="#appointments">Appointments</a>
                 </li>
         </ul>
         <div class="tab-content">
@@ -97,9 +94,11 @@ User: <span class="text-success">{{account.username}}</span>
                                                                 </div>
                                                                 <a data-id="%%id%%" data-toggle="modal"
                                                                         data-target="#form-service-container"
-                                                                        class="btn-edit btn btn-primary"><i class="fas fa-edit"></i></a>
+                                                                        class="btn-edit btn btn-primary"><i
+                                                                                class="fas fa-edit"></i></a>
                                                                 <a href="javascript:void(0);" data-id="%%id%%"
-                                                                        class="btn-delete btn btn-danger"><i class="fas fa-trash-alt"></i></a>
+                                                                        class="btn-delete btn btn-danger"><i
+                                                                                class="fas fa-trash-alt"></i></a>
                                                         </div>
                                                 </div>
                                         </div>
@@ -107,19 +106,36 @@ User: <span class="text-success">{{account.username}}</span>
                         </div>
                 </div>
                 <div id="schedules" class="tab-pane fade">
-                        <h3>Menu 3</h3>
-                        <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-                                explicabo.</p>
+                        <div class="row">
+                                <div class="col-12 col-md-8 h1">Weekly</div>
+                                <div class="col-12 col-md-4 align-self-center">
+                                        <a class="btn btn-success btn-new" id="btn-new-schedule" data-toggle="modal"
+                                                data-target="#form-schedule-container" data-date_exp=""><i
+                                                        class="fas fa-plus"></i></a>
+                                </div>
+                        </div>
+                        <div class="row flex-lg-nowrap" id="schedules-list-weekly">
+                        </div>
+
+                        <div class="row">
+                                <div class="col-12 col-md-8 h1">Specific Dates</div>
+                                <div class="col-12 col-md-4 align-self-center">
+                                </div>
+                        </div>
+                        <div class="row flex-lg-nowrap" id="schedules-list-dates">
+                        </div>
+                        {% with form = schedule_form%}
+                        {% include "form-ajax-modal.html" %}
+                        {% endwith %}
+                        {% include "home/items/myschedule.html" %}
                 </div>
                 <div id="appointments" class="tab-pane fade">
-                        <h3>Menu 3</h3>
-                        <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-                                explicabo.</p>
-                </div>
-                <div id="feedbacks" class="tab-pane fade">
-                        <h3>Menu 3</h3>
-                        <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-                                explicabo.</p>
+                        <div class="row" id="appointments-list">
+                        </div>
+                        {% with form = appointment_form %}
+                        {% include "form-ajax-modal.html" %}
+                        {% endwith %}
+                        {% include "home/items/myappointment.html" %}
                 </div>
         </div>
 </div>
@@ -132,4 +148,6 @@ User: <span class="text-success">{{account.username}}</span>
 
 {% block js %}
 <script src="/static/js/admin/users_get.js" type="module"></script>
+<script src="/static/js/home/users/myschedules.js" type="module"></script>
+<script src="/static/js/home/users/myappointments.js" type="module"></script>
 {% endblock %}

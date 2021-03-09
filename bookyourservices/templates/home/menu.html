@@ -16,11 +16,11 @@
         </li>
         {% if g.user %}
         <li class="nav-item">
-          <a class="nav-link" href="/dashboard">Dashboard</a>
+          <a class="nav-link" href="/users/dashboard">Dashboard</a>
         </li>
         {% if not g.user.is_provider %}
         <li class="nav-item">
-          <a class="nav-link" href="/myappointments">My Appointments</a>
+          <a class="nav-link" href="/users/myappointments">My Appointments</a>
         </li>
         {% endif %}
         {% if g.user.is_provider %}
@@ -29,19 +29,19 @@
             My Appointments
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item"  href="/myappointments">Customer Appointments</a>
-            <a class="dropdown-item" href="/provider_appointments">Provider Appointments</a>
+            <a class="dropdown-item"  href="/users/myappointments">Customer Appointments</a>
+            <a class="dropdown-item" href="/users/provider_appointments">Provider Appointments</a>
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/myservices">My Services</a>
+          <a class="nav-link" href="/users/myservices">My Services</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/myschedules">My Schedules</a>
+          <a class="nav-link" href="/users/myschedules">My Schedules</a>
         </li>
         {% endif %}
         <li class="nav-item">
-          <a class="nav-link" href="/profile">My Profile</a>
+          <a class="nav-link" href="/users/profile">My Profile</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" method="POST" action="/logout">

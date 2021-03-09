@@ -118,7 +118,7 @@ def schedules_get(username, date_exp):
 def schedules_update(username):
     """update /insert for schedules"""
 
-    if login_username() == username:
+    if login_username() == username or login_admin_username() is not None:
         item = ScheduleHandler.update(username)
 
         return (jsonify(item) , 200)
@@ -130,7 +130,7 @@ def schedules_update(username):
 @login_required
 def schedules_delete(username , date_exp):
     """Delete Schedule"""
-    if login_username() == username:
+    if login_username() == username or login_admin_username() is not None:
         return (jsonify(ScheduleHandler.delete(username , date_exp)) , 200)
 
     return jsonify({} , 200)
@@ -163,6 +163,25 @@ def appointments_insert():
 
     return (jsonify(item) , 200)
 
+
+@api.route('/api/appointments/<int:appointment_id>' , methods=['PATCH'])
+@login_required
+def appointments_update(appointment_id):
+    """update for appointment"""
+
+    item = AppointmentHandler.update(login_username() , appointment_id)
+
+    return (jsonify(item) , 200)
+
+
+@api.route('/api/appointments/<int:appointment_id>' , methods=['DELETE'])
+@login_required
+def appointments_delete(appointment_id):
+    """update for appointment"""
+
+    item = AppointmentHandler.delete(login_username() , appointment_id)
+
+    return (jsonify(item) , 200)
 
 @api.route('/api/appointments')
 @login_required

@@ -1,7 +1,7 @@
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask import request, session, flash, redirect,jsonify
+from flask import request, session, flash, redirect,jsonify, g
 from config import *
 import urllib.parse
 import os
@@ -52,7 +52,7 @@ def check_password_hash(hashed_pwd, password):
 
 
 ###########
-# Common methods
+# User Login methods
 
 
 def login_required(func):
@@ -82,6 +82,63 @@ def login_username_set(username):
     """Set current login username"""
 
     session[USERNAME_SESSION_KEY] = username
+
+
+
+###########
+# Admin login methods
+
+
+def login_admin_required(func):
+    """
+    For the route need to login as admin
+    Check if the username in session
+    Redirect to login page if not login yet
+    """
+
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if login_admin_username() is None:
+            flash("Please login first!", FLASH_GROUP_DANGER)
+            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
+
+        return func(*args, **kwargs)
+
+    return func_wrapper
+
+
+def login_administrator_only(func):
+    """
+    For the route need to login as admin
+    Check if the username in session
+    Redirect to login page if not login yet
+    Check if the authorization is administrator
+    if not redirect to index page
+    """
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if login_admin_username() is None:
+            flash("Please login first!", FLASH_GROUP_DANGER)
+            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
+
+        if g.admin.authorization != ADMIN_AUTH_VALUE:
+            flash("Not authorized visit!", FLASH_GROUP_DANGER)
+            return redirect(url_for('admin.index'))
+
+        return func(*args, **kwargs)
+
+    return func_wrapper
+
+
+def login_admin_username():
+    """Return current login username of admin"""
+    return session.get(ADMIN_USER_SESSION_KEY, None)
+
+
+def login_admin_username_set(username):
+    """Set current login username of admin"""
+
+    session[ADMIN_USER_SESSION_KEY] = username
 
 
 

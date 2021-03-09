@@ -8,7 +8,6 @@ from views.modules.service import ServiceHandler
 from google_calendar.google_calendar import GoogleCalendarHandler
 import datetime
 
-
 class AppointmentHandler:
     """Handler for appointment"""
 
@@ -26,6 +25,7 @@ class AppointmentHandler:
             filters.append(Appointment.customer_username == username)
 
         filters.append(Appointment.start >= datetime.datetime.now())
+        filters.append(Appointment.is_active == True)
 
         return Appointment.query.filter(
             *tuple(filters)).order_by(Appointment.start).paginate(page, per_page=per_page)
@@ -41,39 +41,117 @@ class AppointmentHandler:
             provider_username = form.provider_username.data
             customer_username = login_username()
             service_date = form.service_date.data
-            start = form.start.data
-            end = form.end.data
+            times = form.times.data
             note = form.note.data
 
             if provider_username == customer_username:
                 return {"error": "You are not supposed to book the service from yourself!"}
+
+            if len(times) == 0:
+                form.times.errors.append("Must select an appointment time!")
+
+            [start, end] = times.split("-")
 
             item = Appointment(
                 event_id='',
                 service_id=service_id,
                 provider_username=provider_username,
                 customer_username=customer_username,
-                start=datetime.datetime.combine(service_date, start),
-                end=datetime.datetime.combine(service_date, end),
+                start=datetime.datetime.combine(
+                    service_date, datetime.time.fromisoformat(start)),
+                end=datetime.datetime.combine(
+                    service_date, datetime.time.fromisoformat(end)),
                 note=note
             )
 
             if not item.available:
                 # time conflict return error
-                return {"error": "Appointment time is not available now. Please choose another time frame!"}
+                return {"error": "Selected appointment time is not available now. Please choose another time frame!"}
 
-            db.session.add(item)
+            if len(form.errors) == 0:
 
-            db.session.commit()
+                db.session.add(item)
+                db.session.commit()
 
-            # set the google calendar event
-            AppointmentHandler.set_google_calendar(item)
+                print(item.serialize())
 
-            # todo email to the provider and the customer
-            AppointmentHandler.email(item)
+                # set the google calendar event
+                AppointmentHandler.set_google_calendar(item)
 
-            return {"item": item.serialize()}
+                # todo email to the provider and the customer
+                AppointmentHandler.email(item)
+
+                return {"item": item.serialize()}
         return {"errors": form.errors}
+
+    @staticmethod
+    def update(username, appointment_id):
+        """Update Appointment"""
+        form = AppointmentForm(obj=request.json, prefix="appointment")
+
+        item = Appointment.query.get(appointment_id)
+
+        if item is None:
+            return {"error", "Error when updating appointment!"}
+
+        if login_admin_username() is None and item.customer_username != username and item.provider_username != username:
+                return {"error", "Unauthorized access!"}
+
+        if form.validate():
+            service_date = form.service_date.data
+            times = form.times.data
+            note = form.note.data
+
+            if len(times) == 0:
+                form.times.errors.append("Must select an appointment time!")
+
+            [start, end] = times.split("-")
+
+            item.start = datetime.datetime.combine(
+                service_date, datetime.time.fromisoformat(start))
+            item.end = datetime.datetime.combine(
+                service_date, datetime.time.fromisoformat(end))
+            item.note = note
+
+            if not item.available:
+                # time conflict return error
+                return {"error": "Selected appointment time is not available now. Please choose another time frame!"}
+
+        
+            if len(form.errors) == 0:
+                db.session.commit()
+
+                # set the google calendar event
+                AppointmentHandler.set_google_calendar(item)
+
+                # email to the provider and the customer
+                AppointmentHandler.email(item, action="Updated")
+
+                return {"item": item.serialize()}
+        return {"errors": form.errors}
+
+    @staticmethod
+    def delete(username, appointment_id):
+        """Delete Appointment"""
+        item = Appointment.query.get(appointment_id)
+
+        if item is None:
+            return {}
+
+        if login_admin_username() is None and item.customer_username != username and item.provider_username != username:
+            return {"error", "Unauthorized access!"}
+
+        item.is_active = False
+
+        # set the google calendar event
+        AppointmentHandler.set_google_calendar(item)
+
+        # email to the provider and the customer
+        AppointmentHandler.email(item, action="Deleted")
+
+        db.session.commit()
+
+        return {}
 
     @staticmethod
     def set_google_calendar(appointment):
@@ -83,39 +161,49 @@ class AppointmentHandler:
             # provider haven't set up google calendar
             return appointment
 
-        event = GoogleCalendarHandler.events_build(
-            appointment.summary,
-            appointment.start,
-            appointment.end,
-            description=appointment.description,
-            location=""
-        )
+        if appointment.is_active == True:
+            event = GoogleCalendarHandler.events_build(
+                appointment.summary,
+                appointment.start,
+                appointment.end,
+                description=appointment.description,
+                location=""
+            )
 
-        if appointment.event_id != "":
-            # update
-            event["id"] = appointment.event_id
-            event = GoogleCalendarHandler.events_update(
-                event, appointment.provider.calendar_id)
+            if appointment.event_id != "":
+                # update
+                event["id"] = appointment.event_id
+                event = GoogleCalendarHandler.events_update(
+                    event, appointment.provider.calendar_id)
+            else:
+                event = GoogleCalendarHandler.events_insert(
+                    event, appointment.provider.calendar_id)
+
+            if event["id"]:
+                appointment.event_id = event["id"]
+
+                # update the database
+                db.session.commit()
         else:
-            event = GoogleCalendarHandler.events_insert(
-                event, appointment.provider.calendar_id)
+            # delete the event
+            if appointment.event_id != "":
+                GoogleCalendarHandler.events_delete(
+                    event_id=appointment.event_id, calendar_id=appointment.provider.calendar_id)
 
-        if event["id"]:
-            appointment.event_id = event["id"]
-
-            # update the database
+            appointment.event_id = ""
             db.session.commit()
 
         return appointment
 
     @staticmethod
-    def email(appointment):
+    def email(appointment, action="new"):
         """Email the notification for the appointment"""
 
         mail.send_message(
-            subject=appointment.summary,
+            subject=f"{ action.upper() }:{ appointment.summary }",
             sender='bobowu98@gmail.com',
-            recipients=[appointment.provider.email, appointment.customer.email],
+            recipients=[appointment.provider.email,
+                        appointment.customer.email],
             body=f"""
                 Provider: {appointment.provider.full_name}
                 Customer: {appointment.customer.full_name}

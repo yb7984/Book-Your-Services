@@ -205,7 +205,7 @@ class GoogleCalendarHandler:
 
 
     @staticmethod
-    def calendar_events_delete(event_id, calendar_id="primary"):
+    def events_delete(event_id, calendar_id="primary"):
         """Delete an event."""
 
         service = GoogleCalendarHandler.get_service()

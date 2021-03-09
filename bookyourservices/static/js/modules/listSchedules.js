@@ -1,5 +1,6 @@
 import ListBasic from '/static/js/modules/list.js';
 import * as formFunc from '/static/js/modules/form.js';
+import * as config from '/static/js/config.js';
 
 class ListSchedules extends ListBasic {
     /**
@@ -41,7 +42,7 @@ class ListSchedules extends ListBasic {
             return date_exp;
         }
 
-        return WEEKDAYS[parseInt(date_exp)];
+        return config.WEEKDAYS[parseInt(date_exp)];
     }
 
     /**
@@ -214,7 +215,7 @@ class ListSchedules extends ListBasic {
             const today = (new Date(Date.now())).toISOString().substr(0 , 10);
 
             if (date < today){
-                showAlert("Only adding dates today or after!" , ALERT_ERROR);
+                showAlert("Only adding dates today or after!" , config.ALERT_ERROR);
                 return ;
             }
 

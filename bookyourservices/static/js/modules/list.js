@@ -1,4 +1,5 @@
 import * as formFunc from '/static/js/modules/form.js';
+import * as config from '/static/js/config.js';
 /**
  * Basic class for list items from ajax resource
  */
@@ -63,6 +64,8 @@ class ListBasic {
         this.$listContainer.on("click", ".btn-edit", async (e) => {
             e.preventDefault();
 
+            console.log("edit");
+
             const $btn = findClickedButton(e, "btn-edit");
 
             const id = $btn.data(this.idKey);
@@ -70,7 +73,7 @@ class ListBasic {
             const item = await this.getItem(this.idKey, id);
 
             if (item) {
-                this.setEditValues(item);
+                await this.setEditValues(item);
             }
         });
 
@@ -90,7 +93,7 @@ class ListBasic {
      * @param {*} item 
      * @param {*} prefix 
      */
-    setEditValues(item, prefix = "") {
+    async setEditValues(item, prefix = "") {
         if (prefix == "") {
             prefix = this.prefix;
         }
@@ -145,9 +148,10 @@ class ListBasic {
         // try {
         const resp = await axios.delete(this.deleteUrl.substring(0, this.deleteUrl.length - 1) + id);
 
+        console.log(resp);
         await this.loadList(true);
         // } catch (error) {
-        //     showAlert("Error when deleting!", ALERT_ERROR);
+        //     showAlert("Error when deleting!", config.ALERT_ERROR);
         // }
     }
 
@@ -155,6 +159,7 @@ class ListBasic {
      * setup the form submit event
      */
     setFormSubmit() {
+        this.$form.off("submit");
         this.$form.on("submit", async (e) => {
             e.preventDefault();
 
@@ -175,6 +180,8 @@ class ListBasic {
                 url = this.updateUrl.substring(0, this.updateUrl.length - 1) + id;
                 method = "patch";
             }
+
+            console.log(url);
 
 
             const resp = await formFunc.postForm(this.$form, url, method, true);
