@@ -2,17 +2,28 @@
     <li class="nav-item m-1 btn btn-primary">
         <a class="nav-link text-white" href="/users/dashboard">Dashboard</a>
     </li>
-    <li class="nav-item m-1 btn btn-secondary">Appointments</li>
     {% if g.user.is_provider %}
+    <li class="nav-item m-1 btn btn-secondary">Customer Appointments</li>
     <li class="nav-item">
-        <a class="nav-link" href="/users/myappointments">Customer Appointments</a>
+        <a class="nav-link" href="/users/myappointments">Upcoming Appointments</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="/users/provider_appointments">Provider Appointments</a>
+        <a class="nav-link" href="/users/myappointments?is_past=1">Past Appointments</a>
+    </li>
+    <li class="nav-item m-1 btn btn-secondary">Provider Appointments</li>
+    <li class="nav-item">
+        <a class="nav-link" href="/users/provider_appointments">Upcoming Appointments</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/users/provider_appointments?is_past=1">Past Appointments</a>
     </li>
     {% else %}
+    <li class="nav-item m-1 btn btn-secondary">My Appointments</li>
     <li class="nav-item">
-        <a class="nav-link" href="/users/myappointments">My Appointments</a>
+        <a class="nav-link" href="/users/myappointments">Upcoming Appointments</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/users/myappointments">Past Appointments</a>
     </li>
     {% endif %}
     {% if g.user.is_provider %}

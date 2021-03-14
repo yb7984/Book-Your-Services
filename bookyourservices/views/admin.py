@@ -28,6 +28,52 @@ def _jinja2_filter_date(d):
     return dt.strftime(DATE_FORMAT)
 
 
+
+###########
+# Admin login methods
+
+
+def login_admin_required(func):
+    """
+    For the route need to login as admin
+    Check if the username in session
+    Redirect to login page if not login yet
+    """
+
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if login_admin_username() is None:
+            flash("Please login first!", FLASH_GROUP_DANGER)
+            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
+
+        return func(*args, **kwargs)
+
+    return func_wrapper
+
+
+def login_administrator_only(func):
+    """
+    For the route need to login as admin
+    Check if the username in session
+    Redirect to login page if not login yet
+    Check if the authorization is administrator
+    if not redirect to index page
+    """
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if login_admin_username() is None:
+            flash("Please login first!", FLASH_GROUP_DANGER)
+            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
+
+        if g.admin.authorization != ADMIN_AUTH_VALUE:
+            flash("Not authorized visit!", FLASH_GROUP_DANGER)
+            return redirect(url_for('admin.index'))
+
+        return func(*args, **kwargs)
+
+    return func_wrapper
+
+
 ##################
 # Methods for before request
 
@@ -57,7 +103,7 @@ def before_request_func():
 def index():
     """Homepage for the admin"""
 
-    return render_template('admin/index.html')
+    return redirect(url_for('admin.users_list'))
 
 
 ######
@@ -266,10 +312,10 @@ def users_get(username):
     service_form.category_ids.choices = CategoryHandler.list_for_select()
 
     #Service urls
-    g.global_values["SERVICE_LIST_URL"] = url_for("admin.services_list" , username=account.username)
-    g.global_values["SERVICE_INSERT_URL"] = url_for("admin.services_new" , username=account.username)
-    g.global_values["SERVICE_UPDATE_URL"] = url_for("admin.services_update" , username=account.username , service_id=0)
-    g.global_values["SERVICE_DELETE_URL"] = url_for("admin.services_delete" , username=account.username , service_id=0)
+    g.global_values["SERVICE_LIST_URL"] = f'{url_for("api.services_list_mine")}?username={account.username}'
+    g.global_values["SERVICE_INSERT_URL"] = f'{url_for("api.services_insert")}?username={account.username}'
+    g.global_values["SERVICE_UPDATE_URL"] = f'{url_for("api.services_update" , service_id=0)}?username={account.username}'
+    g.global_values["SERVICE_DELETE_URL"] = f'{url_for("api.services_delete" , service_id=0)}?username={account.username}'
 
 
     schedule_form = ScheduleForm(prefix="schedule")
@@ -371,60 +417,6 @@ def google_calendars_delete(calendar_id):
     return redirect(url_for('admin.google_calendars_list'))
 
 ######
-# For services
-#
-@admin.route('/admin/users/<string:username>/services', methods=['GET'])
-@login_admin_required
-def services_list(username):
-    """Get Service List"""
-
-    items = ServiceHandler.list_by_username(username)
-
-    return jsonify(items=[item.serialize() for item in items])
-
-
-@admin.route('/admin/users/<string:username>/services/<int:service_id>', methods=['GET'])
-@login_admin_required
-def services_get(username, service_id):
-    """Get Service"""
-    item = Service.query.get(service_id)
-
-    if item is None:
-        return ("", 404)
-
-    return jsonify(item=item.serialize())
-
-
-@admin.route('/admin/users/<string:username>/services', methods=['POST'])
-@login_admin_required
-def services_new(username):
-    """New Service"""
-
-    item = ServiceHandler.insert(username)
-
-    if "item" in item:
-        return (jsonify(item) , 201)
-
-    return (jsonify(item) , 200)
-
-@admin.route('/admin/users/<string:username>/services/<int:service_id>', methods=['PATCH'])
-@login_admin_required
-def services_update(username, service_id):
-    """Update Service"""
-
-    item = ServiceHandler.update(service_id)
-
-    return (jsonify(item) , 200)
-
-
-@admin.route('/admin/users/<string:username>/services/<int:service_id>', methods=['DELETE'])
-@login_admin_required
-def services_delete(username, service_id):
-    """Delete Service"""
-
-    return (jsonify(ServiceHandler.delete(service_id)) , 200)
-
-######
 # For categories
 #
 @admin.route('/admin/categories/index')
@@ -432,49 +424,10 @@ def categories_index():
     """Page for categories management"""
     form = CategoryForm()
 
-    g.global_values["LIST_URL"] = url_for("admin.categories_list")
-    g.global_values["NEW_URL"] = url_for("admin.categories_new")
-    g.global_values["UPDATE_URL"] = url_for("admin.categories_update", category_id=0)
-    g.global_values["DELETE_URL"] = url_for("admin.categories_delete", category_id=0)
+    g.global_values["LIST_URL"] = url_for("api.categories_list")
+    g.global_values["NEW_URL"] = url_for("api.categories_insert")
+    g.global_values["UPDATE_URL"] = url_for("api.categories_update", category_id=0)
+    g.global_values["DELETE_URL"] = url_for("api.categories_delete", category_id=0)
 
     return render_template('admin/categories/index.html', form=form)
 
-@admin.route('/admin/categories')
-@login_admin_required
-def categories_list():
-    """Show all the categories"""
-
-    items = CategoryHandler.list()
-
-    return jsonify(items=[item.serialize() for item in items])
-
-
-@admin.route('/admin/categories', methods=['POST'])
-@login_admin_required
-def categories_new():
-    """New Category"""
-
-    item = CategoryHandler.insert()
-
-    if "item" in item:
-        return (jsonify(item) , 201)
-
-    return (jsonify(item) , 200)
-
-
-@admin.route('/admin/categories/<int:category_id>', methods=['PATCH'])
-@login_admin_required
-def categories_update(category_id):
-    """Edit Category"""
-
-    item = CategoryHandler.update(category_id)
-
-    return (jsonify(item) , 200)
-
-
-@admin.route('/admin/categories/<int:category_id>', methods=['DELETE'])
-@login_admin_required
-def categories_delete(category_id):
-    """Delete category"""
-
-    return (jsonify(CategoryHandler.delete(category_id)) , 200)

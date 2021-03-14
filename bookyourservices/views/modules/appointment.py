@@ -8,6 +8,7 @@ from views.modules.service import ServiceHandler
 from google_calendar.google_calendar import GoogleCalendarHandler
 import datetime
 
+
 class AppointmentHandler:
     """Handler for appointment"""
 
@@ -17,18 +18,28 @@ class AppointmentHandler:
 
         page = int(request.args.get("page", 1))
         is_provider = request.args.get("is_provider", "0")
+        is_past = request.args.get("is_past", "0")
 
         filters = []
+        orders = []
         if is_provider == "1":
             filters.append(Appointment.provider_username == username)
         else:
             filters.append(Appointment.customer_username == username)
 
-        filters.append(Appointment.start >= datetime.datetime.now())
+        if is_past == "1":
+            # pass appointments
+            filters.append(Appointment.start < datetime.datetime.now())
+            orders.append(Appointment.start.desc())
+        else:
+            # upcoming appointments
+            filters.append(Appointment.start >= datetime.datetime.now())
+            orders.append(Appointment.start)
+
         filters.append(Appointment.is_active == True)
 
         return Appointment.query.filter(
-            *tuple(filters)).order_by(Appointment.start).paginate(page, per_page=per_page)
+            *tuple(filters)).order_by(*tuple(orders)).paginate(page, per_page=per_page)
 
     @staticmethod
     def insert(username):
@@ -73,8 +84,6 @@ class AppointmentHandler:
                 db.session.add(item)
                 db.session.commit()
 
-                print(item.serialize())
-
                 # set the google calendar event
                 AppointmentHandler.set_google_calendar(item)
 
@@ -95,7 +104,7 @@ class AppointmentHandler:
             return {"error", "Error when updating appointment!"}
 
         if login_admin_username() is None and item.customer_username != username and item.provider_username != username:
-                return {"error", "Unauthorized access!"}
+            return {"error", "Unauthorized visit!"}
 
         if form.validate():
             service_date = form.service_date.data
@@ -117,7 +126,6 @@ class AppointmentHandler:
                 # time conflict return error
                 return {"error": "Selected appointment time is not available now. Please choose another time frame!"}
 
-        
             if len(form.errors) == 0:
                 db.session.commit()
 
@@ -139,7 +147,7 @@ class AppointmentHandler:
             return {}
 
         if login_admin_username() is None and item.customer_username != username and item.provider_username != username:
-            return {"error", "Unauthorized access!"}
+            return {"error", "Unauthorized visit!"}
 
         item.is_active = False
 
@@ -156,6 +164,10 @@ class AppointmentHandler:
     @staticmethod
     def set_google_calendar(appointment):
         """Set the google calendar event for the appointment"""
+
+        if is_testing():
+            # return if is testing
+            return appointment
 
         if appointment.provider.calendar_id == "" or appointment.provider.calendar_email == "":
             # provider haven't set up google calendar
@@ -198,17 +210,18 @@ class AppointmentHandler:
     @staticmethod
     def email(appointment, action="new"):
         """Email the notification for the appointment"""
-
-        mail.send_message(
-            subject=f"{ action.upper() }:{ appointment.summary }",
-            sender='bobowu98@gmail.com',
-            recipients=[appointment.provider.email,
-                        appointment.customer.email],
-            body=f"""
-                Provider: {appointment.provider.full_name}
-                Customer: {appointment.customer.full_name}
-                Start: {appointment.start}
-                End: {appointment.end}
-                Note: {appointment.note}
-                """
-        )
+        if not is_testing():
+            # send email if not testing
+            mail.send_message(
+                subject=f"{ action.upper() }:{ appointment.summary }",
+                sender='bobowu98@gmail.com',
+                recipients=[appointment.provider.email,
+                            appointment.customer.email],
+                body=f"""
+                    Provider: {appointment.provider.full_name}
+                    Customer: {appointment.customer.full_name}
+                    Start: {appointment.start}
+                    End: {appointment.end}
+                    Note: {appointment.note}
+                    """
+            )

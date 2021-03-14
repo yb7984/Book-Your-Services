@@ -29,6 +29,29 @@ def _jinja2_filter_date(d):
     return dt.strftime(DATE_FORMAT)
 
 
+
+###########
+# User Login methods
+
+
+def login_required(func):
+    """
+    For the route need to login
+    Check if the username in session
+    Redirect to login page if not login yet
+    """
+
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if login_username() is None:
+            flash("Please login first!", FLASH_GROUP_DANGER)
+            return redirect(f'{url_for("home.login")}?path={urllib.parse.quote_plus(request.path)}')
+
+        return func(*args, **kwargs)
+
+    return func_wrapper
+
+
 ##################
 # Methods for before request
 
@@ -42,7 +65,8 @@ def before_request_func():
     if login_username():
         g.user = User.query.get(login_username())
 
-        g.global_values["CURRENT_USERNAME"] = g.user.username
+        if g.user is not None:
+            g.global_values["CURRENT_USERNAME"] = g.user.username
 
         if g.user is None:
             flash("Please login first!", FLASH_GROUP_DANGER)
@@ -79,6 +103,9 @@ def services_list():
     service_form.categories.choices.extend(CategoryHandler.list_for_select())
     service_url = "/services"
 
+    service_form.term.data = request.args.get("term" , "")
+    service_form.categories.data = request.args.get("categories" , "0")
+
     appointment_form = AppointmentForm(prefix="appointment")
 
     return render_template("home/services.html",
@@ -93,6 +120,10 @@ def providers_list():
 
     provider_form = BaseSearchForm()
     provider_url = "/providers"
+
+
+    provider_form.term.data = request.args.get("term" , "")
+
     return render_template("home/providers.html",
                            provider_url=provider_url,
                            provider_form=provider_form)
@@ -184,6 +215,14 @@ def password_reset():
             flash('Email is not found!', FLASH_GROUP_DANGER)
 
         return render_template('home/users/password_reset.html', form=form)
+
+    user = User.query.filter(User.pwd_token==token, User.is_active==True).first()
+
+    if user is None:
+
+        flash('Invalid Token, please try again!', FLASH_GROUP_DANGER)
+
+        return redirect(url_for("home.password_reset"))
 
     # Set the new password
     form = PasswordResetForm()
@@ -277,7 +316,7 @@ def password_update():
         account = User.update_password(login_username(), password)
 
         if account != False:
-            flash('Successfully Update Password!', FLASH_GROUP_SUCCESS)
+            flash('Successfully Updated Password!', FLASH_GROUP_SUCCESS)
 
             return redirect(url_for("home.password_update"))
 
@@ -289,6 +328,11 @@ def password_update():
 def my_services():
     """Get all my services"""
 
+    if not g.user.is_provider:
+        flash("Unauthorized visit!" , FLASH_GROUP_DANGER)
+
+        return redirect(url_for("home.dashboard"))
+
     form = ServiceForm(prefix="service")
     form.category_ids.choices = CategoryHandler.list_for_select()
 
@@ -299,6 +343,11 @@ def my_services():
 @login_required
 def my_schedules():
     """Get all my schedules"""
+
+    if not g.user.is_provider:
+        flash("Unauthorized visit!" , FLASH_GROUP_DANGER)
+
+        return redirect(url_for("home.dashboard"))
 
     form = ScheduleForm(prefix="schedule")
 
@@ -316,7 +365,7 @@ def my_appointments():
 
     appointment_form = AppointmentForm(prefix="appointment")
 
-    return render_template("home/appointments/list.html", form=appointment_form)
+    return render_template("home/appointments/list.html", form=appointment_form, is_past=bool(request.args.get("is_past" , 0)))
 
 
 @home.route('/users/provider_appointments')
@@ -324,10 +373,15 @@ def my_appointments():
 def provider_appointments():
     """Get all my services"""
 
+    if not g.user.is_provider:
+        flash("Unauthorized visit!" , FLASH_GROUP_DANGER)
+
+        return redirect(url_for("home.dashboard"))
+
     g.global_values["APPOINTMENT_LIST_URL"] = f'/api/appointments/{login_username()}?is_provider=1'
     g.global_values["APPOINTMENT_UPDATE_URL"] = '/api/appointments/0'
     g.global_values["APPOINTMENT_DELETE_URL"] = '/api/appointments/0'
 
     appointment_form = AppointmentForm(prefix="appointment")
 
-    return render_template("home/appointments/list-provider.html", form=appointment_form)
+    return render_template("home/appointments/list-provider.html", form=appointment_form, is_past=bool(request.args.get("is_past", 0)))

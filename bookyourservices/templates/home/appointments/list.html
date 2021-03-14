@@ -9,23 +9,25 @@
 {% endblock %}
 
 {% block top_links %}
+<h3 class="text-primary">{{ "Past" if is_past else "Upcoming"}}</h3>
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12 d-flex row py-2 bg-secondary text-white font-weight-bolder" id="services-list-%%id%%">
+<div class="row container-fluid mx-auto">
+    <div class="col-12 d-flex row py-2 bg-secondary text-white font-weight-bolder">
         <div class="col-2">Provider</div>
-        <div class="col-2">Service</div>
-        <div class="col-2">Date</div>
-        <div class="col">Start</div>
-        <div class="col">End</div>
-        <div class="col">Note</div>
+        <div class="col">Service</div>
+        <div class="col">Date</div>
+        <div class="col">Time</div>
+        <div class="col-1">Note</div>
+        {% if not is_past %}
         <div class="col-2">
             Actions
         </div>
+        {% endif %}
     </div>
 </div>
-<div class="row" id="appointments-list">
+<div class="row container-fluid mx-auto" id="appointments-list">
 </div>
 {% include "form-ajax-modal.html" %}
 {% include "home/items/myappointment.html" %}

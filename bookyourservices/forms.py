@@ -125,7 +125,6 @@ class UserForm(FlaskForm):
     is_active = BooleanField('Active')
 
 
-
 ######
 # For Category
 #
@@ -167,26 +166,27 @@ class ScheduleForm(FlaskForm):
     """Form for insert/update schedules"""
     username = HiddenField("username")
     date_exp_weekly = CheckboxMultipleField("Days of the week",
-                                     choices=[(str(index), WEEKDAYS[index])
-                                              for index in range(7)],
-                                     validators=[Optional()])
+                                            choices=[(str(index), WEEKDAYS[index])
+                                                     for index in range(7)],
+                                            validators=[Optional()])
 
     date_exp_dates = StringField("Specific Days", validators=[Optional()])
     schedules = StringField("Schedules", validators=[Optional()])
     is_active = BooleanField('Active', default=True)
 
 
-
 def ScheduleSpecialForm(FlaskForm):
     """Form for insert/update schedules"""
     username = HiddenField("username")
-    date_exp = DateField("Date" , validators=[InputRequired()])
+    date_exp = DateField("Date", validators=[InputRequired()])
     schedules = StringField("Schedules", validators=[Optional()])
     is_active = BooleanField('Active', default=True)
 
 ######
 # For Appointment
 #
+
+
 class AppointmentForm(FlaskForm):
     """Form for insert/update appointment"""
     id = HiddenField("ID")
@@ -196,9 +196,7 @@ class AppointmentForm(FlaskForm):
     customer_username = HiddenField("Customer Username")
     service_date = DateField("Service Date", validators=[InputRequired()], render_kw={
                              "placeholder": "Input your service date here"})
-    # start = TimeField("Starts from", validators=[InputRequired()])
-    # end = TimeField("Ends at", validators=[InputRequired()])
-    times = StringField("Schedule Time" , validators=[InputRequired()])
+    times = StringField("Schedule Time", validators=[InputRequired()])
     note = TextAreaField("Note", validators=[Optional()],
                          render_kw={"placeholder": "Input your note here",
                                     "rows": 4})

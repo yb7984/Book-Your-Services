@@ -206,18 +206,20 @@ class UserHandler:
         
         email = form.email.data
 
-        account = User.query.filter(User.email == email).first()
+        account = User.query.filter(User.email == email, User.is_active==True).first()
 
         if account:
             account.pwd_token = token_urlsafe()
             db.session.commit()
-
-            mail.send_message(
-                subject='Book your services admin password reset' ,
-                sender='bobowu98@gmail.com',
-                recipients=[email] ,
-                body=f'{BASE_URL}{url_for("home.password_reset")}?token={account.pwd_token}'
-            )
+            
+            if not is_testing():
+                # send email if not testing
+                mail.send_message(
+                    subject='Book your services admin password reset' ,
+                    sender='bobowu98@gmail.com',
+                    recipients=[email] ,
+                    body=f'{BASE_URL}{url_for("home.password_reset")}?token={account.pwd_token}'
+                )
 
             return True
         return False
@@ -234,6 +236,9 @@ class UserHandler:
     @staticmethod
     def upload_image(user, form):
         """upload user image"""
+
+        if is_testing():
+            return 
         # upload file
         image = upload_file(
             form.image.name,
@@ -249,6 +254,10 @@ class UserHandler:
     @staticmethod
     def set_google_calendar(user, form):
         """Set the google calendar for provider"""
+
+        if is_testing():
+            # return if is testing
+            return
 
         if user.is_provider and form.calendar_email.data.strip() != "":
             #if is provider and providing the gmail account, create the calendar and share
@@ -274,7 +283,7 @@ class UserHandler:
                 GoogleCalendarHandler.calendars_share(user.calendar_id , user.calendar_email)
 
         elif user.is_provider == False:
-            user.calendar_email = None
+            user.calendar_email = ""
 
         
         db.session.commit()

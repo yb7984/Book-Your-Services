@@ -26,7 +26,7 @@ const categoryTemplate = `
     <td>
         <a class="btn btn-primary btn-edit" href="javascript:void(0);" title="Edit" data-id="%%id%%" data-toggle="modal" data-target="#form-container"><i class="fas fa-edit"></i></a>
         <a class="btn btn-danger btn-delete" href="javascript:void(0);" title="Delete" data-id="%%id%%"><i
-                class="fas fa-trash-alt-alt"></i></a>
+                class="fas fa-trash-alt"></i></a>
     </td>
 </tr>`;
 

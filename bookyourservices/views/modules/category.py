@@ -12,7 +12,7 @@ class CategoryHandler:
     @staticmethod
     def list(only_active=False):
         """Return category list"""
-
+        
         items = None
         if only_active == False:
             items = Category.query.order_by(Category.name).order_by(Category.is_active.desc()).all()

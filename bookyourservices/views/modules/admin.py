@@ -133,12 +133,14 @@ class AdminHandler:
             account.pwd_token = token_urlsafe()
             db.session.commit()
 
-            mail.send_message(
-                subject='Book your services admin password reset' ,
-                sender='bobowu98@gmail.com',
-                recipients=[email] ,
-                body=f'{BASE_URL}{url_for("admin.admins_password_reset")}?token={account.pwd_token}'
-            )
+            if not is_testing():
+                # send email if not testing
+                mail.send_message(
+                    subject='Book your services admin password reset' ,
+                    sender='bobowu98@gmail.com',
+                    recipients=[email] ,
+                    body=f'{BASE_URL}{url_for("admin.admins_password_reset")}?token={account.pwd_token}'
+                )
 
             return True
         return False

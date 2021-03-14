@@ -50,8 +50,6 @@ class ScheduleHandler:
 
         times = json.loads(schedule.schedules)
 
-        print(times)
-
         return [time for time in times if Appointment.check_available(
             username,
             start=datetime.datetime.combine(date , datetime.time.fromisoformat(time["start"])),

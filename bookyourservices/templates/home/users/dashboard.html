@@ -10,10 +10,10 @@ Dashboard
 
 {% block content %}
 <div class="row">
-    <div class="col-12 col-lg-4">
+    <div class="col-12 col-md-4">
         <img src="{{account.image_url}}" class="img-fluid" />
     </div>
-    <div class="col-12 col-lg-8 h4">
+    <div class="col-12 col-md-8 h4">
         <div class="row">
             <div class="col-4 text-primary">Name:</div>
             <div class="col-8 text-secondary">{{account.full_name}}</div>
@@ -29,10 +29,23 @@ Dashboard
 
 <div class="row p-2">
     <div class="col h2">
-        My Appointments
+        Upcoming Appointments
     </div>
 </div>
-<div class="row" id="appointments-list">
+
+<div class="row container-fluid mx-auto">
+    <div class="col-12 d-flex row py-2 bg-secondary text-white font-weight-bolder">
+        <div class="col-2">{{"Customer" if g.user.is_provider else "Provider" }}</div>
+        <div class="col">Service</div>
+        <div class="col">Date</div>
+        <div class="col">Time</div>
+        <div class="col-1">Note</div>
+        <div class="col-2">
+            Actions
+        </div>
+    </div>
+</div>
+<div class="row container-fluid mx-auto" id="appointments-list">
 </div>
 {% if g.user.is_provider %}
 <div class="row p-2">
@@ -47,7 +60,7 @@ Dashboard
 {% with form = appointment_form %}
 {% include "form-ajax-modal.html" %}
 {% endwith %}
-{% include "home/items/myappointment.html" %}
+{% include ("home/items/myappointment-provider.html" if g.user.is_provider else "home/items/myappointment.html") %}
 
 {% if g.user.is_provider %}
 {% include "home/items/myservice.html" %}

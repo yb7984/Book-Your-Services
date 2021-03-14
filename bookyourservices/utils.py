@@ -1,7 +1,7 @@
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask import request, session, flash, redirect,jsonify, g
+from flask import request, session, flash, redirect, jsonify, g, url_for
 from config import *
 import urllib.parse
 import os
@@ -9,11 +9,18 @@ from werkzeug.utils import secure_filename
 from wtforms.widgets import HiddenInput
 from flask_mail import Mail
 import secret
+import sys
+import pytz
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
 mail = Mail()
+
+def is_testing():
+    """Return if is testing"""
+
+    return 'unittest' in sys.modules
 
 
 def connect_db(app):
@@ -48,29 +55,9 @@ def hash_password(pwd):
 def check_password_hash(hashed_pwd, password):
     """Check if the hashed password matched the real password"""
 
-    return bcrypt.check_password_hash(hashed_pwd, password)
+    return bcrypt.check_password_hash(pw_hash=hashed_pwd, password=password)
 
 
-###########
-# User Login methods
-
-
-def login_required(func):
-    """
-    For the route need to login
-    Check if the username in session
-    Redirect to login page if not login yet
-    """
-
-    @wraps(func)
-    def func_wrapper(*args, **kwargs):
-        if login_username() is None:
-            flash("Please login first!", FLASH_GROUP_DANGER)
-            return redirect(f'{url_for("home.login")}?path={urllib.parse.quote_plus(request.path)}')
-
-        return func(*args, **kwargs)
-
-    return func_wrapper
 
 
 def login_username():
@@ -84,52 +71,6 @@ def login_username_set(username):
     session[USERNAME_SESSION_KEY] = username
 
 
-
-###########
-# Admin login methods
-
-
-def login_admin_required(func):
-    """
-    For the route need to login as admin
-    Check if the username in session
-    Redirect to login page if not login yet
-    """
-
-    @wraps(func)
-    def func_wrapper(*args, **kwargs):
-        if login_admin_username() is None:
-            flash("Please login first!", FLASH_GROUP_DANGER)
-            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
-
-        return func(*args, **kwargs)
-
-    return func_wrapper
-
-
-def login_administrator_only(func):
-    """
-    For the route need to login as admin
-    Check if the username in session
-    Redirect to login page if not login yet
-    Check if the authorization is administrator
-    if not redirect to index page
-    """
-    @wraps(func)
-    def func_wrapper(*args, **kwargs):
-        if login_admin_username() is None:
-            flash("Please login first!", FLASH_GROUP_DANGER)
-            return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
-
-        if g.admin.authorization != ADMIN_AUTH_VALUE:
-            flash("Not authorized visit!", FLASH_GROUP_DANGER)
-            return redirect(url_for('admin.index'))
-
-        return func(*args, **kwargs)
-
-    return func_wrapper
-
-
 def login_admin_username():
     """Return current login username of admin"""
     return session.get(ADMIN_USER_SESSION_KEY, None)
@@ -139,7 +80,6 @@ def login_admin_username_set(username):
     """Set current login username of admin"""
 
     session[ADMIN_USER_SESSION_KEY] = username
-
 
 
 # upload methods
@@ -156,7 +96,7 @@ def upload_allowed_file(filename, exts={}):
         exts = ALLOWED_EXTENSIONS
 
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in exts
 
 
 def replace_file_name(filename, change_name=""):
@@ -208,21 +148,21 @@ def upload_file(fieldname, name="", dirname="", exts={}):
 def upload_file_url(filename, username="", dirname=""):
     """Return the url of an uploaded file"""
 
+    if len(username) == 0:
+        if len(dirname) > 0:
+            return f'{UPLOAD_FOLDER_URL}{dirname}/{filename}'
+        return f'{UPLOAD_FOLDER_URL}{filename}'
+
     if len(dirname) > 0:
         return f'{UPLOAD_FOLDER_URL}{USER_UPLOAD_DIRNAME}/{username}/{dirname}/{filename}'
     return f'{UPLOAD_FOLDER_URL}{USER_UPLOAD_DIRNAME}/{username}/{filename}'
 
 
 def form_hide_value(field, value):
-    """
-    Hide the field by morping it into a 
-    HiddenInput.    
-    """
+    """Hide the field by morping it into a HiddenInput. """
     field.widget = HiddenInput()
-    # wtforms chokes if the data attribute is not present
+    
     field.data = value
-    # wtforms chokes on SelectField with HiddenInput widget
-    # if there is no _data() callable
     field._value = lambda: value
 
 
@@ -238,3 +178,12 @@ def jsonify_paginate(pagenate):
         pages=pagenate.pages,
         per_page=pagenate.per_page,
         total=pagenate.total)
+
+
+#####
+# Datetime
+#
+
+def localize_datetime(time_value):
+    """add time zone information into datetime"""
+    return pytz.timezone(DEFAULT_TIMEZONE).localize(time_value)

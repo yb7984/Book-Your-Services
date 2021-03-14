@@ -146,7 +146,7 @@ class ListBasic {
 
         const id = $btn.data(this.idKey);
         // try {
-        const resp = await axios.delete(this.deleteUrl.substring(0, this.deleteUrl.length - 1) + id);
+        const resp = await axios.delete(this.getDeleteUrl(id));
 
         console.log(resp);
         await this.loadList(true);
@@ -177,7 +177,7 @@ class ListBasic {
             let method = "post";
 
             if (id) {
-                url = this.updateUrl.substring(0, this.updateUrl.length - 1) + id;
+                url = this.getUpdateUrl(id)
                 method = "patch";
             }
 
@@ -335,6 +335,38 @@ class ListBasic {
         return null;
     }
 
+    /**
+     * Return the update url
+     * @param {*} id 
+     */
+    getUpdateUrl(id) {
+
+        if (this.updateUrl.includes("?")) {
+            let strs = this.updateUrl.split("?" , 2)
+            return strs[0].substring(0, strs[0].length - 1) + id + "?" + strs[1];
+
+        }
+        else {
+            return this.updateUrl.substring(0, this.updateUrl.length - 1) + id;
+        }
+    }
+
+
+    /**
+     * Return the update url
+     * @param {*} id 
+     */
+    getDeleteUrl(id) {
+
+        if (this.deleteUrl.includes("?")) {
+            let strs = this.deleteUrl.split("?" , 2)
+            return strs[0].substring(0, strs[0].length - 1) + id + "?" + strs[1];
+
+        }
+        else {
+            return this.deleteUrl.substring(0, this.deleteUrl.length - 1) + id;
+        }
+    }
 
     /**
      * Method to get the request url from querystring

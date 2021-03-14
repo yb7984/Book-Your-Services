@@ -23,7 +23,7 @@ class Admin(db.Model):
         server_default=sqlalchemy.func.now()
     )
 
-    pwd_token = db.Column(db.Text, nullable=True)
+    pwd_token = db.Column(db.Text, nullable=True , server_default='')
 
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
@@ -34,7 +34,7 @@ class Admin(db.Model):
 
     def __repr__(self):
         e = self
-        return f"<Admin {e.first_name} {e.last_name} {e.email}>"
+        return f"<Admin {e.username} {e.first_name} {e.last_name} {e.email}>"
 
     @classmethod
     def register(cls, username, password, email, first_name, last_name):
@@ -50,9 +50,9 @@ class Admin(db.Model):
         Return admin if valid; else return False.
         """
 
-        u = Admin.query.filter_by(username=username).first()
+        u = Admin.query.filter(Admin.username==username, Admin.is_active==True).first()
 
-        if u and u.is_active and check_password_hash(u.password, password):
+        if u and check_password_hash(hashed_pwd=u.password, password=password):
             # return admin instance
             return u
         else:
@@ -66,7 +66,7 @@ class Admin(db.Model):
 
         if u:
             u.password = hash_password(password)
-            u.pwd_token = None
+            u.pwd_token = ""
             db.session.commit()
 
             return u
@@ -77,11 +77,11 @@ class Admin(db.Model):
     def update_password_by_token(cls, token, password):
         """Update password by token"""
 
-        u = Admin.query.filter(Admin.pwd_token == token).first()
+        u = Admin.query.filter(Admin.pwd_token == token , Admin.is_active==True).first()
 
         if u:
             u.password = hash_password(password)
-            u.password_token = None
+            u.pwd_token = ""
             db.session.commit()
 
             return u
@@ -99,13 +99,13 @@ class User(db.Model):
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(30), nullable=False)
-    phone = db.Column(db.String(20))
-    description = db.Column(db.Text)
-    image = db.Column(db.Text)
+    phone = db.Column(db.String(20), server_default='')
+    description = db.Column(db.Text, server_default='')
+    image = db.Column(db.Text, server_default='')
 
     # for google calendar use
-    calendar_id = db.Column(db.Text)
-    calendar_email = db.Column(db.String(50))
+    calendar_id = db.Column(db.Text, server_default='')
+    calendar_email = db.Column(db.String(50), server_default='')
 
     #provider or customer
     is_provider = db.Column(db.Boolean, nullable=False, server_default="FALSE")
@@ -121,7 +121,7 @@ class User(db.Model):
         server_default=sqlalchemy.func.now()
     )
 
-    pwd_token = db.Column(db.Text, nullable=True)
+    pwd_token = db.Column(db.Text, nullable=True, server_default='')
 
     is_active = db.Column(db.Boolean, nullable=False, server_default="TRUE")
 
@@ -152,10 +152,10 @@ class User(db.Model):
     def __repr__(self):
         """Representation of this class"""
         e = self
-        return f"<User {e.first_name} {e.last_name} {e.email}>"
+        return f"<User {e.username} {e.first_name} {e.last_name} {e.email}>"
 
     @classmethod
-    def register(cls, username, password, email, first_name, last_name, is_provider):
+    def register(cls, username, password, email, first_name, last_name, is_provider=False):
         """Register user w/hashed password & return user."""
 
         # return instance of user w/username and hashed pwd
@@ -200,11 +200,11 @@ class User(db.Model):
     def update_password_by_token(cls, token, password):
         """Update password by token"""
 
-        u = User.query.filter(User.pwd_token == token).first()
+        u = User.query.filter(User.pwd_token == token, User.is_active==True).first()
 
         if u:
             u.password = hash_password(password)
-            u.password_token = None
+            u.pwd_token = ''
             db.session.commit()
 
             return u
@@ -268,8 +268,8 @@ class Service(db.Model):
         'users.username', ondelete="CASCADE"))
     name = db.Column(db.String(100), nullable=False)
     # location_type = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    image = db.Column(db.Text)
+    description = db.Column(db.Text, nullable=False, server_default='')
+    image = db.Column(db.Text, server_default='')
     updated = db.Column(
         db.TIMESTAMP(timezone=True),
         nullable=False,
@@ -292,23 +292,6 @@ class Service(db.Model):
             return DEFAULT_IMAGE_SERVICE
 
         return upload_file_url(self.image, username=self.username, dirname="services")
-
-    # @property
-    # def location_type_name(self):
-    #     """Return the location type name"""
-
-    #     return Service.get_location_type_name(self.location_type)
-
-    # @staticmethod
-    # def get_location_type_name(location_type):
-    #     """Return the location type name"""
-
-    #     if location_type == 0:
-    #         return "Online Service"
-    #     if location_type == 1:
-    #         return "Phone Service"
-
-    #     return "Online Service"
 
     def set_categoiry_ids(self, ids=[]):
         """Set categories with category_id list"""
@@ -339,8 +322,6 @@ class Service(db.Model):
             "id": self.id,
             "username": self.username,
             "name": self.name,
-            # "location_type": self.location_type,
-            # "location_type_name": self.location_type_name,
             "description": self.description,
             "image": self.image,
             "image_url": self.image_url,
@@ -406,13 +387,20 @@ class Schedule(db.Model):
 
         return []
 
-    def available_times(self , date):
+    def available_times(self, date):
         """Return the list of available time for specific date"""
 
         list = self.schedule_list
 
-        return [(f"{item['start']}-{item['end']}" , f"{item['start']} to {item['end']}") for item in list if Schedule.check_available(self.username , date , item)]
+        if len(self.date_exp) == 1:
+            if date.isoweekday() % 7 != int(self.date_exp):
+                # not the day of the week
+                return []
+        elif date.isoformat() != self.date_exp:
+            # not the specific date
+            return []
 
+        return [(f"{item['start']}-{item['end']}", f"{item['start']} to {item['end']}") for item in list if Schedule.check_available(self.username, date, item)]
 
     @staticmethod
     def check_available(username, date, item):
@@ -477,7 +465,7 @@ class Appointment(db.Model):
     customer = db.relationship("User", foreign_keys=[customer_username], backref=db.backref(
         "appointments_as_customer", lazy="dynamic"))
 
-    service = db.relationship("Service" , foreign_keys=[service_id])
+    service = db.relationship("Service", foreign_keys=[service_id])
 
     @property
     def summary(self):
@@ -489,16 +477,12 @@ class Appointment(db.Model):
     def description(self):
         """Return the google calendar description"""
 
-        return f"""
+        return f"""Service:{self.service.name}
 Customer:{self.customer.full_name}
-Note:{self.note}
-"""
+Provider:{self.provider.full_name}
+Time:{self.start} to {self.end}
+Note:{self.note}"""
 
-    # @property
-    # def location_type_name(self):
-    #     """Returnt the name of location_type"""
-
-    #     return Service.get_location_type_name(self.location_type)
 
     def __repr__(self):
         """Representation of this class"""
