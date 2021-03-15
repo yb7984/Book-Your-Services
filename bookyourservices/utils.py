@@ -8,7 +8,6 @@ import os
 from werkzeug.utils import secure_filename
 from wtforms.widgets import HiddenInput
 from flask_mail import Mail
-import secret
 import sys
 import pytz
 
@@ -37,8 +36,8 @@ def config_mail(app):
         MAIL_SERVER=MAIL_SERVER,
         MAIL_PORT=MAIL_PORT,
         MAIL_USE_SSL=MAIL_USE_SSL,
-        MAIL_USERNAME=secret.MAIL_USERNAME,
-        MAIL_PASSWORD=secret.MAIL_PASSWORD
+        MAIL_USERNAME=MAIL_USERNAME,
+        MAIL_PASSWORD=MAIL_PASSWORD
     )
 
     mail = Mail(app)

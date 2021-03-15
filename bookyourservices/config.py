@@ -1,6 +1,18 @@
 
 """Default Configurations"""
 import os
+import json
+
+
+def read_config_from_secret(key):
+    """Read the config information from secret.py"""
+
+    with open("secret.py" , "r") as f:
+        str = f.read()
+
+        config = json.loads(str)
+
+        return config.get(key , "")
 
 #database setting
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgres:///bookyourservices')
@@ -12,7 +24,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'so so so')
 
 
 #url
-BASE_URL = "http://127.0.0.1:5000"
+BASE_URL = os.environ.get('BASE_URL' , 'http://127.0.0.1:5000')
 
 #debug setting
 DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -137,3 +149,6 @@ US_ABBREV_STATES = dict(map(reversed, US_STATE_ABBREV.items()))
 MAIL_SERVER='smtp.gmail.com'
 MAIL_PORT=465
 MAIL_USE_SSL=True
+MAIL_USERNAME=os.environ.get('MAIL_USERNAME' , read_config_from_secret('MAIL_USERNAME'))
+MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD' , read_config_from_secret('MAIL_PASSWORD'))
+
