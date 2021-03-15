@@ -41,7 +41,7 @@ class GoogleCalendarHandler:
             info_json = os.environ.get(GOOGLE_SERVICE_ACCOUNT_KEY , None)
 
             if info_json is not None:
-                service_account_info = json.load(info_json)
+                service_account_info = json.loads(info_json)
                 credentials = service_account.Credentials.from_service_account_info(service_account_info , 
                 scopes=GOOGLE_CALENDAR_SCOPES)
             else :
