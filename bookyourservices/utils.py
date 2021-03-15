@@ -66,7 +66,7 @@ def login_username():
 
 def login_username_set(username):
     """Set current login username"""
-
+    session.clear()
     session[USERNAME_SESSION_KEY] = username
 
 
@@ -77,7 +77,7 @@ def login_admin_username():
 
 def login_admin_username_set(username):
     """Set current login username of admin"""
-
+    session.clear()
     session[ADMIN_USER_SESSION_KEY] = username
 
 
