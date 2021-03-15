@@ -6,13 +6,15 @@ import json
 
 def read_config_from_secret(key):
     """Read the config information from secret.py"""
+    try:
+        with open("secret.py" , "r") as f:
+            str = f.read()
 
-    with open("secret.py" , "r") as f:
-        str = f.read()
+            config = json.loads(str)
 
-        config = json.loads(str)
-
-        return config.get(key , "")
+            return config.get(key , "")
+    except:
+        return ""
 
 #database setting
 SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgres:///bookyourservices')
