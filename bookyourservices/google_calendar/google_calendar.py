@@ -6,8 +6,10 @@ import os.path
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import config
+import os
 
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar']
+GOOGLE_SERVICE_ACCOUNT_KEY = config.GOOGLE_SERVICE_ACCOUNT_KEY
 GOOGLE_SERVICE_ACCOUNT_FILE = config.GOOGLE_SERVICE_ACCOUNT_FILE
 GOOGLE_CALENDAR_DEFAULT_TIMEZONE = config.DEFAULT_TIMEZONE
 
@@ -34,10 +36,17 @@ class GoogleCalendarHandler:
         global google_calendar_service
 
         if google_calendar_service is None:
+            credentials = None
+            info_json = os.environ.get(GOOGLE_SERVICE_ACCOUNT_KEY , None)
 
-            credentials = service_account.Credentials.from_service_account_file(
-                GOOGLE_SERVICE_ACCOUNT_FILE,
+            if info_json is not None:
+                service_account_info = json.load(info_json)
+                credentials = service_account.Credentials.from_service_account_info(service_account_info , 
                 scopes=GOOGLE_CALENDAR_SCOPES)
+            else :
+                credentials = service_account.Credentials.from_service_account_file(
+                    GOOGLE_SERVICE_ACCOUNT_FILE,
+                    scopes=GOOGLE_CALENDAR_SCOPES)
 
             google_calendar_service = build('calendar', 'v3', credentials=credentials)
 

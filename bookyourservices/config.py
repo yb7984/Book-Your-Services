@@ -34,6 +34,7 @@ DEBUG = True
 DEVELOPMENT = True
 
 #google account setting
+GOOGLE_SERVICE_ACCOUNT_KEY = "SERVICE_ACCOUNT"
 GOOGLE_SERVICE_ACCOUNT_FILE = 'google_calendar/service.json'
 
 #time zone
