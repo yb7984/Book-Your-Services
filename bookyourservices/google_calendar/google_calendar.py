@@ -7,6 +7,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import config
 import os
+import json
 
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar']
 GOOGLE_SERVICE_ACCOUNT_KEY = config.GOOGLE_SERVICE_ACCOUNT_KEY
