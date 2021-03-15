@@ -66,17 +66,12 @@ class ScheduleHandler:
         """update schedules"""
         form = ScheduleForm(obj=request.json, prefix="schedule")
 
-        print(request.json)
-        print(request.form)
         if form.validate():
             date_exp_weekly = form.date_exp_weekly.data
             date_exp_dates = form.date_exp_dates.data
 
             date_exp_dates_list = date_exp_dates.split(
                 ",") if len(date_exp_dates) > 0 else []
-
-            print(date_exp_weekly)
-            print(date_exp_dates_list)
 
             for date in date_exp_dates_list:
                 # remove dates before today
@@ -92,8 +87,6 @@ class ScheduleHandler:
             is_active = form.is_active.data
 
             # check data for schedule time
-            print(starts)
-            print(ends)
 
             # sort with the start time
             for i in range(len(starts)):
@@ -116,8 +109,6 @@ class ScheduleHandler:
                         "Schedule time conflick, please check and fix it!")
                     break
 
-            print(starts)
-            print(ends)
 
             if len(form.errors) == 0:
 
@@ -127,8 +118,6 @@ class ScheduleHandler:
                              for i in range(len(starts))]
 
                 date_exps = date_exp_weekly + date_exp_dates_list
-
-                print(date_exps)
 
                 for date_exp in date_exps:
                     item = ScheduleHandler.get(username, date_exp)
@@ -156,10 +145,8 @@ class ScheduleHandler:
 
                 # # success, return new item
 
-                print(items)
                 return {"items": [item.serialize() for item in items]}
 
-        print(form.errors)
         # return form errors
         return {"errors": form.errors}
 

@@ -6,6 +6,7 @@ from forms import AdminForm, AdminLoginForm
 from utils import *
 import datetime
 from secrets import token_urlsafe
+import config
 
 class AdminHandler:
     """Handler for admin"""
@@ -137,7 +138,7 @@ class AdminHandler:
                 # send email if not testing
                 mail.send_message(
                     subject='Book your services admin password reset' ,
-                    sender='bobowu98@gmail.com',
+                    sender=config.MAIL_SENDER,
                     recipients=[email] ,
                     body=f'{BASE_URL}{url_for("admin.admins_password_reset")}?token={account.pwd_token}'
                 )

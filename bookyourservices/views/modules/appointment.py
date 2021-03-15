@@ -7,6 +7,7 @@ from utils import *
 from views.modules.service import ServiceHandler
 from google_calendar.google_calendar import GoogleCalendarHandler
 import datetime
+import config
 
 
 class AppointmentHandler:
@@ -214,7 +215,7 @@ class AppointmentHandler:
             # send email if not testing
             mail.send_message(
                 subject=f"{ action.upper() }:{ appointment.summary }",
-                sender='bobowu98@gmail.com',
+                sender=config.MAIL_SENDER,
                 recipients=[appointment.provider.email,
                             appointment.customer.email],
                 body=f"""

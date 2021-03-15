@@ -12,15 +12,13 @@ class GoogleCalendarTest(TestCase):
         list = GoogleCalendarHandler.calendars_list()
 
         for calendar in list:
-            print(calendar)
+            
             if calendar['summary'] == 'test calendar':
                 cls.calendar_id = calendar.get('id')
 
                 return 
                 
         # if not found the test calendar create one
-
-        print ("#####create one")
         calendar = GoogleCalendarHandler.calendars_insert(summary="test calendar" , description="test calendar description")
         cls.calendar_id = calendar.get('id')
 
@@ -78,7 +76,7 @@ class GoogleCalendarTest(TestCase):
     def test_calendars_share(self):
         """test calendar_calendars_share"""
 
-        test_email = 'bobowu98@gmail.com'
+        test_email = 'ybdevs.com@gmail.com'
 
         rule = GoogleCalendarHandler.calendars_share(self.calendar_id , test_email)
 

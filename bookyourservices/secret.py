@@ -1,4 +1,4 @@
 {
-"MAIL_USERNAME":"bobowu98@gmail.com",
-"MAIL_PASSWORD":"bobowu5611393"
+"MAIL_USERNAME":"ybdevs.com@gmail.com",
+"MAIL_PASSWORD":"live01702"
 }

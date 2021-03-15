@@ -6,6 +6,7 @@ from forms import *
 from secrets import token_urlsafe
 from wtforms.widgets import HiddenInput
 from flask_sqlalchemy import Pagination
+import config
 
 # Use test database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///bookyourservices_test'
@@ -47,7 +48,7 @@ class UtilsTest(TestCase):
 
                 mail.send_message(subject='testing',
                                   body='test',
-                                  sender='bobowu98@gmail.com',
+                                  sender=config.MAIL_SENDER,
                                   recipients=['bobowu@outlook.com'])
 
                 self.assertEqual(len(outbox),  1)

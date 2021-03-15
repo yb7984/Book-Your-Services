@@ -6,6 +6,7 @@ from forms import UserForm, UserLoginForm
 from utils import *
 from google_calendar.google_calendar import GoogleCalendarHandler
 import datetime
+import config
 from secrets import token_urlsafe
 
 
@@ -216,7 +217,7 @@ class UserHandler:
                 # send email if not testing
                 mail.send_message(
                     subject='Book your services admin password reset' ,
-                    sender='bobowu98@gmail.com',
+                    sender=config.MAIL_SENDER,
                     recipients=[email] ,
                     body=f'{BASE_URL}{url_for("home.password_reset")}?token={account.pwd_token}'
                 )
