@@ -4,12 +4,26 @@ import * as config from '/static/js/config.js';
  * Basic class for list items from ajax resource
  */
 class ListBasic {
+
+    /**
+     * Constructor for ListBasic
+     * @param {*} $list jQuery object of the list container
+     * @param {*} template html template of how to display the list
+     * @param {*} url the url to get the list
+     * @param {*} per_page how many items per page. if set to 0 getting the default amount of the server setting.
+     * @param {*} $form jQuery object of the form for submiting updates. 
+     * @param {*} prefix prefix for the form items
+     * @param {*} insertUrl url for insert new item.
+     * @param {*} updateUrl url for update existed item.
+     * @param {*} deleteUrl url for delete existed item
+     * @param {*} newTitle title of the form for inserting new Item
+     */
     constructor(
         $list,
         template,
         url,
         per_page = 0,
-        form = null,
+        $form = null,
         prefix = "",
         insertUrl = "",
         updateUrl = "",
@@ -26,7 +40,7 @@ class ListBasic {
         this.idKey = "id";
         this.nameKey = "name";
 
-        this.$form = form;
+        this.$form = $form;
         this.prefix = prefix;
         this.insertUrl = insertUrl;
         this.updateUrl = updateUrl;

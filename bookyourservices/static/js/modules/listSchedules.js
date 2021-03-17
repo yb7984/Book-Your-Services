@@ -2,6 +2,9 @@ import ListBasic from '/static/js/modules/list.js';
 import * as formFunc from '/static/js/modules/form.js';
 import * as config from '/static/js/config.js';
 
+/**
+ * Class for list items from schedules
+ */
 class ListSchedules extends ListBasic {
     /**
      * Events

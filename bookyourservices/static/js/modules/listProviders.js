@@ -1,5 +1,8 @@
 import ListBasic from '/static/js/modules/list.js'
 
+/**
+ * Class for list items from providers
+ */
 class ListProviders extends ListBasic {
     /**
      * Return the html of the provider

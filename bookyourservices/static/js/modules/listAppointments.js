@@ -1,6 +1,9 @@
 import ListBasic from '/static/js/modules/list.js';
 import * as config from '/static/js/config.js';
 
+/**
+ * Class for list items from appointments
+ */
 class ListAppointments extends ListBasic {
 
     /**

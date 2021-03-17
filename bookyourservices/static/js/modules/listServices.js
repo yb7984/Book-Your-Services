@@ -1,6 +1,9 @@
 import ListBasic from '/static/js/modules/list.js';
 import * as formFunc from '/static/js/modules/form.js';
 
+/**
+ * Class for list items from service
+ */
 class ListServices extends ListBasic {
     /**
      * Return the html of the service

@@ -21,6 +21,7 @@ class BaseSearchForm(FlaskForm):
 
     class Meta:
         csrf = False  # Disable CSRF
+        
     term = StringField("term", validators=[Optional()], render_kw={
                        "placeholder": "Start your search here"})
 
