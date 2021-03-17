@@ -48,7 +48,6 @@ export async function postForm($form, url, method = "POST", withFiles = false) {
         config["headers"] = { 'Content-Type': 'application/json' };
     }
 
-    console.log(config);
 
     if (method === "patch") {
         return await axios.patch(url, getFormData($form), config);

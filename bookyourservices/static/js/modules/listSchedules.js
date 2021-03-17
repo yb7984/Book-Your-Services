@@ -84,7 +84,6 @@ class ListSchedules extends ListBasic {
     initForm() {
 
         if ($(`#${this.prefix}date_exp_date`).length === 0) {
-            console.log("initForm")
 
             this.$date_exp_dates.addClass("d-none");
             this.$date_exp_dates.after(`
@@ -137,8 +136,6 @@ class ListSchedules extends ListBasic {
         this.$form.off("click", ".btn-schedules-add");
         this.$form.on("click", ".btn-schedules-add", (e) => {
             e.preventDefault();
-
-            console.log("btn-schedules-add");
 
             const $btn = findClickedButton(e, "btn-schedules-add");
 
@@ -292,8 +289,6 @@ class ListSchedules extends ListBasic {
      */
     async postForm(e){
         e.preventDefault();
-
-        console.log(this.$form.serializeArray());
 
         formFunc.showFormError(this.$form, '');
 

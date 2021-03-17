@@ -20,11 +20,12 @@ def read_config_from_secret(key):
 # database setting
 SQLALCHEMY_DATABASE_URI = os.environ.get(
     'DATABASE_URL', 'postgres:///bookyourservices')
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_TRACK_MODIFICATIONS = bool(os.environ.get(
+    'SQLALCHEMY_TRACK_MODIFICATIONS', 'False'))
+SQLALCHEMY_ECHO = bool(os.environ.get('SQLALCHEMY_ECHO', 'True'))
 
 # security key
-SECRET_KEY = os.environ.get('SECRET_KEY', 'so so so')
+SECRET_KEY = os.environ.get('SECRET_KEY', b'Iq\x18N\xefk\x1c|\x9bx\xe8\xf5\x95\xf5 \xb4')
 
 
 # url

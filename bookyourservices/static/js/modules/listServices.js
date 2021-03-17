@@ -21,13 +21,12 @@ class ListServices extends ListBasic {
             .replaceAll("%%username%%", item.username)
             .replaceAll("%%provider%%", item.provider)
             .replaceAll("%%categories%%", categories)
-            // .replaceAll("%%location_type%%", item.location_type_name)
             .replaceAll("%%description%%", item.description.replaceAll("\n", "<br />"))
             .replaceAll("%%image%%", item.image_url)
             .replaceAll("%%is_active%%", item.is_active ? `<span class="text-success">Active</span>` : `<span class="text-danger">Inactive</span>`);
 
         const current_username = getGlobalValues("CURRENT_USERNAME");
-        console.log(current_username);
+        
         if (!current_username || current_username === item.username) {
             //this service is belong to current login user, hide the appointment button
 

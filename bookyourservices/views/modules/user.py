@@ -108,23 +108,23 @@ class UserHandler:
         db.session.add(user)
 
         success = False
-        # try:
-        db.session.commit()
+        try:
+            db.session.commit()
 
-        success = True
+            success = True
 
-        # except IntegrityError:
-        #     db.session.rollback()
-        #     form.username.errors.append(
-        #         'Username or Email taken.  Please pick another')
+        except IntegrityError:
+            db.session.rollback()
+            form.username.errors.append(
+                'Username or Email taken.  Please pick another')
 
-        #     return None
-        # except:
-        #     db.session.rollback()
-        #     form.username.errors.append(
-        #         'Username or Email taken.  Please pick another')
+            return None
+        except:
+            db.session.rollback()
+            form.username.errors.append(
+                'Username or Email taken.  Please pick another')
 
-        #     return None
+            return None
 
         if success == True:
 

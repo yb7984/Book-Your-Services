@@ -7,5 +7,5 @@ const listServices = new ListServices(
     $("#services-template").html(),
     `/api/services?username=${PROVIDER_USERNAME}`);
 
-listServices.loadList(true , 1 , true);
+listServices.loadList(true , 0 , true);
 

@@ -146,8 +146,6 @@ class ServiceForm(FlaskForm):
     name = StringField("Name", validators=[InputRequired(), Length(
         min=1, max=100)], render_kw={"placeholder": "Input your service name here"})
     category_ids = CheckboxMultipleField("Categories", choices=[])
-    # location_type = SelectField(
-    #     "Location", choices=[(0, "Online Service"), (1, "Phone Service")])
     description = TextAreaField("Description", validators=[Optional()],
                                 render_kw={"placeholder": "Input service description here",
                                            "rows": 6})

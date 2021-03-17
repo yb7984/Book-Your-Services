@@ -135,15 +135,15 @@ class ScheduleHandler:
                         is_active = is_active
 
                     items.append(item)
-                # try:
-                db.session.commit()
+                try:
+                    db.session.commit()
 
-                # except:
-                #     db.session.rollback()
-                #     # return error message
-                #     return {"error": "Error when adding an schedule"}
+                except:
+                    db.session.rollback()
+                    # return error message
+                    return {"error": "Error when adding an schedule"}
 
-                # # success, return new item
+                # success, return new item
 
                 return {"items": [item.serialize() for item in items]}
 

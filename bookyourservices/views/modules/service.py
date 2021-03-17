@@ -37,6 +37,8 @@ class ServiceHandler:
         limit = int(request.args.get("limit" , -1))
         if limit > 0:
             per_page = limit
+        else:
+            per_page = int(request.args.get("per_page" , per_page))
 
         filters = []
 
@@ -75,7 +77,6 @@ class ServiceHandler:
 
         if form.validate():
             name = form.name.data
-            # location_type = form.location_type.data
             description = form.description.data
             is_active = form.is_active.data
 
@@ -85,7 +86,6 @@ class ServiceHandler:
                 username=username,
                 name=name,
                 description=description,
-                # location_type=location_type,
                 is_active=is_active,
                 updated=datetime.datetime.now(),
                 created=datetime.datetime.now()
@@ -132,7 +132,6 @@ class ServiceHandler:
 
         if form.validate():
             service.name = form.name.data
-            # service.location_type = form.location_type.data
             service.description = form.description.data
             service.is_active = form.is_active.data
             service.updated = datetime.datetime.now()

@@ -49,22 +49,25 @@ class ListBasic {
 
             const $link = $(e.target);
 
+
             if ($link.hasClass("page-first")) {
                 await this.loadList(true, 1, true);
+                location.href = "#page=1";
             } else if ($link.hasClass("page-prev")) {
                 await this.loadList(true, this.page - 1, true);
+                location.href = "#page=" + (this.page - 1);
             } else if ($link.hasClass("page-next")) {
                 await this.loadList(true, this.page + 1, true);
+                location.href = "#page=" + (this.page + 1);
             } else if ($link.hasClass("page-last")) {
                 await this.loadList(true, this.pages, true);
+                location.href = "#page=" + this.pages;
             }
         });
 
         //edit button event
         this.$listContainer.on("click", ".btn-edit", async (e) => {
             e.preventDefault();
-
-            console.log("edit");
 
             const $btn = findClickedButton(e, "btn-edit");
 
@@ -82,6 +85,12 @@ class ListBasic {
             await this.deleteItem(e);
         });
 
+        this.$listContainer.on("click", ".btn-login", (e) => {
+            e.preventDefault();
+
+            location.href = '/login?path=' + location.href;
+        })
+
         //form submit event
         if (this.$form) {
             this.setFormSubmit();
@@ -98,7 +107,6 @@ class ListBasic {
             prefix = this.prefix;
         }
 
-        console.log(`#form-${this.prefix}title`);
         $(`#form-${this.prefix}title`).text(`Edit:${item[this.nameKey]}`);
 
         for (const key in item) {
@@ -145,14 +153,13 @@ class ListBasic {
         const $btn = findClickedButton(e, "btn-delete");
 
         const id = $btn.data(this.idKey);
-        // try {
-        const resp = await axios.delete(this.getDeleteUrl(id));
+        try {
+            const resp = await axios.delete(this.getDeleteUrl(id));
 
-        console.log(resp);
-        await this.loadList(true);
-        // } catch (error) {
-        //     showAlert("Error when deleting!", config.ALERT_ERROR);
-        // }
+            await this.loadList(true, 0, true);
+        } catch (error) {
+            showAlert("Error when deleting!", config.ALERT_ERROR);
+        }
     }
 
     /**
@@ -169,51 +176,49 @@ class ListBasic {
             this.$form.addClass("d-none");
             $modalLoading.removeClass("d-none");
 
-            // try {
-            formFunc.showFormError(this.$form, "");
+            try {
+                formFunc.showFormError(this.$form, "");
 
-            const id = $(`#${this.prefix}${this.idKey}`).val();
-            let url = this.insertUrl;
-            let method = "post";
+                const id = $(`#${this.prefix}${this.idKey}`).val();
+                let url = this.insertUrl;
+                let method = "post";
 
-            if (id) {
-                url = this.getUpdateUrl(id)
-                method = "patch";
-            }
-
-            console.log(url);
-
-
-            const resp = await formFunc.postForm(this.$form, url, method, true);
-
-            if (resp.data.item) {
-                if (resp.status === 201) {
-                    $modal.modal("hide");
-
-                    //create successfully
-                    await this.loadList(true);
-
-                    this.resetForm();
-                } else if (id && resp.status === 200) {
-                    $modal.modal("hide");
-
-                    //update successfully
-                    await this.loadList(true);
-
-                    this.resetForm();
+                if (id) {
+                    url = this.getUpdateUrl(id)
+                    method = "patch";
                 }
-            } else {
-                if (resp.data.error) {
-                    formFunc.showFormError(this.$form, resp.data.error);
-                } else if (resp.data.errors) {
-                    const errors = resp.data.errors;
-                    formFunc.showFormError(this.$form, "", errors);
-                }
-            }
 
-            // } catch (error) {
-            //     formFunc.showFormError(this.$form , "Error when updating data!");
-            // }
+
+                const resp = await formFunc.postForm(this.$form, url, method, true);
+
+                if (resp.data.item) {
+                    if (resp.status === 201) {
+                        $modal.modal("hide");
+
+                        //create successfully
+                        await this.loadList(true, 0, true);
+
+                        this.resetForm();
+                    } else if (id && resp.status === 200) {
+                        $modal.modal("hide");
+
+                        //update successfully
+                        await this.loadList(true, 0, true);
+
+                        this.resetForm();
+                    }
+                } else {
+                    if (resp.data.error) {
+                        formFunc.showFormError(this.$form, resp.data.error);
+                    } else if (resp.data.errors) {
+                        const errors = resp.data.errors;
+                        formFunc.showFormError(this.$form, "", errors);
+                    }
+                }
+
+            } catch (error) {
+                formFunc.showFormError(this.$form, "Error when updating data!");
+            }
 
             this.$form.removeClass("d-none");
             $modalLoading.addClass("d-none");
@@ -224,7 +229,6 @@ class ListBasic {
      * Reset form
      */
     resetForm() {
-        console.log(`#form-${this.prefix}title`);
         $(`#form-${this.prefix}title`).text(this.newTitle);
         $(`#${this.prefix}${this.idKey}`).val('');
         formFunc.showFormError(this.$form, "");
@@ -237,13 +241,21 @@ class ListBasic {
      * @param {*} page
      * @param {*} loadPager
      */
-    async loadList(reload = false, page = 1, loadPager = false) {
+    async loadList(reload = false, page = 0, loadPager = false) {
+
+        if (page === 0) {
+            const hash = location.hash;
+
+            if (hash.startsWith("#page=")) {
+                page = parseInt(hash.substr(6));
+            } else {
+                page = 1;
+            }
+        }
 
         const list = await this.getList(reload, page);
 
         this.$listContainer.html('');
-
-        console.log(list);
 
         for (let i = 0; i < list.length; i++) {
             this.$listContainer.append(this.getHtml(list[i]));
@@ -259,7 +271,13 @@ class ListBasic {
      * @param {*} item 
      */
     getHtml(item) {
-        return this.template.replaceAll("item", item);
+        // return this.template.replaceAll("%%item%%", item);
+        let html = this.template;
+        for (const prop in item){
+            html = html.replaceAll(`%%${prop}%%` , item[prop]);
+        }
+
+        return html;
     }
 
 
@@ -307,7 +325,6 @@ class ListBasic {
             //Load the services if not loaded yet
             const resp = await axios.get(this.getUrl(page));
 
-            console.log(resp);
             this.items = resp.data.items;
             this.page = resp.data.page;
             this.pages = resp.data.pages;
@@ -342,7 +359,7 @@ class ListBasic {
     getUpdateUrl(id) {
 
         if (this.updateUrl.includes("?")) {
-            let strs = this.updateUrl.split("?" , 2)
+            let strs = this.updateUrl.split("?", 2)
             return strs[0].substring(0, strs[0].length - 1) + id + "?" + strs[1];
 
         }
@@ -359,7 +376,7 @@ class ListBasic {
     getDeleteUrl(id) {
 
         if (this.deleteUrl.includes("?")) {
-            let strs = this.deleteUrl.split("?" , 2)
+            let strs = this.deleteUrl.split("?", 2)
             return strs[0].substring(0, strs[0].length - 1) + id + "?" + strs[1];
 
         }

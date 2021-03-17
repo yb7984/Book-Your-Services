@@ -163,7 +163,12 @@ def login():
 
             login_username_set(username)
 
-            return redirect(url_for('home.dashboard'))
+            path = request.args.get("path" , "")
+
+            if path == "":
+                return redirect(url_for('home.dashboard'))
+            else:
+                return redirect(path)
         else:
             flash('Invalid username/password.', 'danger')
 

@@ -30,7 +30,7 @@ const listServices = new ListServices(
     "New Service"
 );
 
-listServices.loadList(true);
+listServices.loadList(true , 0 , true);
 
 $("#btn-service-new").on("click" , (e)=>{
     listServices.resetForm();

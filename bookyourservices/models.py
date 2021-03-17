@@ -267,7 +267,6 @@ class Service(db.Model):
     username = db.Column(db.String(20), db.ForeignKey(
         'users.username', ondelete="CASCADE"))
     name = db.Column(db.String(100), nullable=False)
-    # location_type = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=False, server_default='')
     image = db.Column(db.Text, server_default='')
     updated = db.Column(

@@ -23,4 +23,4 @@ $newBtn.on("click" , (e)=>{
     listAppointments.resetForm();
 });
 
-listAppointments.loadList(true , 1 , true);
+listAppointments.loadList(true , 0 , true);

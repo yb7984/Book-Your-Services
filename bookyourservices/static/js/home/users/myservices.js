@@ -26,4 +26,4 @@ $newBtn.on("click" , (e)=>{
     listServices.resetForm();
 });
 
-listServices.loadList(true , 1 , true);
+listServices.loadList(true , 0 , true);

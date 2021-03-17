@@ -29,7 +29,6 @@ class ListAppointments extends ListBasic {
      * @param {*} item 
      */
     getHtml(item) {
-        console.log(item);
         return this.template
             .replaceAll("%%id%%", item.id)
             .replaceAll("%%summary%%", item.summary)
@@ -39,7 +38,6 @@ class ListAppointments extends ListBasic {
             .replaceAll("%%service_date%%", (new Date(item.start)).toLocaleString(config.DATE_FORMAT_LANG, config.DATE_FORMAT_OPTIONS))
             .replaceAll("%%start%%", (new Date(item.start)).toLocaleString(config.DATE_FORMAT_LANG, config.TIME_FORMAT_OPTIONS))
             .replaceAll("%%end%%", (new Date(item.end)).toLocaleString(config.DATE_FORMAT_LANG, config.TIME_FORMAT_OPTIONS))
-            // .replaceAll("%%location_type%%", item.location_type)
             .replaceAll("%%no_note%%", item.note === "" ? "d-none": "")
             .replaceAll("%%description%%", item.description.replaceAll("\n", "<br />"))
             .replaceAll("%%is_active%%", item.is_active ? `<span class="text-success">Active</span>` : `<span class="text-danger">Inactive</span>`);
@@ -56,7 +54,6 @@ class ListAppointments extends ListBasic {
             prefix = this.prefix;
         }
 
-        console.log(`#form-${this.prefix}title`);
         $(`#form-${this.prefix}title`).text(`Edit:${item[this.nameKey]}`);
 
         const start = item.start;
@@ -116,7 +113,6 @@ class ListAppointments extends ListBasic {
         
         const $rows = this.$listContainer.find(".appointment-item");
 
-        console.log($rows.length);
 
         for (let i = 0 ; i < $rows.length ; i ++){
             if (i % 2 == 0){

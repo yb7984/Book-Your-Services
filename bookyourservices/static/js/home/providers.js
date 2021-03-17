@@ -6,5 +6,5 @@ const listProviders = new ListProviders(
     "/api/providers" , 
     3);
 
-listProviders.loadList(true , 1 , true);
+listProviders.loadList(true , 0 , true);
 
