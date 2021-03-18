@@ -385,7 +385,7 @@ def users_update(username):
 
         if len(form.errors) == 0:
             #no error, redirect
-            flash('Successfully Update Account!', FLASH_GROUP_SUCCESS)
+            flash('Successfully Update User!', FLASH_GROUP_SUCCESS)
 
             return redirect(url_for("admin.users_get", username=username))
 
@@ -398,7 +398,7 @@ def users_delete(username):
 
     UserHandler.delete(username)
 
-    flash('Successfull deactivate a user account!', 'success')
+    flash('Successfull deactivate an user account!', 'success')
 
     return redirect(url_for("admin.users_list"))
 
@@ -435,6 +435,7 @@ def google_calendars_delete(calendar_id):
 # For categories
 #
 @admin.route('/admin/categories/index')
+@login_admin_required
 def categories_index():
     """Page for categories management"""
     form = CategoryForm()

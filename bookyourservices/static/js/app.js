@@ -35,6 +35,26 @@ function showAlert(message, className = "success") {
     $("#alert-modal").modal("show");
 }
 
+/**
+ * get the url for pager
+ */
+function getPageUrl(page=1){
+
+    let params = new URLSearchParams(window.location.search);
+    let url = window.location.pathname;
+
+    params.delete("page");
+    params.append("page" , page);
+
+    return url + "?" + params.toString();
+}
+
+$(".html-pager").on("click" , ".pager-link" , (e)=>{
+    e.preventDefault();
+
+    const $btn = $(e.target);
+    location.href = getPageUrl($btn.data("page"));
+});
 
 
 if ($('#side-menu-btn')) {

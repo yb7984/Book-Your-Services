@@ -12,23 +12,25 @@ Users List
 <form id="search-form">
     <div id="filters" class="row container-fluid">
         <div class="col-3">
-            <input type="text" class="form-control" name="username" placeholder="Username" value="{{request.args.get('username' , '')}}">
+            <input type="text" class="form-control" name="username" placeholder="Username"
+                value="{{request.args.get('username' , '')}}">
         </div>
         <div class="col-3">
-            <input type="text" class="form-control" name="email" placeholder="Email" value="{{request.args.get('email' , '')}}">
+            <input type="text" class="form-control" name="email" placeholder="Email"
+                value="{{request.args.get('email' , '')}}">
         </div>
         <div class="col-2">
             <select name="is_provider" class="form-control">
                 <option value="">Is Provider</option>
-                <option value="1" {{"selected" if request.args.get("is_provider") == "1"}}>Providers</option>
-                <option value="0" {{"selected" if request.args.get("is_provider") == "0"}}>Not Providers</option>
+                <option value="1" {{"selected" if request.args.get("is_provider")=="1" }}>Providers</option>
+                <option value="0" {{"selected" if request.args.get("is_provider")=="0" }}>Not Providers</option>
             </select>
         </div>
         <div class="col-2">
             <select name="is_active" class="form-control">
                 <option value="">Is Active</option>
-                <option value="1" {{"selected" if request.args.get("is_active") == "1"}}>Active</option>
-                <option value="0" {{"selected" if request.args.get("is_active") == "0"}}>Inactive</option>
+                <option value="1" {{"selected" if request.args.get("is_active")=="1" }}>Active</option>
+                <option value="0" {{"selected" if request.args.get("is_active")=="0" }}>Inactive</option>
             </select>
         </div>
         <div class="col-2">
@@ -79,17 +81,20 @@ Users List
 
     </tbody>
 </table>
-<div class=pagination>
-    {% for page in pagination.iter_pages() %}
-    {% if page %}
-    {% if page != pagination.page %}
-    <a href="?page={{page}}">{{ page }}</a>
-    {% else %}
-    <strong>{{ page }}</strong>
+{% if pagination.pages > 1 %}
+<div class="h5 html-pager">
+    {% if pagination.page > 1 %}
+    <a href="" data-page="1" class="text-primary pager-link">First</a>
+    <a href="" data-page="{{pagination.page - 1}}" class="text-primary pager-link">Previous</a>
     {% endif %}
-    {% else %}
-    <span class=ellipsis>…</span>
+
+    {% if pagination.page < pagination.pages %}
+    <a href="" data-page="{{pagination.page + 1}}" class="text-primary pager-link">Next</a>
+    <a href="" data-page="{{pagination.pages}}" class="text-primary pager-link">Last</a>
     {% endif %}
-    {% endfor %}
+
+    Current page <span class="text-primary">{{pagination.page}}</span> of <span
+        class="text-primary">{{pagination.pages}}</span> Pages
 </div>
+{% endif %}
 {% endblock %}

@@ -21,8 +21,8 @@ db.create_all()
 TESTING = True
 
 
-class ViewUserTest(TestCase):
-    """Test class for views for user information"""
+class ViewAdminTest(TestCase):
+    """Test class for views for admin information"""
 
     def setUp(self):
         """Clean up test data and set up some new data"""
