@@ -30,6 +30,9 @@ class Admin(db.Model):
     @property
     def full_name(self):
         """Return the full name of the admin"""
+        if len(self.first_name) == 0 and len(self.last_name) == 0:
+            return self.username
+            
         return f"{self.first_name} {self.last_name}"
 
     def __repr__(self):

@@ -8,5 +8,38 @@ Dashboard
 {% endblock %}
 
 {% block content %}
-
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="card m-1 bg-light">
+            <div class="card-body">
+                <h2 class="card-title text-center text-primary">Users</h2>
+                <p class="display-1 text-center text-success">{{ counts["users_count"] }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card m-1 bg-light">
+            <div class="card-body">
+                <h2 class="card-title text-center text-primary">Providers</h2>
+                <p class="display-1 text-center text-success">{{ counts["providers_count"] }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card m-1 bg-light">
+            <div class="card-body">
+                <h2 class="card-title text-center text-primary">Services</h2>
+                <p class="display-1 text-center text-success">{{ counts["services_count"] }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card m-1 bg-light">
+            <div class="card-body">
+                <h2 class="card-title text-center text-primary">Appointments</h2>
+                <p class="display-1 text-center text-success"> {{ counts["appointments_count"] }} </p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

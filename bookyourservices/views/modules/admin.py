@@ -26,19 +26,26 @@ class AdminHandler:
     def register(form):
         """New Admin"""
 
-        username = form.username.data
+        username = form.username.data.strip().lower()
         password = form.password.data
-        email = form.email.data
+        email = form.email.data.strip().lower()
         first_name = form.first_name.data
         last_name = form.last_name.data
 
         #check duplicate username and email
-        count = Admin.query.filter(db.or_(Admin.username==username, Admin.email==email)).count()
+        count = Admin.query.filter(Admin.username==username).count()
 
         if count > 0:
             form.username.errors.append(
-                'Username or Email taken.  Please pick another')
+                'Username taken.  Please pick another')
 
+        count = Admin.query.filter(Admin.email==email).count()
+
+        if count > 0:
+            form.email.errors.append(
+                'Email taken.  Please pick another')
+
+        if len(form.errors) > 0:
             return None
 
         new_account = Admin.register(

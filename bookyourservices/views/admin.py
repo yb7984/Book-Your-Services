@@ -88,8 +88,8 @@ def before_request_func():
         g.admin = Admin.query.get(login_admin_username())
 
         if g.admin is None:
-            flash("Please login first!", FLASH_GROUP_DANGER)
             session.clear()
+            flash("Please login first!", FLASH_GROUP_DANGER)
             return redirect(f'{url_for("admin.login")}?path={urllib.parse.quote_plus(request.path)}')
 
         g.is_administrator = (g.admin.authorization == ADMIN_AUTH_VALUE)
@@ -103,7 +103,14 @@ def before_request_func():
 def index():
     """Homepage for the admin"""
 
-    return redirect(url_for('admin.users_list'))
+    counts = {}
+
+    counts["users_count"] = User.query.filter(User.is_active==True).count()
+    counts["providers_count"] = User.query.filter(User.is_active==True, User.is_provider==True).count()
+    counts["services_count"] = Service.query.filter(Service.is_active==True).count()
+    counts["appointments_count"] = Appointment.query.filter(Appointment.is_active==True).count()
+
+    return render_template("admin/index.html" , counts=counts)
 
 
 ######
@@ -125,9 +132,9 @@ def login():
         user = Admin.authenticate(username, password)
 
         if user:
-            flash(f"Welcome Back, {user.full_name}!", FLASH_GROUP_SUCCESS)
-
             login_admin_username_set(username)
+
+            flash(f"Welcome Back, {user.full_name}!", FLASH_GROUP_SUCCESS)
 
             return redirect(url_for('admin.index'))
         else:
@@ -222,7 +229,7 @@ def admins_password_update():
         account = Admin.update_password(login_admin_username() , password)
 
         if account != False:
-            flash('Successfully Update Password!', FLASH_GROUP_SUCCESS)
+            flash('Successfully Updated Password!', FLASH_GROUP_SUCCESS)
 
             return redirect(url_for("admin.admins_password_update"))
 
@@ -247,6 +254,15 @@ def admins_password_reset():
 
         return render_template('admin/admins/password_reset.html' , form=form)
     
+    admin = Admin.query.filter(Admin.pwd_token==token, Admin.is_active==True).first()
+
+    if admin is None:
+
+        flash('Invalid Token, please try again!', FLASH_GROUP_DANGER)
+
+        return redirect(url_for("admin.admins_password_reset"))
+
+
     # Set the new password
     form = PasswordResetForm()
 
@@ -255,10 +271,9 @@ def admins_password_reset():
         account = AdminHandler.reset_password(form=form, token=token)
 
         if account:
-            flash('Successfully reset password!' , FLASH_GROUP_SUCCESS)
-
             login_admin_username_set(account.username)
 
+            flash('Successfully reset password!' , FLASH_GROUP_SUCCESS)
             return redirect(url_for('admin.index'))
         
         flash('Error when updating password!' , FLASH_GROUP_DANGER)
@@ -281,7 +296,7 @@ def admins_delete(username):
 
     AdminHandler.delete(username)
 
-    flash('Successfull deactivate a account!', 'success')
+    flash('Successfull deactivate an account!', 'success')
 
     return redirect(url_for("admin.admins_list"))
 
