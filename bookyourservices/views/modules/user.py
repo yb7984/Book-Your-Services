@@ -219,7 +219,12 @@ class UserHandler:
                     subject='Book your services admin password reset' ,
                     sender=config.MAIL_SENDER,
                     recipients=[email] ,
-                    body=f'{BASE_URL}{url_for("home.password_reset")}?token={account.pwd_token}'
+                    body=f'''
+Book your services user password reset:
+Please click the link below to reset your password.
+{BASE_URL}{url_for("home.password_reset")}?token={account.pwd_token}
+
+'''
                 )
 
             return True
