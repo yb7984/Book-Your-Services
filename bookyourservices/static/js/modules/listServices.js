@@ -115,9 +115,6 @@ class ListServices extends ListBasic {
         $date.val(today);
 
         await this.loadAvailableTimes(this.current_service.username, $date.val());
-
-        const $timesSelector = $("#appointment-times-select");
-        $times.val($timesSelector.val());
     }
 
     /**
@@ -138,6 +135,9 @@ class ListServices extends ListBasic {
                 ${item["start"]}-${item["end"]}
             </option>`)
         });
+
+        const $times = $("#appointment-times");
+        $times.val($timesSelector.val());
     }
 
     /**

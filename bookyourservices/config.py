@@ -32,9 +32,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', b'Iq\x18N\xefk\x1c|\x9bx\xe8\xf5\x95\x
 BASE_URL = os.environ.get('BASE_URL', 'http://127.0.0.1:5000')
 
 # debug setting
-DEBUG_TB_INTERCEPT_REDIRECTS = False
-DEBUG = True
-DEVELOPMENT = True
+DEBUG_TB_INTERCEPT_REDIRECTS = bool(os.environ.get('DEBUG_TB_INTERCEPT_REDIRECTS' ,False))
+DEBUG = bool(os.environ.get('DEBUG', True))
+DEVELOPMENT = bool(os.environ.get('DEVELOPMENT', True))
 
 # google account setting
 GOOGLE_SERVICE_ACCOUNT_KEY = "SERVICE_ACCOUNT"
