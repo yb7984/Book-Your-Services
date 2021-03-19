@@ -1,62 +1,89 @@
 <nav class="navbar navbar-expand-lg  navbar-dark bg-secondary">
-    <a class="navbar-brand" href="#"></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/services">Services</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/providers">Providers</a>
-        </li>
-        {% if g.user %}
-        <li class="nav-item">
-          <a class="nav-link" href="/users/dashboard">Dashboard</a>
-        </li>
-        {% if not g.user.is_provider %}
-        <li class="nav-item">
-          <a class="nav-link" href="/users/myappointments">My Appointments</a>
-        </li>
-        {% endif %}
-        {% if g.user.is_provider %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            My Appointments
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item"  href="/users/myappointments">Customer Appointments</a>
-            <a class="dropdown-item" href="/users/provider_appointments">Provider Appointments</a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/users/myservices">My Services</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/users/myschedules">My Schedules</a>
-        </li>
-        {% endif %}
-        <li class="nav-item">
-          <a class="nav-link" href="/users/profile">My Profile</a>
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" method="POST" action="/logout">
-                <button class="btn btn-link text-danger" title="Signout">[Logout]</button>
-            </form>
-        </li>
-        {% else %}
+  <a class="navbar-brand" href="#"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/services">Services</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/providers">Providers</a>
+      </li>
+      {% if g.user %}
+      <li class="nav-item">
+        <a class="nav-link" href="/users/dashboard">Dashboard</a>
+      </li>
+      {% if not g.user.is_provider %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          My Appointments
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/users/myappointments">Upcoming Appointments</a>
+          <a class="dropdown-item" href="/users/myappointments?is_past=1">Past Appointments</a>
+        </div>
+      </li>
+      {% endif %}
+      {% if g.user.is_provider %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMyAppointments" role="button"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          My Appointments
+        </a>
+        <div class="dropdown-menu bg-secondary" aria-labelledby="navbarDropdownMyAppointments">
+          <div class="dropdown-item bg-secondary text-white">Customer Appointments</div>
+          <a class="dropdown-item bg-light" href="/users/myappointments">Upcoming Appointments</a>
+          <a class="dropdown-item bg-light" href="/users/myappointments?is_past=1">Past Appointments</a>
+          <div class="dropdown-item bg-secondary text-white">Provider Appointments</div>
+          <a class="dropdown-item bg-light" href="/users/provider_appointments">Upcoming Appointments</a>
+          <a class="dropdown-item bg-light" href="/users/provider_appointments?is_past=1">Past Appointments</a>
+        </div>
+      </li>
 
-        <li class="nav-item">
-          <a class="nav-link text-success" href="/register">Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-success" href="/login">Login</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
-  </nav>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSetting" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          My Settings
+        </a>
+        <div class="dropdown-menu bg-secondary" aria-labelledby="navbarDropdownSetting">
+          <a class="dropdown-item" href="/users/myservices">My Services</a>
+          <a class="dropdown-item" href="/users/myschedules">My Schedules</a>
+        </div>
+      </li>
+      {% endif %}
+
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAccount" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          My Account
+        </a>
+        <div class="dropdown-menu bg-secondary" aria-labelledby="navbarDropdownAccount">
+          <a class="dropdown-item" href="/users/profile">My Profile</a>
+          <a class="dropdown-item" href="/users/password">Update Password</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <form class="form-inline" method="POST" action="/logout">
+          <button class="btn btn-link text-danger" title="Signout">[Logout]</button>
+        </form>
+      </li>
+      {% else %}
+
+      <li class="nav-item">
+        <a class="nav-link text-success" href="/register">Register</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-success" href="/login">Login</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

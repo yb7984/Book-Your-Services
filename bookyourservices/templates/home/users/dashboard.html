@@ -63,7 +63,13 @@ Dashboard
 {% include ("home/items/myappointment-provider.html" if g.user.is_provider else "home/items/myappointment.html") %}
 
 {% if g.user.is_provider %}
+
 {% include "home/items/myservice.html" %}
+
+{% with form = service_form %}
+{% include "form-ajax-modal.html" %}
+{% endwith %}
+
 {% endif %}
 
 {% endblock %}
@@ -72,7 +78,7 @@ Dashboard
 <script src="/static/js/home/users/myappointments.js" type="module"></script>
 
 {% if g.user.is_provider %}
-<script src="/static/js/home/provider.js" type="module"></script>
+<script src="/static/js/home/users/myservices.js" type="module"></script>
 {% endif %}
 
 {% endblock %}

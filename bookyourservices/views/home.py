@@ -29,7 +29,6 @@ def _jinja2_filter_date(d):
     return dt.strftime(DATE_FORMAT)
 
 
-
 ###########
 # User Login methods
 
@@ -103,8 +102,8 @@ def services_list():
     service_form.categories.choices.extend(CategoryHandler.list_for_select())
     service_url = "/services"
 
-    service_form.term.data = request.args.get("term" , "")
-    service_form.categories.data = request.args.get("categories" , "0")
+    service_form.term.data = request.args.get("term", "")
+    service_form.categories.data = request.args.get("categories", "0")
 
     appointment_form = AppointmentForm(prefix="appointment")
 
@@ -121,8 +120,7 @@ def providers_list():
     provider_form = BaseSearchForm()
     provider_url = "/providers"
 
-
-    provider_form.term.data = request.args.get("term" , "")
+    provider_form.term.data = request.args.get("term", "")
 
     return render_template("home/providers.html",
                            provider_url=provider_url,
@@ -163,7 +161,7 @@ def login():
 
             login_username_set(username)
 
-            path = request.args.get("path" , "")
+            path = request.args.get("path", "")
 
             if path == "":
                 return redirect(url_for('home.dashboard'))
@@ -221,7 +219,8 @@ def password_reset():
 
         return render_template('home/users/password_reset.html', form=form)
 
-    user = User.query.filter(User.pwd_token==token, User.is_active==True).first()
+    user = User.query.filter(User.pwd_token == token,
+                             User.is_active == True).first()
 
     if user is None:
 
@@ -271,7 +270,12 @@ def dashboard():
 
     appointment_form = AppointmentForm(prefix="appointment")
 
-    return render_template("home/users/dashboard.html", account=g.user, appointment_form=appointment_form)
+    service_form = ServiceForm(prefix="service")
+    service_form.category_ids.choices = CategoryHandler.list_for_select()
+
+    return render_template("home/users/dashboard.html", account=g.user,
+                           appointment_form=appointment_form,
+                           service_form=service_form)
 
 
 @home.route('/users/profile')
@@ -334,7 +338,7 @@ def my_services():
     """Get all my services"""
 
     if not g.user.is_provider:
-        flash("Unauthorized visit!" , FLASH_GROUP_DANGER)
+        flash("Unauthorized visit!", FLASH_GROUP_DANGER)
 
         return redirect(url_for("home.dashboard"))
 
@@ -350,7 +354,7 @@ def my_schedules():
     """Get all my schedules"""
 
     if not g.user.is_provider:
-        flash("Unauthorized visit!" , FLASH_GROUP_DANGER)
+        flash("Unauthorized visit!", FLASH_GROUP_DANGER)
 
         return redirect(url_for("home.dashboard"))
 
@@ -370,7 +374,7 @@ def my_appointments():
 
     appointment_form = AppointmentForm(prefix="appointment")
 
-    return render_template("home/appointments/list.html", form=appointment_form, is_past=bool(request.args.get("is_past" , 0)))
+    return render_template("home/appointments/list.html", form=appointment_form, is_past=bool(request.args.get("is_past", 0)))
 
 
 @home.route('/users/provider_appointments')
@@ -379,7 +383,7 @@ def provider_appointments():
     """Get all my services"""
 
     if not g.user.is_provider:
-        flash("Unauthorized visit!" , FLASH_GROUP_DANGER)
+        flash("Unauthorized visit!", FLASH_GROUP_DANGER)
 
         return redirect(url_for("home.dashboard"))
 
