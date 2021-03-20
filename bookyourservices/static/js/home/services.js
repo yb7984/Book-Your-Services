@@ -1,4 +1,4 @@
-import ListServices from '/static/js/modules/listServices.js'
+import ListServices from '../modules/listServices.js'
 
 const $serviceList = $("#services-list");
 const $serviceTemplate = $("#services-template").html();

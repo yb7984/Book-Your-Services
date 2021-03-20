@@ -1,4 +1,4 @@
-import ListBasic from '/static/js/modules/list.js'
+import ListBasic from './list.js'
 
 /**
  * Class for list items from providers

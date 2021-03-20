@@ -1,4 +1,4 @@
-import ListCategories from '/static/js/modules/listCategories.js'
+import ListCategories from '../modules/listCategories.js'
 
 /************
  * Here is the part for categories

@@ -1,4 +1,4 @@
-import ListAppointments from '/static/js/modules/listAppointments.js';
+import ListAppointments from '../../modules/listAppointments.js';
 
 const APPOINTMENT_LIST_URL = getGlobalValues("APPOINTMENT_LIST_URL");
 const APPOINTMENT_UPDATE_URL = getGlobalValues("APPOINTMENT_UPDATE_URL");

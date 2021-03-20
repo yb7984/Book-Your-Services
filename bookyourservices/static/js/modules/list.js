@@ -1,5 +1,5 @@
-import * as formFunc from '/static/js/modules/form.js';
-import * as config from '/static/js/config.js';
+import * as formFunc from '../modules/form.js';
+import * as config from '../config.js';
 /**
  * Basic class for list items from ajax resource
  */
@@ -287,8 +287,8 @@ class ListBasic {
     getHtml(item) {
         // return this.template.replaceAll("%%item%%", item);
         let html = this.template;
-        for (const prop in item){
-            html = html.replaceAll(`%%${prop}%%` , item[prop]);
+        for (const prop in item) {
+            html = html.replaceAll(`%%${prop}%%`, item[prop]);
         }
 
         return html;
@@ -407,27 +407,41 @@ class ListBasic {
 
         let url = this.url;
 
-        if (params.toString().length > 0) {
-            if (this.url.includes("?")) {
-                url += `&${params.toString()}`
-            }
-            else {
-                url += `?${params.toString()}`;
-            }
-        }
+        // if (params.toString().length > 0) {
+        //     if (this.url.includes("?")) {
+        //         url += `&${params.toString()}`
+        //     }
+        //     else {
+        //         url += `?${params.toString()}`;
+        //     }
+        // }
 
         if (this.per_page > 0) {
-            if (url.includes('?')) {
-                url += `&per_page=${this.per_page}`;
-            } else {
-                url += `?per_page=${this.per_page}`;
-            }
+            params.delete("per_page");
+            params.append("per_page", this.per_page);
+
+            // if (url.includes('?')) {
+            //     url += `&per_page=${this.per_page}`;
+            // } else {
+            //     url += `?per_page=${this.per_page}`;
+            // }
         }
         if (page > 1) {
+            params.delete("page");
+            params.append("page", page);
+            // if (url.includes('?')) {
+            //     url += `&page=${page}`;
+            // } else {
+            //     url += `?page=${page}`;
+            // }
+        }
+
+        const queryString = params.toString();
+        if (queryString.length > 0) {
             if (url.includes('?')) {
-                url += `&page=${page}`;
+                url += '&' + params.toString();
             } else {
-                url += `?page=${page}`;
+                url += '?' + params.toString();
             }
         }
 

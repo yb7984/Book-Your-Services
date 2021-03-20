@@ -1,4 +1,4 @@
-import ListProviders from '/static/js/modules/listProviders.js'
+import ListProviders from '../modules/listProviders.js'
 
 const listProviders = new ListProviders(
     $("#providers-list") , 

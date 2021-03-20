@@ -1,4 +1,4 @@
-import ListSchedules from '/static/js/modules/listSchedules.js';
+import ListSchedules from '../../modules/listSchedules.js';
 const CURRENT_USERNAME = getGlobalValues("CURRENT_USERNAME");
 const SCHEDULE_LIST_URL = `/api/schedules/${CURRENT_USERNAME}`;
 const SCHEDULE_UPDATE_URL = `/api/schedules/${CURRENT_USERNAME}`;

@@ -1,5 +1,5 @@
-import ListServices from '/static/js/modules/listServices.js'
-import ListProviders from '/static/js/modules/listProviders.js'
+import ListServices from '../modules/listServices.js'
+import ListProviders from '../modules/listProviders.js'
 
 const $serviceList = $("#services-list");
 const $serviceTemplate = $("#services-template").html();

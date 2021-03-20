@@ -1,5 +1,5 @@
-import ListBasic from '/static/js/modules/list.js';
-import * as formFunc from '/static/js/modules/form.js';
+import ListBasic from './list.js';
+import * as formFunc from './form.js';
 
 /**
  * Class for list items from service

@@ -1,6 +1,6 @@
-import ListBasic from '/static/js/modules/list.js';
-import * as formFunc from '/static/js/modules/form.js';
-import * as config from '/static/js/config.js';
+import ListBasic from './list.js';
+import * as formFunc from './form.js';
+import * as config from '../config.js';
 
 /**
  * Class for list items from schedules

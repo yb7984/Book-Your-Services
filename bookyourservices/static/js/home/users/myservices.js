@@ -1,4 +1,4 @@
-import ListServices from '/static/js/modules/listServices.js';
+import ListServices from '../modules/listServices.js';
 
 const SERVICE_LIST_URL = '/api/services/mine';
 const SERVICE_INSERT_URL = '/api/services';

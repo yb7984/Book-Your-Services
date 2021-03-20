@@ -1,5 +1,5 @@
-import ListBasic from '/static/js/modules/list.js';
-import * as config from '/static/js/config.js';
+import ListBasic from './list.js';
+import * as config from '../config.js';
 
 /**
  * Class for list items from appointments

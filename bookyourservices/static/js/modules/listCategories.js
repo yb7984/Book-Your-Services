@@ -1,5 +1,4 @@
-import ListBasic from '/static/js/modules/list.js'
-import * as formFunc from '/static/js/modules/form.js'
+import ListBasic from './list.js'
 
 /**
  * Class for list items from categories
