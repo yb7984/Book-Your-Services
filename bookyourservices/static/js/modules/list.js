@@ -407,41 +407,22 @@ class ListBasic {
 
         let url = this.url;
 
-        // if (params.toString().length > 0) {
-        //     if (this.url.includes("?")) {
-        //         url += `&${params.toString()}`
-        //     }
-        //     else {
-        //         url += `?${params.toString()}`;
-        //     }
-        // }
-
         if (this.per_page > 0) {
             params.delete("per_page");
             params.append("per_page", this.per_page);
 
-            // if (url.includes('?')) {
-            //     url += `&per_page=${this.per_page}`;
-            // } else {
-            //     url += `?per_page=${this.per_page}`;
-            // }
         }
         if (page > 1) {
             params.delete("page");
             params.append("page", page);
-            // if (url.includes('?')) {
-            //     url += `&page=${page}`;
-            // } else {
-            //     url += `?page=${page}`;
-            // }
         }
 
         const queryString = params.toString();
         if (queryString.length > 0) {
             if (url.includes('?')) {
-                url += '&' + params.toString();
+                url += '&' + queryString;
             } else {
-                url += '?' + params.toString();
+                url += '?' + queryString;
             }
         }
 
