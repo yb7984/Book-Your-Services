@@ -7,10 +7,13 @@ Book your service
 
 {% block header %}
 <div class="p-2 h4 row bg-secondary text-white mx-auto mb-0">
-    <div class="col-12 col-md-10 display-2">
+    <div class="col-12 display-5 d-block d-lg-none">
         Book Your Services
     </div>
-    <div class="d-none d-lg-block col-lg-2">
+    <div class="d-none d-lg-block col-10 display-2">
+        Book Your Services
+    </div>
+    <div class="d-none d-lg-block col-lg-2 my-auto">
         {% if g.user %}
         <p class="text-success h4 align-bottom">{{g.user.full_name}}</p>
         {% endif %}
