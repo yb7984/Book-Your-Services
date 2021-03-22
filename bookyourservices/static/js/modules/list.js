@@ -70,11 +70,13 @@ class ListBasic {
                 await this.loadList(true, 1, true);
                 location.href = "#page=1";
             } else if ($link.hasClass("page-prev")) {
+                const hash = "#page=" + (this.page - 1);
                 await this.loadList(true, this.page - 1, true);
-                location.href = "#page=" + (this.page - 1);
+                location.href = hash;
             } else if ($link.hasClass("page-next")) {
+                const hash = "#page=" + (this.page + 1);
                 await this.loadList(true, this.page + 1, true);
-                location.href = "#page=" + (this.page + 1);
+                location.href = hash;
             } else if ($link.hasClass("page-last")) {
                 await this.loadList(true, this.pages, true);
                 location.href = "#page=" + this.pages;
@@ -259,7 +261,7 @@ class ListBasic {
      */
     async loadList(reload = false, page = 0, loadPager = false) {
 
-        if (page === 0) {
+        if (page == 0) {
             const hash = location.hash;
 
             if (hash.startsWith("#page=")) {
@@ -267,6 +269,8 @@ class ListBasic {
             } else {
                 page = 1;
             }
+
+            this.page = page;
         }
 
         const list = await this.getList(reload, page);

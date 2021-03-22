@@ -4,7 +4,7 @@ const listProviders = new ListProviders(
     $("#providers-list") , 
     $("#providers-template").html() , 
     "/api/providers" , 
-    3);
+    12);
 
 listProviders.loadList(true , 0 , true);
 
