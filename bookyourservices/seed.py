@@ -54,7 +54,8 @@ resp = requests.get('https://randomuser.me/api/?results=50')
 data = resp.json()
 
 users = [
-    User(username=item["login"]["username"] ,
+    User(
+    username=item["login"]["username"] if len(item["login"]["username"]) <= 20 else item["login"]["username"][0:20],
     first_name=item["name"]["first"],
     last_name=item["name"]["last"],
     email=item["email"],
@@ -73,7 +74,7 @@ resp = requests.get('https://randomuser.me/api/?results=30')
 data = resp.json()
 
 users = [
-    User(username=item["login"]["username"] ,
+    User(username=item["login"]["username"] if len(item["login"]["username"]) <= 20 else item["login"]["username"][0:20] ,
     first_name=item["name"]["first"],
     last_name=item["name"]["last"],
     email=item["email"],
