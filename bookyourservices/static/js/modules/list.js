@@ -2,6 +2,8 @@ import * as formFunc from '../modules/form.js';
 import * as config from '../config.js';
 /**
  * Basic class for list items from ajax resource
+ * Author: Sunbao Wu
+ * Email: bobowu@outlook.com
  */
 class ListBasic {
 

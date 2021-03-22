@@ -248,7 +248,6 @@ def password_reset():
 
 
 @home.route('/logout', methods=['POST'])
-@login_required
 def logout():
     """logout"""
 

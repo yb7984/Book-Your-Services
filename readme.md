@@ -33,13 +33,16 @@
 ## Features
 
 - ### Shared Google Calendar
-All providers with a Gmail account can get a dedicated shared Google Calendar. As Google Calendar is so popular and almost can be viewed and get reminder on all cellphone today, providers would easily get appointment remind from the phone and don't have to go the the website and check them out.
+All providers with a Gmail account can get a dedicated shared Google Calendar showing all up to date appointment information. As Google Calendar is so popular and almost can be viewed and get reminder on all cellphone today, providers would easily get appointment remind from the phone and don't have to go the the website and check them out.
 
-Future planning: Adding outlook calendar support into the system.
+Future planning: Adding outlook calendar support into the system, this would make it more convinient for people not using Gmail.
 
 
 - ### Email Notification
-Email the appointment updates can keep the appointment record as you go. 
+Email all the appointment updates (including new appointment, changes and cancelations) can keep the appointment record as you go. 
+
+- ### Customizable Schedule Setting
+Schedules can be setup for weekly and specific days. 
 
 ## Google Calendar API
 [Google Calendar API](https://developers.google.com/calendar/overview)

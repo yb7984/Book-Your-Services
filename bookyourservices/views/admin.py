@@ -144,7 +144,6 @@ def login():
 
 
 @admin.route('/admin/logout', methods=['POST'])
-@login_admin_required
 def logout():
     """logout for admin"""
 

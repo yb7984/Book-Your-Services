@@ -13,7 +13,7 @@ class Admin(db.Model):
     password = db.Column(db.Text, nullable=False)
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
-    email = db.Column(db.String(30), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
     authorization = db.Column(
         db.String(100), nullable=False, server_default="regular")
 
@@ -101,7 +101,7 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
-    email = db.Column(db.String(30), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), server_default='')
     description = db.Column(db.Text, server_default='')
     image = db.Column(db.Text, server_default='')
