@@ -52,8 +52,17 @@ Schedules can be setup for weekly and specific days.
 
 ## User Flows
 - Registration
+
 [![Watch the video](videos/registration.jpg)](https://youtu.be/oNxQ0RZ4sj8)
 
 - Create services
+ 
+[![Watch the video](videos/services.jpg)](https://youtu.be/Nqo9oSTpwRk)
+
 - Set up schedules
+
+[![Watch the video](videos/schedules.jpg)](https://youtu.be/wtpJu_85wHw)
+
 - Making appointments
+
+[![Watch the video](videos/appointments.jpg)](https://youtu.be/gfSMOTrkQuM)
