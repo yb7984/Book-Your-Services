@@ -52,6 +52,13 @@ Schedules can be setup for weekly and specific days.
 
 ## User Flows
 - Registration
+  
+<figure class="video_container">
+  <video controls="true" allowfullscreen="true">
+    <source src="videos/registration.mp4" type="video/mp4">
+  </video>
+</figure>
+
 - Create services
 - Set up schedules
 - Making appointments
