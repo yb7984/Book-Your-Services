@@ -216,7 +216,7 @@ def admins_update(username):
 
 
 @admin.route('/admin/admins/password', methods=['POST', 'GET'])
-@login_administrator_only
+@login_admin_required
 def admins_password_update():
     """Edit Password"""
 
