@@ -54,9 +54,7 @@ Schedules can be setup for weekly and specific days.
 - Registration
   
 <figure class="video_container">
-  <video controls="true" allowfullscreen="true">
-    <source src="videos/registration.mp4" type="video/mp4">
-  </video>
+  <iframe src="https://youtu.be/oNxQ0RZ4sj8" frameborder="0" allowfullscreen="true"> </iframe>
 </figure>
 
 - Create services
