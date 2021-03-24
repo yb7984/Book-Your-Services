@@ -65,4 +65,4 @@ Schedules can be setup for weekly and specific days.
 
 - Making appointments
 
-[![Watch the video](videos/appointments.gif)](https://youtu.be/gfSMOTrkQuM)
+[![Watch the video](videos/makingappointment.gif)](https://youtu.be/gfSMOTrkQuM)
