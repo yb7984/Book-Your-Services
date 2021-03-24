@@ -6,6 +6,32 @@
 
 - Try the Administration Panel here: [Administration Panel](https://book-your-services.herokuapp.com/admin)
 
+## About
+- A platform let providers post their services and manage their appointments online. 
+
+- All providers with a Gmail account would get a dedicated shared google calendar containing all appointment information and updates as well as they can manage all their information on the website. All appointment updates would be sent by the email also.
+
+- All customers can easily search all services they need and make appointment with provider. All appointments can be managed on the website. They would be email notification with all updates of the appointments.
+
+
+## User Flows
+- Registration
+
+[![Watch the video](videos/registration.gif)](https://youtu.be/cPUBUyXaU3Q)
+
+- Create services
+ 
+[![Watch the video](videos/services.gif)](https://youtu.be/VvkJ4FzvPb8)
+
+- Set up schedules
+
+[![Watch the video](videos/schedules.gif)](https://youtu.be/VvkJ4FzvPb8)
+
+- Making appointments
+
+[![Watch the video](videos/makingappointments.gif)](https://youtu.be/_-OwEHqUoF0)
+
+
 ## Stack
 - [Python](https://www.python.org/)
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/)
@@ -23,12 +49,6 @@
 - [Bootstrap](https://getbootstrap.com/)
 - [Font Awesome](https://fontawesome.com/start)
 
-## About
-- A platform let providers post their services and manage their appointments online. 
-
-- All providers with a Gmail account would get a dedicated shared google calendar containing all appointment information and updates as well as they can manage all their information on the website. All appointment updates would be sent by the email also.
-
-- All customers can easily search all services they need and make appointment with provider. All appointments can be managed on the website. They would be email notification with all updates of the appointments.
 
 ## Features
 
@@ -49,20 +69,3 @@ Schedules can be setup for weekly and specific days.
 
 ## Data schema
 ![Database schema](dataschema.png)
-
-## User Flows
-- Registration
-
-[![Watch the video](videos/registration.gif)](https://youtu.be/oNxQ0RZ4sj8)
-
-- Create services
- 
-[![Watch the video](videos/services.gif)](https://youtu.be/Nqo9oSTpwRk)
-
-- Set up schedules
-
-[![Watch the video](videos/schedules.gif)](https://youtu.be/wtpJu_85wHw)
-
-- Making appointments
-
-[![Watch the video](videos/makingappointment.gif)](https://youtu.be/gfSMOTrkQuM)
