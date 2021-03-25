@@ -66,7 +66,7 @@ class UserHandler:
             filters.append(User.is_active==True)
 
         return User.query.filter(
-            *tuple(filters)).paginate(page, per_page=per_page)
+            *tuple(filters)).order_by(User.updated.desc()).paginate(page, per_page=per_page)
 
     @staticmethod
     def get(username):
