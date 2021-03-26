@@ -10,6 +10,7 @@ from wtforms.widgets import HiddenInput
 from flask_mail import Mail
 import sys
 import pytz
+from aws.aws_s3 import AWSS3Handler
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -81,13 +82,6 @@ def login_admin_username_set(username):
     session[ADMIN_USER_SESSION_KEY] = username
 
 
-# upload methods
-def upload_dir_user(username, subdir=""):
-    """Return user's upload dir path"""
-    if len(subdir) > 0:
-        return f'{USER_UPLOAD_DIRNAME}/{username}/{subdir}'
-    return f'{USER_UPLOAD_DIRNAME}/{username}'
-
 
 def upload_allowed_file(filename, exts={}):
     """Check if file is allowed to upload"""
@@ -140,21 +134,27 @@ def upload_file(fieldname, name="", dirname="", exts={}):
 
         file.save(file_path)
 
+        if UPLOAD_TO_AWS_S3 and len(AWS_S3_BUCKET) > 0:
+            # upload to the aws s3
+
+            AWSS3Handler.upload_file(file_path , AWS_S3_BUCKET , f"{dirname}/{filename}")
+
         return filename
     return None
 
 
-def upload_file_url(filename, username="", dirname=""):
+def upload_file_url(filename, dirname=""):
     """Return the url of an uploaded file"""
 
-    if len(username) == 0:
+    if UPLOAD_TO_AWS_S3 and len(AWS_S3_BUCKET) > 0:
         if len(dirname) > 0:
-            return f'{UPLOAD_FOLDER_URL}{dirname}/{filename}'
-        return f'{UPLOAD_FOLDER_URL}{filename}'
+            return AWSS3Handler.object_url(AWS_S3_BUCKET , f'{dirname}/{filename}')
+        return AWSS3Handler.object_url(AWS_S3_BUCKET , filename)
+        
 
     if len(dirname) > 0:
-        return f'{UPLOAD_FOLDER_URL}{USER_UPLOAD_DIRNAME}/{username}/{dirname}/{filename}'
-    return f'{UPLOAD_FOLDER_URL}{USER_UPLOAD_DIRNAME}/{username}/{filename}'
+        return f'{UPLOAD_FOLDER_URL}{dirname}/{filename}'
+    return f'{UPLOAD_FOLDER_URL}{filename}'
 
 
 def form_hide_value(field, value):

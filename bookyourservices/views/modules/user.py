@@ -249,7 +249,7 @@ Please click the link below to reset your password.
         image = upload_file(
             form.image.name,
             name=user.username,
-            dirname=upload_dir_user(user.username),
+            dirname=USER_UPLOAD_DIRNAME,
             exts=IMAGE_ALLOWED_EXTENSIONS)
 
         if image is not None:

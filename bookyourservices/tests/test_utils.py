@@ -116,13 +116,6 @@ class UtilsTest(TestCase):
 
             self.assertEqual(login_admin_username(), "admin")
 
-    def test_upload_dir_user(self):
-        """Testing the upload_dir_user method"""
-
-        self.assertEqual(upload_dir_user('test'), 'users/test')
-        self.assertEqual(upload_dir_user(
-            'test', 'subdir'), 'users/test/subdir')
-
     def test_upload_allowed_file(self):
         """Testing the upload_allowed_file method"""
 

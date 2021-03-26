@@ -175,7 +175,7 @@ class ServiceHandler:
             image = upload_file(
                 form.image.name,
                 name=service.id,
-                dirname=upload_dir_user(service.username, "services"),
+                dirname=SERVICE_UPLOAD_DIRNAME,
                 exts=IMAGE_ALLOWED_EXTENSIONS)
 
             if image is not None:

@@ -150,7 +150,7 @@ class User(db.Model):
         if self.image is None or len(self.image) == 0:
             return DEFAULT_IMAGE_USER
 
-        return upload_file_url(self.image, username=self.username)
+        return upload_file_url(self.image, USER_UPLOAD_DIRNAME)
 
     def __repr__(self):
         """Representation of this class"""
@@ -293,7 +293,7 @@ class Service(db.Model):
         if self.image is None or len(self.image) == 0:
             return DEFAULT_IMAGE_SERVICE
 
-        return upload_file_url(self.image, username=self.username, dirname="services")
+        return upload_file_url(self.image, dirname=SERVICE_UPLOAD_DIRNAME)
 
     def set_categoiry_ids(self, ids=[]):
         """Set categories with category_id list"""

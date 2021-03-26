@@ -61,7 +61,11 @@ ADMIN_USER_SESSION_KEY = 'admin_username'
 ADMIN_AUTH_VALUE = 'administrator'
 
 # upload setting
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "static/upload/")
+UPLOAD_TO_AWS_S3 = bool(os.environ.get("UPLOAD_TO_AWS_S3" , True))
+AWS_S3_BUCKET = os.environ.get("AWS_S3_BUCKET" , "bookyourservices")
+
+STATIC_FOLDER = os.path.join(os.path.dirname(__file__), "static/")
+UPLOAD_FOLDER = os.path.join(STATIC_FOLDER, "upload/")
 UPLOAD_FOLDER_URL = "/static/upload/"
 IMAGE_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -72,6 +76,7 @@ DEFAULT_IMAGE_USER = "/static/images/default-user.png"
 DEFAULT_IMAGE_SERVICE = "/static/images/default-service.jpg"
 
 USER_UPLOAD_DIRNAME = 'users'
+SERVICE_UPLOAD_DIRNAME = 'services'
 
 # flash message
 FLASH_GROUP_DANGER = "danger"
