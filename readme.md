@@ -48,6 +48,7 @@
 - [CSS 3](https://developer.mozilla.org/en-US/docs/Web/CSS)
 - [Bootstrap](https://getbootstrap.com/)
 - [Font Awesome](https://fontawesome.com/start)
+- [Amazon S3](https://aws.amazon.com/s3/?c=s&sec=srv)
 
 
 ## Features
@@ -61,11 +62,19 @@ Future planning: Adding outlook calendar support into the system, this would mak
 - ### Email Notification
 Email all the appointment updates (including new appointment, changes and cancelations) can keep the appointment record as you go. 
 
+- ### Amazon S3 Storage
+The Heroku filesystem is ephemeral - that means that any changes to the filesystem whilst the dyno is running only last until that dyno is shut down or restarted. I have to make a way to keep the uploaded images alive. S3 is the choice.
+
 - ### Customizable Schedule Setting
 Schedules can be setup for weekly and specific days. 
 
-## Google Calendar API
+## API
+
+### Google Calendar API
 [Google Calendar API](https://developers.google.com/calendar/overview)
+
+### Amazon S3 API
+[Amazon S3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)
 
 ## Data schema
 ![Database schema](dataschema.png)
