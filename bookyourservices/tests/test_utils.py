@@ -150,10 +150,10 @@ class UtilsTest(TestCase):
         self.assertEqual(upload_file_url('test'), '/static/upload/test')
         self.assertEqual(upload_file_url(
             'test', dirname='dir'), '/static/upload/dir/test')
-        self.assertEqual(upload_file_url('test', username='user'),
-                         '/static/upload/users/user/test')
-        self.assertEqual(upload_file_url('test', username='user',
-                                         dirname='dir'), '/static/upload/users/user/dir/test')
+        # self.assertEqual(upload_file_url('test', username='user'),
+        #                  '/static/upload/users/user/test')
+        # self.assertEqual(upload_file_url('test', username='user',
+        #                                  dirname='dir'), '/static/upload/users/user/dir/test')
 
     def test_form_hide_value(self):
         """Testing the form_hide_value method"""

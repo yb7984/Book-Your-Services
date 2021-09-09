@@ -70,13 +70,13 @@ class ScheduleHandler:
             date_exp_weekly = form.date_exp_weekly.data
             date_exp_dates = form.date_exp_dates.data
 
-            date_exp_dates_list = date_exp_dates.split(
+            date_exp_dates_list_temp = date_exp_dates.split(
                 ",") if len(date_exp_dates) > 0 else []
-
-            for date in date_exp_dates_list:
+            date_exp_dates_list = []
+            for date in date_exp_dates_list_temp:
                 # remove dates before today
-                if date < datetime.date.today().isoformat():
-                    date_exp_dates_list.remove(date)
+                if date >= datetime.date.today().isoformat():
+                    date_exp_dates_list.append(date)
 
             if len(date_exp_weekly) == 0 and len(date_exp_dates_list) == 0:
                 form.date_exp_weekly.errors.append(

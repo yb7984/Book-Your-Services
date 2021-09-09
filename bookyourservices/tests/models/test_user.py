@@ -50,7 +50,7 @@ class UserModelTest(TestCase):
         self.assertEqual(item.image_url , DEFAULT_IMAGE_USER)
 
         item.image = 'test.jpg'
-        self.assertEqual(item.image_url , upload_file_url('test.jpg' , username='test'))
+        self.assertEqual(item.image_url , upload_file_url('test.jpg' , dirname='users'))
 
     def test_repr(self):
         """Testing the __repr method"""

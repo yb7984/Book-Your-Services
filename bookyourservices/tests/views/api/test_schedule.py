@@ -4,6 +4,7 @@ from utils import *
 from models import *
 from secrets import token_urlsafe
 from tests.views.test_data import *
+from datetime import date, timedelta
 
 # Use test database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///bookyourservices_test'
@@ -76,9 +77,12 @@ class APIScheduleTest(TestCase):
 
         with app.test_client() as client:
 
+            date1 = date.today() + timedelta(days=1)
+            date2 = date.today() + timedelta(days=3)
+
             post_data = {
                 "schedule-date_exp_weekly":["1","2"] ,
-                "schedule-date_exp_dates":"2021-05-20,2021-05-22",
+                "schedule-date_exp_dates":f"{date1.isoformat()},{date2.isoformat()}",
                 "schedule-schedules":"",
                 "schedule-is_active":"y",
                 "schedule-schedules-start": "07:00,08:00",
@@ -115,7 +119,7 @@ class APIScheduleTest(TestCase):
 
             schedules = Schedule.query.filter(
                 Schedule.username==self.provider_username , 
-                Schedule.date_exp.in_(['1' , '2' , '2021-05-20','2021-05-22'])).all()
+                Schedule.date_exp.in_(['1' , '2' , date1.isoformat(),date2.isoformat()])).all()
 
             self.assertEqual(len(schedules) , 4)
             self.assertEqual(schedules[0].schedules , schedules[1].schedules)

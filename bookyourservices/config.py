@@ -61,7 +61,7 @@ ADMIN_USER_SESSION_KEY = 'admin_username'
 ADMIN_AUTH_VALUE = 'administrator'
 
 # upload setting
-UPLOAD_TO_AWS_S3 = bool(os.environ.get("UPLOAD_TO_AWS_S3" , True))
+UPLOAD_TO_AWS_S3 = bool(os.environ.get("UPLOAD_TO_AWS_S3" , False))
 AWS_S3_BUCKET = os.environ.get("AWS_S3_BUCKET" , "bookyourservices")
 
 STATIC_FOLDER = os.path.join(os.path.dirname(__file__), "static/")

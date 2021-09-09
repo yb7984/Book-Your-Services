@@ -1,7 +1,7 @@
 from unittest import TestCase
 from app import app
 from utils import *
-from models import *
+from models import User
 from secrets import token_urlsafe
 from tests.views.test_data import *
 
@@ -53,7 +53,8 @@ class ViewNoLoginTest(TestCase):
 
             html = resp.get_data(as_text=True)
 
-            self.assertIn(self.customer.full_name , html)
+            customer = User.query.get(self.customer_username)
+            self.assertIn(customer.full_name , html)
             self.assertNotIn('<a class="nav-link text-success" href="/register">Register</a>' , html)
             self.assertNotIn('<a class="nav-link text-success" href="/login">Login</a>' , html)
 
