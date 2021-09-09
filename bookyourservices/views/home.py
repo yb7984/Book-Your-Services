@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, g, request, flash, url_for, jsonify
 from secrets import token_urlsafe
+
+from flask.helpers import get_flashed_messages
 from utils import *
 from forms import *
 from models import *
@@ -157,15 +159,17 @@ def login():
         user = User.authenticate(username, password)
 
         if user:
-            flash(f"Welcome Back, {user.full_name}!", FLASH_GROUP_SUCCESS)
-
             login_username_set(username)
 
             path = request.args.get("path", "")
 
             if path == "":
-                return redirect(url_for('home.dashboard'))
+                flash(f"Welcome Back, {user.full_name}!", FLASH_GROUP_SUCCESS)
+                
+                return redirect(url_for("home.dashboard"))
             else:
+                flash(f"Welcome Back, {user.full_name}!", FLASH_GROUP_SUCCESS)
+                
                 return redirect(path)
         else:
             flash('Invalid username/password.', 'danger')
@@ -236,9 +240,9 @@ def password_reset():
         account = UserHandler.reset_password(form=form, token=token)
 
         if account:
-            flash('Successfully reset password!', FLASH_GROUP_SUCCESS)
-
             login_username_set(account.username)
+
+            flash('Successfully reset password!', FLASH_GROUP_SUCCESS)
 
             return redirect(url_for('home.dashboard'))
 
@@ -272,6 +276,8 @@ def dashboard():
     service_form = ServiceForm(prefix="service")
     service_form.category_ids.choices = CategoryHandler.list_for_select()
 
+    print("#####")
+    print(get_flashed_messages())
     return render_template("home/users/dashboard.html", account=g.user,
                            appointment_form=appointment_form,
                            service_form=service_form)

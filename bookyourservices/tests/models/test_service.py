@@ -66,7 +66,7 @@ class ServiceModelTest(TestCase):
         self.assertEqual(item.image_url , DEFAULT_IMAGE_SERVICE)
 
         item.image = 'test.jpg'
-        self.assertEqual(item.image_url , upload_file_url('test.jpg', username=item.username, dirname="services"))
+        self.assertEqual(item.image_url , upload_file_url('test.jpg', dirname="services"))
 
     def test_set_categoiry_ids(self):
         """Testing the set_categoiry_ids method"""

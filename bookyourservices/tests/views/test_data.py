@@ -1,3 +1,4 @@
+from datetime import date,timedelta,time
 from utils import *
 from config import *
 from models import *
@@ -70,15 +71,19 @@ def set_test_data(test_class):
     test_class.schedule_date_exp = schedule.date_exp
     test_class.schedule = schedule
 
+    # make sure the date has schedules
+    appointment_date = date.today() + timedelta(days=(1 if date.today().weekday() % 2 == 0 else 2))
     # appointment
     appointment = Appointment(
         provider_username=provider.username,
         customer_username=customer.username,
         service_id=service.id,
-        start=(datetime.date.today() + datetime.timedelta(days=1 , hours=10 , minutes=30)),
-        end=(datetime.date.today() + datetime.timedelta(days=1 , hours=11 , minutes=30)),
+        start=datetime.datetime.combine(appointment_date, time(hour=10 , minute=30)),
+        end=datetime.datetime.combine(appointment_date, time(hour=11 , minute=30)),
         note="test note"
     )
+
+    # print(appointment)
     db.session.add(appointment)
     db.session.commit()
 
@@ -134,15 +139,15 @@ def set_data_schedule(provider_username):
 def set_data_appointment(provider_username , customer_username , service_id,  count):
     """Creat appointments"""
 
-    date = datetime.date.today()
 
     for i in range(count):
+        appointment_date = date.today() + timedelta(days=i)
         appointment = Appointment(
             provider_username=provider_username,
             customer_username=customer_username,
             service_id=service_id,
-            start=(date + datetime.timedelta(days=i , hours=7)),
-            end=(date + datetime.timedelta(days=i , hours=8)),
+            start=datetime.datetime.combine(appointment_date, time(hour=7)),
+            end=datetime.datetime.combine(appointment_date, time(hour=8)),
             note=f"test note {i}"
         )
 

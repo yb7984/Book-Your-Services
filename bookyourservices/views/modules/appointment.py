@@ -183,7 +183,7 @@ class AppointmentHandler:
                 location=""
             )
 
-            print(event)
+            # print(event)
 
             if appointment.event_id != "":
                 # update
