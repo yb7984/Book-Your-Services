@@ -73,15 +73,11 @@ class ScheduleHandler:
             date_exp_dates_list_temp = date_exp_dates.split(
                 ",") if len(date_exp_dates) > 0 else []
             date_exp_dates_list = []
-            # print(date_exp_dates_list_temp)
-
             for date in date_exp_dates_list_temp:
-                # print(datetime.date.today().isoformat())
                 # remove dates before today
                 if date >= datetime.date.today().isoformat():
                     date_exp_dates_list.append(date)
 
-            # print(date_exp_dates_list)
             if len(date_exp_weekly) == 0 and len(date_exp_dates_list) == 0:
                 form.date_exp_weekly.errors.append(
                     "Must choose a day of the week or a specific day!")

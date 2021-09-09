@@ -83,7 +83,6 @@ def set_test_data(test_class):
         note="test note"
     )
 
-    # print(appointment)
     db.session.add(appointment)
     db.session.commit()
 

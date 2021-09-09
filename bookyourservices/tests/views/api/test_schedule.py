@@ -59,8 +59,7 @@ class APIScheduleTest(TestCase):
             resp = client.get(f"/api/schedules/{self.provider_username}/{appointment.start.date().isoformat()}/0")
 
             data = resp.get_json()
-            print(appointment)
-            print(data)
+            
             self.assertEqual(resp.status_code , 200)
             self.assertEqual(len(data["items"]) , 2)
 

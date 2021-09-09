@@ -276,8 +276,6 @@ def dashboard():
     service_form = ServiceForm(prefix="service")
     service_form.category_ids.choices = CategoryHandler.list_for_select()
 
-    print("#####")
-    print(get_flashed_messages())
     return render_template("home/users/dashboard.html", account=g.user,
                            appointment_form=appointment_form,
                            service_form=service_form)
