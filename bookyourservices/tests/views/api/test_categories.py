@@ -5,18 +5,10 @@ from models import *
 from secrets import token_urlsafe
 from tests.views.test_data import *
 
-# Use test database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///bookyourservices_test'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
 
-app.config['TESTING'] = True
-app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
-app.config['WTF_CSRF_ENABLED'] = False
+from tests.test_common import test_setup
 
-
-db.drop_all()
-db.create_all()
+test_setup(app=app , db=db)
 
 
 class APICategoryTest(TestCase):

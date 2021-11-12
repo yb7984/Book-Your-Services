@@ -4,16 +4,10 @@ from utils import *
 from models import *
 from secrets import token_urlsafe
 
-# Use test database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///bookyourservices_test'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
 
-app.config['TESTING'] = True
-app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
+from tests.test_common import test_setup
 
-db.drop_all()
-db.create_all()
+test_setup(app=app , db=db)
 
 
 class ServiceModelTest(TestCase):

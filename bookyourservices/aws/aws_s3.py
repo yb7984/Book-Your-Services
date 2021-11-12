@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 class AWSS3Handler:
     """Class including methods handling aws s3"""
 
+    @staticmethod
     def upload_file(file_name, bucket, object_name=None):
         """Upload a file to an S3 bucket
 
