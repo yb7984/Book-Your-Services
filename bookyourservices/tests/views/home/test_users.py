@@ -10,8 +10,6 @@ from tests.test_common import test_setup
 
 test_setup(app=app , db=db)
 
-TESTING = True
-
 
 class ViewUserTest(TestCase):
     """Test class for views for user information"""
